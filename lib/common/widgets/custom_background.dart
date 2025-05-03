@@ -21,7 +21,6 @@ class CustomBackground extends StatelessWidget {
         image: DecorationImage(
           image: AssetImage(backgroundImage ?? AppImages.backgroundImage),
           fit: BoxFit.cover,
-          opacity: 0.3,
         ),
       ),
       child: child,

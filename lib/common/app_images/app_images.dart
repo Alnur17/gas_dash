@@ -122,7 +122,6 @@ class AppImages {
   static const carImageFour = 'assets/images/car image 4.jpg';
   static const carImageFive = 'assets/images/car image 5.jpg';
   static const coverImage = 'assets/images/cover image.png';
-
   static const onboardingBackTwo = "assets/images/onboarding background 2.png";
   static const authFlower = "assets/images/auth flower.png";
   static const authHome = "assets/images/auth home back.png";

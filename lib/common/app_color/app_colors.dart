@@ -5,12 +5,12 @@ class AppColors {
   static const mainColorTwo = Color(0xFFF1F1F1);
   static const logoBgColor = Color(0xFFECF7FF);
   static const bottomNavbar = Color(0xffF9F9F9);
-  static const textColorBlue = Color(0xff2C50ED);
+  static const textColor = Color(0xff063749);
   static const gradientColor = [Color(0xff2E8DD6), Color(0xff4742B5)];
 
   //fixed color
   static const transparent = Colors.transparent;
-  static const greyLight = Color(0xffF5F5F5);
+  static const greyLight = Color(0xffececec);
   static const grey = Color(0xffa5a5a5);
   static const greyDark = Color(0xff2A2A2A);
   static const silver = Color(0xffE8EBF0);
@@ -27,7 +27,7 @@ class AppColors {
   static const hintColor = Color(0xff8b8989);
   static const greenLight = Color(0xffe0f3f1);
   static const whiteDark = Color(0xffBEBEBE);
-  static const primary = Color(0xff4DB5AD);
+  static const primaryColor = Color(0xff409E7A);
   static const orange = Color(0xffff6200);
   static const orangeLight = Color(0xffFFAE35);
   static const darkRed = Color(0xffC21A1E);
