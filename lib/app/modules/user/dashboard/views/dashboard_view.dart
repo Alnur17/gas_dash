@@ -1,0 +1,158 @@
+import 'package:flutter/material.dart';
+import 'package:gas_dash/common/app_color/app_colors.dart';
+import 'package:gas_dash/common/app_images/app_images.dart';
+
+import 'package:get/get.dart';
+
+import '../../../../../common/app_text_style/styles.dart';
+import '../../home/views/home_view.dart';
+import '../controllers/dashboard_controller.dart';
+
+class DashboardView extends StatefulWidget {
+  const DashboardView({super.key});
+
+  @override
+  State<DashboardView> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends State<DashboardView> {
+  final DashboardController dashboardController =
+      Get.put(DashboardController());
+
+  static final List<Widget> _views = [
+    const HomeView(),
+    Container(),
+    Container(),
+    Container(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Obx(() => _views[dashboardController.selectedIndex.value]),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        backgroundColor: AppColors.textColor,
+        shape: const CircleBorder(),
+        child: Image.asset(AppImages.addFloating,scale: 4,),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: AppColors.mainColor,
+        padding: EdgeInsets.zero,
+        child: Obx(() => Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Image.asset(
+                        dashboardController.selectedIndex.value == 0
+                            ? AppImages.homeFilled
+                            : AppImages.home,
+                        width: 24,
+                        height: 24,
+                        scale: 4,
+                      ),
+                      onPressed: () {
+                        dashboardController.changeTabIndex(0);
+                      },
+                    ),
+                    if (dashboardController.selectedIndex.value == 0)
+                      Text(
+                        'Home',
+                        style: h6.copyWith(
+                          color: AppColors.textColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                  ],
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Image.asset(
+                        dashboardController.selectedIndex.value == 1
+                            ? AppImages.bookFilled
+                            : AppImages.book,
+                        width: 24,
+                        height: 24,
+                        scale: 4,
+                      ),
+                      onPressed: () {
+                        dashboardController.changeTabIndex(1);
+                      },
+                    ),
+                    if (dashboardController.selectedIndex.value == 1)
+                      Text(
+                        'Book',
+                        style: h6.copyWith(
+                          color: AppColors.textColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(
+                  width: 50,
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Image.asset(
+                        dashboardController.selectedIndex.value == 2
+                            ? AppImages.messagesFilled
+                            : AppImages.messages,
+                        width: 24,
+                        height: 24,
+                        scale: 4,
+                      ),
+                      onPressed: () {
+                        dashboardController.changeTabIndex(2);
+                      },
+                    ),
+                    if (dashboardController.selectedIndex.value == 2)
+                      Text(
+                        'Message',
+                        style: h6.copyWith(
+                          color: AppColors.textColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                  ],
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Image.asset(
+                        dashboardController.selectedIndex.value == 3
+                            ? AppImages.personFilled
+                            : AppImages.person,
+                        width: 24,
+                        height: 24,
+                        scale: 4,
+                      ),
+                      onPressed: () {
+                        dashboardController.changeTabIndex(3);
+                      },
+                    ),
+                    if (dashboardController.selectedIndex.value == 3)
+                      Text(
+                        'Profile',
+                        style: h6.copyWith(
+                          color: AppColors.textColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            )),
+      ),
+    );
+  }
+}

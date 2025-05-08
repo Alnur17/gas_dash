@@ -10,6 +10,7 @@ import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_button.dart';
 import '../../../../../common/widgets/custom_textfield.dart';
 import '../../../../../common/widgets/google_button.dart';
+import '../../../user/dashboard/views/dashboard_view.dart';
 import '../../forgot_password/views/forgot_password_view.dart';
 import '../controllers/login_controller.dart';
 
@@ -118,8 +119,8 @@ class LoginView extends GetView<LoginController> {
                 CustomButton(
                   text: 'Login',
                   onPressed: () {
-                    //Get.to(() => const DashboardView());
-                  },
+                    Get.to(() => const DashboardView());
+                  },gradientColors: AppColors.gradientColor,
                 ),
                 sh10,
                 Row(

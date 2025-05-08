@@ -117,6 +117,7 @@ class _OnboardingViewState extends State<OnboardingView> {
                   onPressed: () {
                     Get.to(()=> SignUpView());
                   },
+                      gradientColors: AppColors.gradientColor,
                 )),
               ],
             ),

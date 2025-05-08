@@ -14,6 +14,7 @@ class CustomButton extends StatelessWidget {
   final String? imageAssetPath;
   final double? borderRadius;
   final Color? iconColor;
+  final List<Color>? gradientColors;
 
   const CustomButton({
     super.key,
@@ -26,7 +27,7 @@ class CustomButton extends StatelessWidget {
     this.width = double.infinity,
     this.borderColor,
     this.imageAssetPath,
-    this.borderRadius = 40,this.iconColor,
+    this.borderRadius = 40,this.iconColor, this.gradientColors,
   });
 
   @override
@@ -40,7 +41,16 @@ class CustomButton extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius!),
           border: Border.all(color: borderColor ?? AppColors.transparent),
-          color: backgroundColor ?? AppColors.primaryColor,
+          color: gradientColors == null
+              ? backgroundColor ?? AppColors.transparent
+              : null,
+          gradient: gradientColors != null
+              ? LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: gradientColors!,
+          )
+              : null,
         ),
         child: Center(
           child: Row(
