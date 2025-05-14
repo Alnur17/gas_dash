@@ -3,11 +3,13 @@ import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
+import 'package:gas_dash/common/widgets/custom_row_header.dart';
 
 import 'package:get/get.dart';
 
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/helper/fuel_card.dart';
+import '../../../../../common/helper/fuel_order_card.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -336,6 +338,17 @@ class HomeView extends GetView<HomeController> {
                 ],
               ),
             ),
+            sh12,
+            CustomRowHeader(title: 'Order History', onTap: (){}),
+            FuelOrderCard(
+              orderId: '5758',
+              orderDate: '10 Dec 2025 at 10:39 AM',
+              fuelQuantity: '15 Litres',
+              fuelType: 'Premium Fuel',
+              price: '65',
+              status: 'Fuel Delivered',
+            ),
+            sh40,
           ],
         ),
       ),

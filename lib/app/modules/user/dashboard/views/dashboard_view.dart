@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/message/views/message_view.dart';
+import 'package:gas_dash/app/modules/user/order_history/views/order_history_view.dart';
+import 'package:gas_dash/app/modules/user/profile/views/profile_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
 
@@ -21,9 +24,9 @@ class _DashboardViewState extends State<DashboardView> {
 
   static final List<Widget> _views = [
     const HomeView(),
-    Container(),
-    Container(),
-    Container(),
+    OrderHistoryView(),
+    MessageView(),
+    ProfileView(),
   ];
 
   @override
@@ -87,7 +90,7 @@ class _DashboardViewState extends State<DashboardView> {
                     ),
                     if (dashboardController.selectedIndex.value == 1)
                       Text(
-                        'Book',
+                        'Order History',
                         style: h6.copyWith(
                           color: AppColors.textColor,
                           fontWeight: FontWeight.w600,

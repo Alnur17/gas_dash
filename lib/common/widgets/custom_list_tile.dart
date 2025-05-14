@@ -30,9 +30,11 @@ class CustomListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.silver)
+        //border: Border.all(color: AppColors.silver)
       ),
       child: ListTile(
         leading: Image.asset(

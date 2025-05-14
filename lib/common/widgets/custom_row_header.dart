@@ -19,24 +19,27 @@ class CustomRowHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: h3,
-        ),
-        GestureDetector(
-          onTap: onTap,
-          child: Row(
-            children: [
-              Text('See All',style: h6.copyWith(color: AppColors.darkRed),),
-              sw5,
-              Image.asset(AppImages.arrowRight,scale: 4,color: AppColors.darkRed,)
-            ],
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: h3,
           ),
-        ),
-      ],
+          GestureDetector(
+            onTap: onTap,
+            child: Row(
+              children: [
+                Text('See All',style: h6.copyWith(color: AppColors.green),),
+                sw5,
+                Image.asset(AppImages.arrowRight,scale: 4,color: AppColors.green,)
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

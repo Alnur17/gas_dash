@@ -11,6 +11,8 @@ import '../../../../../common/helper/sign_up_body_widget.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_button.dart';
 import '../../../../../common/widgets/google_button.dart';
+import '../../../driver/driver_dashboard/views/driver_dashboard_view.dart';
+import '../../../user/dashboard/views/dashboard_view.dart';
 import '../controllers/sign_up_controller.dart';
 
 class SignUpView extends GetView<SignUpController> {
@@ -18,6 +20,7 @@ class SignUpView extends GetView<SignUpController> {
 
   @override
   Widget build(BuildContext context) {
+    final SignUpController signupController = Get.put(SignUpController());
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.white,
@@ -72,7 +75,26 @@ class SignUpView extends GetView<SignUpController> {
                 CustomButton(
                   text: 'Sign Up',
                   onPressed: () {
-                    //controller.onSignupComplete();
+                    //if (isOtpValid) {
+                    // Get selected role from SignupController
+                    String userRole = signupController.selectedRole.value;
+
+                    // Navigate to the appropriate dashboard
+                    switch (userRole) {
+                      case 'customer':
+                        Get.offAll(() => DashboardView());
+                        break;
+                      case 'driver':
+                        Get.offAll(() => DriverDashboardView());
+                        break;
+                      default:
+                        Get.offAll(() => const LoginView());
+                        break;
+                    }
+                    // } else {
+                    // // Show error if OTP is invalid
+                    // Get.snackbar('Error', 'Invalid OTP. Please try again.');
+                    // }
                   },
                   gradientColors: AppColors.gradientColor,
                 ),
@@ -96,12 +118,12 @@ class SignUpView extends GetView<SignUpController> {
                   label: 'Continue with Google',
                   onTap: () {},
                 ),
-                sh24,
-                GoogleButton(
-                  assetPath: AppImages.facebook,
-                  label: 'Continue with Facebook',
-                  onTap: () {},
-                ),
+                // sh24,
+                // GoogleButton(
+                //   assetPath: AppImages.facebook,
+                //   label: 'Continue with Facebook',
+                //   onTap: () {},
+                // ),
                 sh20,
                 GestureDetector(
                   onTap: () {

@@ -3,6 +3,7 @@ part of 'app_pages.dart';
 
 abstract class Routes {
   Routes._();
+
   static const HOME = _Paths.HOME;
   static const SPLASH = _Paths.SPLASH;
   static const AUTHENTICATION = _Paths.AUTHENTICATION;
@@ -12,10 +13,19 @@ abstract class Routes {
   static const FORGOT_PASSWORD = _Paths.FORGOT_PASSWORD;
   static const DASHBOARD = _Paths.DASHBOARD;
   static const PROFILE = _Paths.PROFILE;
+  static const ORDER_HISTORY = _Paths.ORDER_HISTORY;
+  static const MESSAGE = _Paths.MESSAGE;
+  static const DRIVER_DASHBOARD = _Paths.DRIVER_DASHBOARD;
+  static const DRIVER_HOME = _Paths.DRIVER_HOME;
+  static const DRIVER_HISTORY = _Paths.DRIVER_HISTORY;
+  static const DRIVER_EARNING = _Paths.DRIVER_EARNING;
+  static const DRIVER_MESSAGE = _Paths.DRIVER_MESSAGE;
+  static const DRIVER_PROFILE = _Paths.DRIVER_PROFILE;
 }
 
 abstract class _Paths {
   _Paths._();
+
   static const HOME = '/home';
   static const SPLASH = '/splash';
   static const AUTHENTICATION = '/authentication';
@@ -25,4 +35,12 @@ abstract class _Paths {
   static const FORGOT_PASSWORD = '/forgot-password';
   static const DASHBOARD = '/dashboard';
   static const PROFILE = '/profile';
+  static const ORDER_HISTORY = '/order-history';
+  static const MESSAGE = '/message';
+  static const DRIVER_DASHBOARD = '/driver-dashboard';
+  static const DRIVER_HOME = '/driver-home';
+  static const DRIVER_HISTORY = '/driver-history';
+  static const DRIVER_EARNING = '/driver-earning';
+  static const DRIVER_MESSAGE = '/driver-message';
+  static const DRIVER_PROFILE = '/driver-profile';
 }

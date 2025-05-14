@@ -113,6 +113,10 @@ class AppImages {
   static const carShipped = "assets/icons/car shipped.png";
   static const boxShape = "assets/icons/box shape.png";
   static const oilLoader = "assets/icons/oil loader.png";
+  static const changePass = "assets/icons/change pass.png";
+  static const editProfile = "assets/icons/edit profile.png";
+  static const policy = "assets/icons/policy.png";
+  static const subscription = "assets/icons/subscription.png";
 
   //================ Images ==================>
 
