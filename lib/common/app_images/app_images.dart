@@ -37,6 +37,7 @@ class AppImages {
   static const wheelIcon = "assets/icons/wheel icon.png";
   static const wheelIconRed = "assets/icons/wheel icon red.png";
   static const steeringWheel = "assets/icons/steering wheel.png";
+  static const copy = "assets/icons/copy.png";
   static const chat = "assets/icons/chat.png";
   static const chatRed = "assets/icons/chat red.png";
   static const chatFilled = "assets/icons/Chat_alt_fill.png";
@@ -71,6 +72,7 @@ class AppImages {
   static const share = "assets/icons/share.png";
   static const stars = "assets/icons/stars.png";
   static const fuel = "assets/icons/fuel station.png";
+  static const fuelFiller = "assets/icons/fuel filler.png";
   static const mileage = "assets/icons/mileage.png";
   static const transmission = "assets/icons/transmission.png";
   static const upload = "assets/icons/upload.png";
@@ -127,6 +129,7 @@ class AppImages {
   static const diesel = "assets/images/diesel.png";
   static const emergencyFuel = "assets/images/emergency fuel image.png";
   static const discount = "assets/images/discount image.png";
+  static const mapImage = "assets/images/map image.png";
 
 
 

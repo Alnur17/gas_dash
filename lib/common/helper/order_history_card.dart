@@ -175,8 +175,8 @@ class OrderHistoryCard extends StatelessWidget {
                   child: CustomButton(
                     text: buttonText1!,
                     backgroundColor: AppColors.transparent,
-                    borderColor: AppColors.green,
-                    textColor: AppColors.green,
+                    borderColor: AppColors.primaryColor,
+                    textColor: AppColors.primaryColor,
                     onPressed: onButton1Pressed!,
                   ),
                 ),

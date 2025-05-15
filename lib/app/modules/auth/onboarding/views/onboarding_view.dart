@@ -77,38 +77,19 @@ class _OnboardingViewState extends State<OnboardingView> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: ShapeDecoration(
-                          shape: CircleBorder(),
-                          color: AppColors.whiteDark,
-                        ),
-                        child: Image.asset(
-                          AppImages.google,
-                          scale: 4,
-                        ),
-                      ),
+                GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: ShapeDecoration(
+                      shape: CircleBorder(),
+                      color: AppColors.whiteDark,
                     ),
-                    sw16,
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: ShapeDecoration(
-                          shape: CircleBorder(),
-                          color: AppColors.whiteDark,
-                        ),
-                        child: Image.asset(
-                          AppImages.facebook,
-                          scale: 4,
-                        ),
-                      ),
+                    child: Image.asset(
+                      AppImages.google,
+                      scale: 4,
                     ),
-                  ],
+                  ),
                 ),
                 sw16,
                 Expanded(
@@ -154,3 +135,22 @@ class _OnboardingViewState extends State<OnboardingView> {
     );
   }
 }
+
+
+/*
+
+sw16,
+GestureDetector(
+onTap: () {},
+child: Container(
+padding: EdgeInsets.all(8),
+decoration: ShapeDecoration(
+shape: CircleBorder(),
+color: AppColors.whiteDark,
+),
+child: Image.asset(
+AppImages.facebook,
+scale: 4,
+),
+),
+),*/

@@ -2,21 +2,9 @@ import 'package:get/get.dart';
 
 class DriverHistoryController extends GetxController {
 
-  final count = 0.obs;
-  @override
-  void onInit() {
-    super.onInit();
-  }
+  var isOnTheWay = false.obs; // State to track if delivery is marked as "On the Way"
 
-  @override
-  void onReady() {
-    super.onReady();
+  void markAsOnTheWay() {
+    isOnTheWay.value = true; // Update state when button is clicked
   }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
-  void increment() => count.value++;
 }

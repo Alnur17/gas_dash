@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/driver/driver_history/views/driver_order_details_view.dart';
+import 'package:gas_dash/app/modules/driver/driver_history/views/driver_start_delivery_view.dart';
+import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:gas_dash/common/helper/order_history_card.dart';
 
 import 'package:get/get.dart';
@@ -20,7 +22,7 @@ class _DriverHistoryViewState extends State<DriverHistoryView> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Order History'),
+          title: Text('Order History',style: titleStyle,),
           centerTitle: true,
           bottom: TabBar(
             tabs: [
@@ -69,7 +71,7 @@ class OrderStatusSection extends StatelessWidget {
           buttonText1: _getButtonText1(status),
           buttonText2: _getButtonText2(status),
           onButton1Pressed: () {
-            debugPrint('$status order started!');
+            Get.to(()=> DriverStartDeliveryView());
           },
           onButton2Pressed: () {
             Get.to(()=> DriverOrderDetailsView());
