@@ -8,6 +8,8 @@ import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
 import 'package:get/get.dart';
 
+import '../../../../../common/widgets/custom_circular_container.dart';
+
 class DriverStartDeliveryView extends StatefulWidget {
   const DriverStartDeliveryView({super.key});
 
@@ -27,6 +29,16 @@ class _DriverStartDeliveryViewState extends State<DriverStartDeliveryView> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         scrolledUnderElevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12),
+          child: CustomCircularContainer(
+            imagePath: AppImages.back,
+            onTap: () {
+              Get.back();
+            },
+            padding: 2,
+          ),
+        ),
         title: Text(
           'Start Delivery',
           style: titleStyle,

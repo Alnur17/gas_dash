@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/jump_start_car_battery/views/jump_start_car_battery_view.dart';
+import 'package:gas_dash/app/modules/user/subscription/views/subscription_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
@@ -101,7 +103,9 @@ class HomeView extends GetView<HomeController> {
                   sh12,
                   CustomButton(
                     text: 'Manage Subscription',
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.to(()=> SubscriptionView());
+                    },
                     gradientColors: AppColors.gradientColor,
                   ),
                 ],
@@ -244,6 +248,7 @@ class HomeView extends GetView<HomeController> {
                   ),
                   sh8,
                   CustomButton(
+                    height: 40,
                     text: 'Order Now',
                     onPressed: () {},
                     gradientColors: AppColors.gradientColor,
@@ -330,7 +335,9 @@ class HomeView extends GetView<HomeController> {
                   sh12,
                   CustomButton(
                     text: 'Order Now',
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.to(()=> JumpStartCarBatteryView());
+                    },
                     gradientColors: AppColors.gradientColor,
                     width: 150,
                     height: 40,
@@ -338,8 +345,67 @@ class HomeView extends GetView<HomeController> {
                 ],
               ),
             ),
+            sh16,
+            Container(
+              height: 250,
+              width: double.infinity,
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                image: DecorationImage(
+                  image: AssetImage(AppImages.discount),
+                  scale: 4,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Stack(
+                children: [
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    left: 0,
+                    top: Get.height * 0.2,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.blurBack,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(20),
+                          bottomRight: Radius.circular(20),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 12,
+                    left: 12,
+                    right: 12,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Join Now for Discounts & No Tips!',
+                          style: h5.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.white,
+                          ),
+                        ),
+                        sh8,
+                        CustomButton(
+                          height: 40,
+                          text: 'Join Now',
+                          onPressed: () {},
+                          gradientColors: AppColors.gradientColor,
+                          width: 150,
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
             sh12,
-            CustomRowHeader(title: 'Order History', onTap: (){}),
+            CustomRowHeader(title: 'Order History', onTap: () {}),
             FuelOrderCard(
               orderId: '5758',
               orderDate: '10 Dec 2025 at 10:39 AM',

@@ -10,7 +10,7 @@ class AppImages {
   static const checkBox = "assets/icons/checkbox.png";
   static const checkBoxCircle = "assets/icons/circle checkbox.png";
   static const checkBoxFilled = "assets/icons/checkbox filled.png";
-  static const checkBoxFilledSquare = "assets/icons/checkbox filled square.png";
+  static const checkBoxFilledSquare = "assets/icons/Checbox filled squar.png";
   static const eyeClose = "assets/icons/eye close.png";
 
   static const addFloating = "assets/icons/float add.png";
@@ -119,10 +119,14 @@ class AppImages {
   static const editProfile = "assets/icons/edit profile.png";
   static const policy = "assets/icons/policy.png";
   static const subscription = "assets/icons/subscription.png";
+  static const submit = "assets/icons/submit.png";
+  static const addCar = "assets/icons/add car.png";
+  static const subsRight = "assets/icons/subs right.png";
 
   //================ Images ==================>
 
-  static const backgroundImage = "assets/images/background gd.png";
+  static const backgroundImage = "assets/images/backgroundImage.png";
+  static const subscriptionImage = "assets/images/subscription image.png";
   static const verifySuccess = "assets/images/verify success.png";
   static const unleaded = "assets/images/unleaded.png";
   static const premium = "assets/images/premium.png";

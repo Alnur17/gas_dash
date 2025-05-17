@@ -50,23 +50,25 @@ class SignUpView extends GetView<SignUpController> {
                 Row(
                   children: [
                     Image.asset(
-                      AppImages.checkBoxFilled,
+                      AppImages.checkBoxFilledSquare,
                       scale: 4,
                     ),
-                    sw5,
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(text: 'By agreeing to the ', style: h4),
-                          TextSpan(
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                //Get.to(() => TermsAndConditionsView());
-                              },
-                            text: 'Terms & Condition',
-                            style: h4.copyWith(color: AppColors.textColor),
-                          ),
-                        ],
+                    sw12,
+                    Expanded(
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(text: 'By agreeing to the ', style: h4),
+                            TextSpan(
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  //Get.to(() => TermsAndConditionsView());
+                                },
+                              text: 'Terms & Condition',
+                              style: h4.copyWith(color: AppColors.textColor),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],

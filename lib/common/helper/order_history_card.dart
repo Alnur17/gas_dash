@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 
 import '../app_color/app_colors.dart';
+import '../app_text_style/styles.dart';
 import '../widgets/custom_button.dart';
 
 class OrderHistoryCard extends StatelessWidget {
@@ -176,11 +177,12 @@ class OrderHistoryCard extends StatelessWidget {
                     text: buttonText1!,
                     backgroundColor: AppColors.transparent,
                     borderColor: AppColors.primaryColor,
-                    textColor: AppColors.primaryColor,
                     onPressed: onButton1Pressed!,
+                    textStyle: h6.copyWith(color: AppColors.primaryColor,),
+                    height: 40,
                   ),
                 ),
-              sw12,
+              sw8,
               // Show button 2 only if text and onPressed are provided
               if (buttonText2 != null && onButton2Pressed != null)
                 Expanded(
@@ -188,6 +190,8 @@ class OrderHistoryCard extends StatelessWidget {
                     text: buttonText2!,
                     gradientColors: AppColors.gradientColor,
                     onPressed: onButton2Pressed!,
+                    textStyle: h6.copyWith(color: AppColors.white,),
+                    height: 40,
                   ),
                 ),
             ],

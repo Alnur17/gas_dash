@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
-import '../../../../../common/widgets/custom_circular_container.dart';
 import 'driver_message_body_view.dart';
 
 class DriverMessageView extends StatefulWidget {
@@ -26,16 +25,6 @@ class _DriverMessageViewState extends State<DriverMessageView> {
       backgroundColor: AppColors.mainColor,
       appBar: AppBar(
         backgroundColor: AppColors.mainColor,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 12),
-          child: CustomCircularContainer(
-            imagePath: AppImages.back,
-            onTap: () {
-              Get.back();
-            },
-            padding: 2,
-          ),
-        ),
         title: Text('Message'),
         centerTitle: true,
       ),

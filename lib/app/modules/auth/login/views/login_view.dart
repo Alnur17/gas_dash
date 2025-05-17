@@ -93,7 +93,7 @@ class LoginView extends GetView<LoginController> {
                             //Get.to(() => const ForgotPasswordView());
                           },
                           child: Image.asset(
-                            AppImages.checkBoxFilled,
+                            AppImages.checkBoxFilledSquare,
                             scale: 4,
                           ),
                         ),

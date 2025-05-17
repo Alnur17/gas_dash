@@ -26,12 +26,16 @@ import '../modules/user/dashboard/bindings/dashboard_binding.dart';
 import '../modules/user/dashboard/views/dashboard_view.dart';
 import '../modules/user/home/bindings/home_binding.dart';
 import '../modules/user/home/views/home_view.dart';
+import '../modules/user/jump_start_car_battery/bindings/jump_start_car_battery_binding.dart';
+import '../modules/user/jump_start_car_battery/views/jump_start_car_battery_view.dart';
 import '../modules/user/message/bindings/message_binding.dart';
 import '../modules/user/message/views/message_view.dart';
 import '../modules/user/order_history/bindings/order_history_binding.dart';
 import '../modules/user/order_history/views/order_history_view.dart';
 import '../modules/user/profile/bindings/profile_binding.dart';
 import '../modules/user/profile/views/profile_view.dart';
+import '../modules/user/subscription/bindings/subscription_binding.dart';
+import '../modules/user/subscription/views/subscription_view.dart';
 
 part 'app_routes.dart';
 
@@ -120,6 +124,16 @@ class AppPages {
       name: _Paths.DRIVER_PROFILE,
       page: () => const DriverProfileView(),
       binding: DriverProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.SUBSCRIPTION,
+      page: () => const SubscriptionView(),
+      binding: SubscriptionBinding(),
+    ),
+    GetPage(
+      name: _Paths.JUMP_START_CAR_BATTERY,
+      page: () => const JumpStartCarBatteryView(),
+      binding: JumpStartCarBatteryBinding(),
     ),
   ];
 }

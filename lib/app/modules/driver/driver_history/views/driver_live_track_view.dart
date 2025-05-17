@@ -9,6 +9,8 @@ import 'package:gas_dash/common/widgets/custom_button.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../../../../../common/widgets/custom_circular_container.dart';
+
 class DriverLiveTrackView extends StatefulWidget {
   const DriverLiveTrackView({super.key});
 
@@ -44,11 +46,21 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
+        backgroundColor: AppColors.background,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12),
+          child: CustomCircularContainer(
+            imagePath: AppImages.back,
+            onTap: () {
+              Get.back();
+            },
+            padding: 2,
+          ),
+        ),
         title: Text(
           'Live Track',
           style: titleStyle,
-        ),
-        backgroundColor: AppColors.white, // Tailwind yellow shade kinda
+        ), // Tailwind yellow shade kinda
         centerTitle: true,
       ),
       body: Column(

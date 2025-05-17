@@ -4,12 +4,12 @@ import '../app_images/app_images.dart';
 
 class CustomBackground extends StatelessWidget {
   final Widget child;
-  final String? backgroundImage;
+  final String? backgroundImages;
 
   const CustomBackground({
     super.key,
     required this.child,
-    this.backgroundImage = AppImages.backgroundImage,
+    this.backgroundImages = AppImages.backgroundImage,
   });
 
   @override
@@ -19,7 +19,7 @@ class CustomBackground extends StatelessWidget {
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(backgroundImage ?? AppImages.backgroundImage),
+          image: AssetImage(backgroundImages ?? AppImages.backgroundImage),
           fit: BoxFit.cover,
         ),
       ),

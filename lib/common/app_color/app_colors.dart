@@ -7,6 +7,7 @@ class AppColors {
   static const bottomNavbar = Color(0xffF9F9F9);
   static const textColor = Color(0xff409E7A);
   static const blueTurquoise = Color(0xff00AEEF);
+  static const blurBack = Color(0x8D8D8D6B);
   static const gradientColor = [Color(0xff63CCA4), Color(0xff409E7A)];
   static const gradientColorBlue = [Color(0xff63B3ED), Color(0xff3182CE)];
   static const gradientColorGrey = [Color(0xffE2E2E2), Color(0xffA0A19E)];

@@ -3,6 +3,7 @@ import 'package:gas_dash/app/modules/user/profile/views/change_password_view.dar
 import 'package:gas_dash/app/modules/user/profile/views/edit_profile_view.dart';
 import 'package:gas_dash/app/modules/user/profile/views/policies_view.dart';
 import 'package:gas_dash/app/modules/user/profile/views/terms_and_conditions_view.dart';
+import 'package:gas_dash/app/modules/user/subscription/views/subscription_view.dart';
 
 import 'package:get/get.dart';
 
@@ -64,7 +65,9 @@ class ProfileView extends GetView<ProfileController> {
             ),
             sh12,
             CustomListTile(
-              onTap: () {},
+              onTap: () {
+                Get.to(()=> SubscriptionView());
+              },
               leadingImage: AppImages.subscription,
               title: 'Subscription',
               trailingImage: AppImages.arrowRightSmall,

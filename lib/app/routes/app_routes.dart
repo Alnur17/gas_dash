@@ -21,6 +21,8 @@ abstract class Routes {
   static const DRIVER_EARNING = _Paths.DRIVER_EARNING;
   static const DRIVER_MESSAGE = _Paths.DRIVER_MESSAGE;
   static const DRIVER_PROFILE = _Paths.DRIVER_PROFILE;
+  static const SUBSCRIPTION = _Paths.SUBSCRIPTION;
+  static const JUMP_START_CAR_BATTERY = _Paths.JUMP_START_CAR_BATTERY;
 }
 
 abstract class _Paths {
@@ -43,4 +45,6 @@ abstract class _Paths {
   static const DRIVER_EARNING = '/driver-earning';
   static const DRIVER_MESSAGE = '/driver-message';
   static const DRIVER_PROFILE = '/driver-profile';
+  static const SUBSCRIPTION = '/subscription';
+  static const JUMP_START_CAR_BATTERY = '/jump-start-car-battery';
 }

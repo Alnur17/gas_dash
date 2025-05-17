@@ -12,7 +12,7 @@ class CustomCircularContainer extends StatelessWidget {
     required this.imagePath,
     required this.onTap,
     this.padding = 12.0,
-    this.backgroundColor = AppColors.white,
+    this.backgroundColor = AppColors.transparent,
   });
 
   @override
