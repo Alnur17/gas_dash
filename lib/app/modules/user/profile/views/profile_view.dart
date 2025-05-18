@@ -3,6 +3,7 @@ import 'package:gas_dash/app/modules/user/profile/views/change_password_view.dar
 import 'package:gas_dash/app/modules/user/profile/views/edit_profile_view.dart';
 import 'package:gas_dash/app/modules/user/profile/views/policies_view.dart';
 import 'package:gas_dash/app/modules/user/profile/views/terms_and_conditions_view.dart';
+import 'package:gas_dash/app/modules/user/profile/views/track_your_order_view.dart';
 import 'package:gas_dash/app/modules/user/subscription/views/subscription_view.dart';
 
 import 'package:get/get.dart';
@@ -61,6 +62,14 @@ class ProfileView extends GetView<ProfileController> {
               },
               leadingImage: AppImages.changePass,
               title: 'Change  Password ',
+              trailingImage: AppImages.arrowRightSmall,
+            ),sh12,
+            CustomListTile(
+              onTap: () {
+                Get.to(()=> TrackYourOrderView());
+              },
+              leadingImage: AppImages.changePass,
+              title: 'Track your Order',
               trailingImage: AppImages.arrowRightSmall,
             ),
             sh12,

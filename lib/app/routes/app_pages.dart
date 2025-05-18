@@ -22,6 +22,8 @@ import '../modules/driver/driver_message/bindings/driver_message_binding.dart';
 import '../modules/driver/driver_message/views/driver_message_view.dart';
 import '../modules/driver/driver_profile/bindings/driver_profile_binding.dart';
 import '../modules/driver/driver_profile/views/driver_profile_view.dart';
+import '../modules/user/about_driver_information/bindings/about_driver_information_binding.dart';
+import '../modules/user/about_driver_information/views/about_driver_information_view.dart';
 import '../modules/user/dashboard/bindings/dashboard_binding.dart';
 import '../modules/user/dashboard/views/dashboard_view.dart';
 import '../modules/user/home/bindings/home_binding.dart';
@@ -30,12 +32,16 @@ import '../modules/user/jump_start_car_battery/bindings/jump_start_car_battery_b
 import '../modules/user/jump_start_car_battery/views/jump_start_car_battery_view.dart';
 import '../modules/user/message/bindings/message_binding.dart';
 import '../modules/user/message/views/message_view.dart';
+import '../modules/user/order_fuel/bindings/order_fuel_binding.dart';
+import '../modules/user/order_fuel/views/order_fuel_view.dart';
 import '../modules/user/order_history/bindings/order_history_binding.dart';
 import '../modules/user/order_history/views/order_history_view.dart';
 import '../modules/user/profile/bindings/profile_binding.dart';
 import '../modules/user/profile/views/profile_view.dart';
 import '../modules/user/subscription/bindings/subscription_binding.dart';
 import '../modules/user/subscription/views/subscription_view.dart';
+import '../modules/user/track_order_details/bindings/track_order_details_binding.dart';
+import '../modules/user/track_order_details/views/track_order_details_view.dart';
 
 part 'app_routes.dart';
 
@@ -134,6 +140,21 @@ class AppPages {
       name: _Paths.JUMP_START_CAR_BATTERY,
       page: () => const JumpStartCarBatteryView(),
       binding: JumpStartCarBatteryBinding(),
+    ),
+    GetPage(
+      name: _Paths.TRACK_ORDER_DETAILS,
+      page: () => const TrackOrderDetailsView(),
+      binding: TrackOrderDetailsBinding(),
+    ),
+    GetPage(
+      name: _Paths.ABOUT_DRIVER_INFORMATION,
+      page: () => const AboutDriverInformationView(),
+      binding: AboutDriverInformationBinding(),
+    ),
+    GetPage(
+      name: _Paths.ORDER_FUEL,
+      page: () => const OrderFuelView(),
+      binding: OrderFuelBinding(),
     ),
   ];
 }

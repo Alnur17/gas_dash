@@ -90,10 +90,14 @@ class AppImages {
   static const logout = "assets/icons/logout.png";
   static const filter = "assets/icons/Filter_big.png";
   static const call = "assets/icons/call.png";
+  static const callSmall = "assets/icons/call small.png";
   static const callRound = "assets/icons/call round.png";
   static const close = "assets/icons/close.png";
   static const groupLight = "assets/icons/group light.png";
   static const public = "assets/icons/public.png";
+  static const work = "assets/icons/Work.png";
+  static const toggleOn = "assets/icons/toggle on.png";
+  static const toggleOff = "assets/icons/toggle off.png";
 
   static const starCard = "assets/icons/star card.png";
   static const starCardTwo = "assets/icons/star card 2.png";
@@ -121,7 +125,10 @@ class AppImages {
   static const subscription = "assets/icons/subscription.png";
   static const submit = "assets/icons/submit.png";
   static const addCar = "assets/icons/add car.png";
+  static const checkMark = "assets/icons/checkmark.png";
   static const subsRight = "assets/icons/subs right.png";
+  static const star = "assets/icons/star.png";
+  static const estimatedTime = "assets/icons/estimated time.png";
 
   //================ Images ==================>
 

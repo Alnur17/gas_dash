@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/driver/driver_home/views/notification_view.dart';
 import 'package:gas_dash/common/helper/fuel_and_service_card.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/widgets/custom_row_header.dart';
@@ -34,7 +35,9 @@ class DriverHomeView extends GetView<DriverHomeController> {
             ),
             Spacer(),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Get.to(()=> NotificationView());
+              },
               child: Container(
                   padding: EdgeInsets.all(8),
                   decoration: ShapeDecoration(

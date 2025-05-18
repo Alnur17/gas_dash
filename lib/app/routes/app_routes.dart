@@ -23,6 +23,9 @@ abstract class Routes {
   static const DRIVER_PROFILE = _Paths.DRIVER_PROFILE;
   static const SUBSCRIPTION = _Paths.SUBSCRIPTION;
   static const JUMP_START_CAR_BATTERY = _Paths.JUMP_START_CAR_BATTERY;
+  static const TRACK_ORDER_DETAILS = _Paths.TRACK_ORDER_DETAILS;
+  static const ABOUT_DRIVER_INFORMATION = _Paths.ABOUT_DRIVER_INFORMATION;
+  static const ORDER_FUEL = _Paths.ORDER_FUEL;
 }
 
 abstract class _Paths {
@@ -47,4 +50,7 @@ abstract class _Paths {
   static const DRIVER_PROFILE = '/driver-profile';
   static const SUBSCRIPTION = '/subscription';
   static const JUMP_START_CAR_BATTERY = '/jump-start-car-battery';
+  static const TRACK_ORDER_DETAILS = '/track-order-details';
+  static const ABOUT_DRIVER_INFORMATION = '/about-driver-information';
+  static const ORDER_FUEL = '/order-fuel';
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/home/views/notification_view.dart';
 import 'package:gas_dash/app/modules/user/jump_start_car_battery/views/jump_start_car_battery_view.dart';
+import 'package:gas_dash/app/modules/user/order_fuel/views/order_fuel_view.dart';
 import 'package:gas_dash/app/modules/user/subscription/views/subscription_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
@@ -36,7 +38,9 @@ class HomeView extends GetView<HomeController> {
             ),
             Spacer(),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Get.to(()=> NotificationView());
+              },
               child: Container(
                   padding: EdgeInsets.all(8),
                   decoration: ShapeDecoration(
@@ -104,7 +108,7 @@ class HomeView extends GetView<HomeController> {
                   CustomButton(
                     text: 'Manage Subscription',
                     onPressed: () {
-                      Get.to(()=> SubscriptionView());
+                      Get.to(() => SubscriptionView());
                     },
                     gradientColors: AppColors.gradientColor,
                   ),
@@ -273,7 +277,9 @@ class HomeView extends GetView<HomeController> {
               number: '89',
               buttonText: 'Order Now',
               gradientColors: AppColors.gradientColorBlue,
-              onTap: () {},
+              onTap: () {
+                Get.to(() => OrderFuelView());
+              },
             ),
             sh16,
             FuelCard(
@@ -281,7 +287,9 @@ class HomeView extends GetView<HomeController> {
               number: '91',
               buttonText: 'Order Now',
               gradientColors: AppColors.gradientColorGrey,
-              onTap: () {},
+              onTap: () {
+                Get.to(() => OrderFuelView());
+              },
             ),
             sh16,
             FuelCard(
@@ -289,7 +297,9 @@ class HomeView extends GetView<HomeController> {
               number: '71',
               buttonText: 'Order Now',
               gradientColors: AppColors.gradientColorGreen,
-              onTap: () {},
+              onTap: () {
+                Get.to(() => OrderFuelView());
+              },
             ),
             sh16,
             Padding(
@@ -336,7 +346,7 @@ class HomeView extends GetView<HomeController> {
                   CustomButton(
                     text: 'Order Now',
                     onPressed: () {
-                      Get.to(()=> JumpStartCarBatteryView());
+                      Get.to(() => JumpStartCarBatteryView());
                     },
                     gradientColors: AppColors.gradientColor,
                     width: 150,
