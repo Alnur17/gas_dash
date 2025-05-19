@@ -142,12 +142,12 @@ class LoginView extends GetView<LoginController> {
                   label: 'Continue with Google',
                   onTap: () {},
                 ),
-                // sh24,
-                // GoogleButton(
-                //   assetPath: AppImages.facebook,
-                //   label: 'Continue with Facebook',
-                //   onTap: () {},
-                // ),
+                sh12,
+                GoogleButton(
+                  assetPath: AppImages.apple,
+                  label: 'Continue with Apple',
+                  onTap: () {},
+                ),
                 sh10,
                 GestureDetector(
                   onTap: () {

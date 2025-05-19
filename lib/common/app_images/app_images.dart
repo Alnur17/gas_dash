@@ -98,6 +98,8 @@ class AppImages {
   static const work = "assets/icons/Work.png";
   static const toggleOn = "assets/icons/toggle on.png";
   static const toggleOff = "assets/icons/toggle off.png";
+  static const gasStation = "assets/icons/gas station.png";
+  static const gasStationSmall = "assets/icons/gas station small.png";
 
   static const starCard = "assets/icons/star card.png";
   static const starCardTwo = "assets/icons/star card 2.png";

@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:gas_dash/app/modules/driver/driver_history/views/driver_completion_checklist_view.dart';
-import 'package:gas_dash/common/app_color/app_colors.dart';
-import 'package:gas_dash/common/app_images/app_images.dart';
-import 'package:gas_dash/common/app_text_style/styles.dart';
-import 'package:gas_dash/common/size_box/custom_sizebox.dart';
-import 'package:gas_dash/common/widgets/custom_button.dart';
+import 'package:gas_dash/app/modules/driver/driver_history/views/driver_live_track_view.dart';
 
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../../../../../common/app_color/app_colors.dart';
+import '../../../../../common/app_images/app_images.dart';
+import '../../../../../common/app_text_style/styles.dart';
+import '../../../../../common/size_box/custom_sizebox.dart';
+import '../../../../../common/widgets/custom_button.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
+import 'driver_completion_checklist_view.dart';
 
-class DriverLiveTrackView extends StatefulWidget {
-  const DriverLiveTrackView({super.key});
+class StationNearYouView extends StatefulWidget {
+  const StationNearYouView({super.key});
 
   @override
-  State<DriverLiveTrackView> createState() => _DriverLiveTrackViewState();
+  State<StationNearYouView> createState() => _StationNearYouViewState();
 }
 
-class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
+class _StationNearYouViewState extends State<StationNearYouView> {
   late GoogleMapController _mapController;
 
   final LatLng _initialPosition = LatLng(23.8103, 90.4125);
@@ -58,7 +59,7 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
           ),
         ),
         title: Text(
-          'Destination',
+          'Station Near You',
           style: titleStyle,
         ), // Tailwind yellow shade kinda
         centerTitle: true,
@@ -84,28 +85,43 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Image.asset(
-                      AppImages.locationRed,
+                      AppImages.gasStationSmall,
                       scale: 4,
                     ),
                     sw8,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Chevron',
+                          style: h5,
+                        ),
+                        sh5,
+                        Text(
+                          '456 Pine St, Los Angeles, CA',
+                          style: h6,
+                        ),
+                        sh5,
+                        Text(
+                          '3 miles, 7 mins',
+                          style: h6,
+                        ),
+                      ],
+                    ),
                     Text(
-                      'Location',
-                      style: h5,
+                      'Regular: \$3.69/gal',
+                      style: h6.copyWith(color: AppColors.darkRed),
                     ),
                   ],
                 ),
-                sh5,
-                Text(
-                  '1901 Thornridge Cir. Shiloh',
-                  style: h6,
-                ),
                 sh12,
                 CustomButton(
-                  text: 'Mark As Arrived',
+                  text: 'On the Way',
                   onPressed: () {
-                    Get.to(()=> DriverCompletionChecklistView());
+                    Get.to(() => DriverLiveTrackView());
                   },
                   gradientColors: AppColors.gradientColorGreen,
                 ),

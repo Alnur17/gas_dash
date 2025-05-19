@@ -85,10 +85,25 @@ class _OnboardingViewState extends State<OnboardingView> {
                       padding: EdgeInsets.all(8),
                       decoration: ShapeDecoration(
                         shape: CircleBorder(),
-                        color: AppColors.whiteDark,
+                        color: AppColors.white,
                       ),
                       child: Image.asset(
                         AppImages.google,
+                        scale: 4,
+                      ),
+                    ),
+                  ),
+                  sw12,
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: ShapeDecoration(
+                        shape: CircleBorder(),
+                        color: AppColors.white,
+                      ),
+                      child: Image.asset(
+                        AppImages.apple,
                         scale: 4,
                       ),
                     ),
@@ -98,9 +113,9 @@ class _OnboardingViewState extends State<OnboardingView> {
                       child: CustomButton(
                     text: 'Open Account',
                     onPressed: () {
-                      Get.to(()=> SignUpView());
+                      Get.to(() => SignUpView());
                     },
-                        gradientColors: AppColors.gradientColor,
+                    gradientColors: AppColors.gradientColor,
                   )),
                 ],
               ),
@@ -120,13 +135,14 @@ class _OnboardingViewState extends State<OnboardingView> {
                   ),
                   sw8,
                   GestureDetector(
-                    onTap: (){
-                      Get.to(()=> LoginView());
+                    onTap: () {
+                      Get.to(() => LoginView());
                     },
                     child: Text(
                       'Sign in',
                       style: h5.copyWith(
-                          fontWeight: FontWeight.w700, color: AppColors.textColor),
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textColor),
                     ),
                   ),
                 ],
@@ -138,7 +154,6 @@ class _OnboardingViewState extends State<OnboardingView> {
     );
   }
 }
-
 
 /*
 

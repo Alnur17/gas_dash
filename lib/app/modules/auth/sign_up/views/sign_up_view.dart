@@ -120,12 +120,12 @@ class SignUpView extends GetView<SignUpController> {
                   label: 'Continue with Google',
                   onTap: () {},
                 ),
-                // sh24,
-                // GoogleButton(
-                //   assetPath: AppImages.facebook,
-                //   label: 'Continue with Facebook',
-                //   onTap: () {},
-                // ),
+                sh12,
+                GoogleButton(
+                  assetPath: AppImages.apple,
+                  label: 'Continue with Apple',
+                  onTap: () {},
+                ),
                 sh20,
                 GestureDetector(
                   onTap: () {
