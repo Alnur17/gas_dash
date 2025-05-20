@@ -1,6 +1,6 @@
 class AppConstant {
 
-
+  static const accessToken = 'accessToken';
   static const token = 'token';
   static const refCode = 'refCode';
   static const userId = 'userId';

@@ -26,6 +26,7 @@ abstract class Routes {
   static const TRACK_ORDER_DETAILS = _Paths.TRACK_ORDER_DETAILS;
   static const ABOUT_DRIVER_INFORMATION = _Paths.ABOUT_DRIVER_INFORMATION;
   static const ORDER_FUEL = _Paths.ORDER_FUEL;
+  static const EMERGENCY_FUEL =  _Paths.EMERGENCY_FUEL;
 }
 
 abstract class _Paths {
@@ -53,4 +54,5 @@ abstract class _Paths {
   static const TRACK_ORDER_DETAILS = '/track-order-details';
   static const ABOUT_DRIVER_INFORMATION = '/about-driver-information';
   static const ORDER_FUEL = '/order-fuel';
+  static const EMERGENCY_FUEL = '/emergency-fuel';
 }

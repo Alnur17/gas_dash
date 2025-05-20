@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gas_dash/app/modules/user/order_fuel/views/fuel_type_final_confirmation_view.dart';
+import 'package:gas_dash/app/modules/user/emergency_fuel/views/schedule_delivery_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:gas_dash/common/helper/earnings_card.dart';
@@ -61,7 +61,7 @@ class OrderFuelView extends GetView<OrderFuelController> {
               sh20,
 
               LocationCard(
-                locationText: '1901 Thornridge Cir. Shiloh',
+                locationText: '1901 Thorn ridge Cir. Shiloh',
                 buttonText: 'Change Location',
                 onButtonPressed: () {},
               ),
@@ -82,7 +82,8 @@ class OrderFuelView extends GetView<OrderFuelController> {
         child: CustomButton(
           text: 'Next',
           onPressed: () {
-            Get.to(()=> FuelTypeFinalConfirmationView());
+            //Get.to(()=> FuelTypeFinalConfirmationView());
+            Get.to(()=> ScheduleDeliveryView());
           },
           gradientColors: AppColors.gradientColorGreen,
         ),

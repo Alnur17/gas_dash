@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/emergency_fuel/views/emergency_fuel_view.dart';
 import 'package:gas_dash/app/modules/user/message/views/message_view.dart';
 import 'package:gas_dash/app/modules/user/order_history/views/order_history_view.dart';
 import 'package:gas_dash/app/modules/user/profile/views/profile_view.dart';
@@ -35,7 +36,9 @@ class _DashboardViewState extends State<DashboardView> {
       body: Obx(() => _views[dashboardController.selectedIndex.value]),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Get.to(()=> EmergencyFuelView());
+        },
         backgroundColor: AppColors.textColor,
         shape: const CircleBorder(),
         child: Image.asset(AppImages.addFloating,scale: 4,),

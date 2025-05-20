@@ -26,6 +26,8 @@ import '../modules/user/about_driver_information/bindings/about_driver_informati
 import '../modules/user/about_driver_information/views/about_driver_information_view.dart';
 import '../modules/user/dashboard/bindings/dashboard_binding.dart';
 import '../modules/user/dashboard/views/dashboard_view.dart';
+import '../modules/user/emergency_fuel/bindings/emergency_fuel_binding.dart';
+import '../modules/user/emergency_fuel/views/emergency_fuel_view.dart';
 import '../modules/user/home/bindings/home_binding.dart';
 import '../modules/user/home/views/home_view.dart';
 import '../modules/user/jump_start_car_battery/bindings/jump_start_car_battery_binding.dart';
@@ -48,7 +50,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.SPLASH;
+  static const INITIAL = Routes.EMERGENCY_FUEL;
 
   static final routes = [
     GetPage(
@@ -155,6 +157,11 @@ class AppPages {
       name: _Paths.ORDER_FUEL,
       page: () => const OrderFuelView(),
       binding: OrderFuelBinding(),
+    ),
+    GetPage(
+      name: _Paths.EMERGENCY_FUEL,
+      page: () => const EmergencyFuelView(),
+      binding: EmergencyFuelBinding(),
     ),
   ];
 }
