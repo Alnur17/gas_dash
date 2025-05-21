@@ -155,7 +155,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.ORDER_FUEL,
-      page: () => const OrderFuelView(),
+      page: () => OrderFuelView(),
       binding: OrderFuelBinding(),
     ),
     GetPage(

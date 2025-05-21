@@ -8,6 +8,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../order_fuel/views/fuel_type_final_confirmation_view.dart';
+
 class ScheduleDeliveryFromCalenderView extends GetView {
   final ScheduleDeliveryFromCalenderController
       scheduleDeliveryFromCalenderController =
@@ -228,6 +230,7 @@ class ScheduleDeliveryFromCalenderView extends GetView {
           onPressed: () {
             print('Date: ${scheduleDeliveryFromCalenderController.selectedDay.value}');
             print('Time: ${scheduleDeliveryFromCalenderController.selectedTime.value.format(context)}');
+            Get.to(()=> FuelTypeFinalConfirmationView());
           },
           gradientColors: AppColors.gradientColorGreen,
         ),

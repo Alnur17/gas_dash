@@ -4,6 +4,7 @@ import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:gas_dash/common/helper/earnings_card.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
+import 'package:gas_dash/common/widgets/custom_textfield.dart';
 
 import 'package:get/get.dart';
 
@@ -14,7 +15,153 @@ import '../../../../../common/widgets/custom_button.dart';
 import '../controllers/order_fuel_controller.dart';
 
 class OrderFuelView extends GetView<OrderFuelController> {
-  const OrderFuelView({super.key});
+  OrderFuelView({super.key});
+
+  final OrderFuelController orderFuelController =
+      Get.put(OrderFuelController());
+
+  void _showAddVehicleDialog() {
+    orderFuelController.resetForm();
+
+    Get.dialog(
+      Dialog(
+        backgroundColor: AppColors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Obx(() {
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                   Align(
+                     alignment: Alignment.center,
+                     child: Text(
+                      'Add Vehicle Details',
+                      style: h3.copyWith(fontSize: 20),
+                      textAlign: TextAlign.center,
+                                       ),
+                   ),
+                  const SizedBox(height: 16),
+
+                  // Make Dropdown
+                  Text(
+                    'Make',
+                    style: h5,
+                  ),
+                  DropdownButtonFormField<String>(
+                    value: orderFuelController.selectedMake.value,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                    ),
+                    items: orderFuelController.makes
+                        .map((make) => DropdownMenuItem<String>(
+                              value: make,
+                              child: Text(make,style: h5,),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                      orderFuelController.selectedMake.value = value;
+                      orderFuelController.selectedModel.value = null;
+                    },
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Model Dropdown
+                  Text(
+                    'Model',
+                    style: h5,
+                  ),
+                  DropdownButtonFormField<String>(
+                    value: orderFuelController.selectedModel.value,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                    ),
+                    items: (orderFuelController.selectedMake.value != null
+                            ? orderFuelController.modelsByMake[
+                                    orderFuelController.selectedMake.value] ??
+                                []
+                            : [])
+                        .map((model) => DropdownMenuItem<String>(
+                              value: model,
+                              child: Text(model,style: h5,),
+                            ))
+                        .toList(),
+                    onChanged: orderFuelController.selectedMake.value == null
+                        ? null
+                        : (value) {
+                            orderFuelController.selectedModel.value = value;
+                          },
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Year Dropdown
+                  Text(
+                    'Year',
+                    style: h5,
+                  ),
+                  DropdownButtonFormField<String>(
+                    value: orderFuelController.selectedYear.value,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                    ),
+                    items: orderFuelController.years
+                        .map((year) => DropdownMenuItem<String>(
+                              value: year,
+                              child: Text(
+                                year,
+                                style: h5,
+                              ),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                      orderFuelController.selectedYear.value = value;
+                    },
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  Text(
+                    'Fuel Level',
+                    style: h5,
+                  ),
+                  CustomTextField(
+                    hintText: 'e.g. 20%',
+                    controller: orderFuelController.fuelLevelController,
+                  ),
+                  const SizedBox(height: 20),
+
+                  CustomButton(
+                    text: 'Confirm',
+                    onPressed: () {
+                      orderFuelController.confirmVehicle();
+                    },
+                    gradientColors: AppColors.gradientColorGreen,
+                  ),
+                ],
+              ),
+            );
+          }),
+        ),
+      ),
+      barrierDismissible: false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +215,9 @@ class OrderFuelView extends GetView<OrderFuelController> {
               sh20,
               VehicleCard(
                 buttonText: 'Add',
-                onButtonPressed: () {},
+                onButtonPressed: () {
+                  _showAddVehicleDialog();
+                },
                 imageAssetPath: AppImages.addCar,
               ),
               sh100,
@@ -82,8 +231,7 @@ class OrderFuelView extends GetView<OrderFuelController> {
         child: CustomButton(
           text: 'Next',
           onPressed: () {
-            //Get.to(()=> FuelTypeFinalConfirmationView());
-            Get.to(()=> ScheduleDeliveryView());
+            Get.to(() => ScheduleDeliveryView());
           },
           gradientColors: AppColors.gradientColorGreen,
         ),

@@ -21,139 +21,149 @@ class SignUpView extends GetView<SignUpController> {
   @override
   Widget build(BuildContext context) {
     final SignUpController signupController = Get.put(SignUpController());
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.white,
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16),
-            child: Column(
-              children: [
-                Image.asset(
-                  AppImages.splashLogo,
-                  scale: 4,
-                  height: 100,
-                  width: 100,
-                  fit: BoxFit.contain,
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      appBar: AppBar(
+        toolbarHeight: 90,
+        scrolledUnderElevation: 0,
+        backgroundColor: AppColors.mainColor,
+        title: Image.asset(AppImages.splashLogo,
+          scale: 4,
+          height: 100,
+          width: 100,
+          fit: BoxFit.contain,),
+        automaticallyImplyLeading: false,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Image.asset(
+              //   AppImages.splashLogo,
+              //   scale: 4,
+              //   height: 100,
+              //   width: 100,
+              //   fit: BoxFit.contain,
+              // ),
+              // sh12,
+              Text(
+                'Register your Account',
+                style: h2.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textColor,
                 ),
-                sh12,
-                Text(
-                  'Register your Account',
-                  style: h2.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textColor,
+              ),
+              //sh12,
+              const SignUpBodyWidget(),
+              //sh16,
+              Row(
+                children: [
+                  Image.asset(
+                    AppImages.checkBoxFilledSquare,
+                    scale: 4,
                   ),
-                ),
-                sh12,
-                const SignUpBodyWidget(),
-                sh16,
-                Row(
-                  children: [
-                    Image.asset(
-                      AppImages.checkBoxFilledSquare,
-                      scale: 4,
-                    ),
-                    sw12,
-                    Expanded(
-                      child: RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(text: 'By agreeing to the ', style: h4),
-                            TextSpan(
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  //Get.to(() => TermsAndConditionsView());
-                                },
-                              text: 'Terms & Condition',
-                              style: h4.copyWith(color: AppColors.textColor),
-                            ),
-                          ],
-                        ),
+                  sw12,
+                  Expanded(
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(text: 'By agreeing to the ', style: h4),
+                          TextSpan(
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                //Get.to(() => TermsAndConditionsView());
+                              },
+                            text: 'Terms & Condition',
+                            style: h4.copyWith(color: AppColors.textColor),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-                sh24,
-                CustomButton(
-                  text: 'Sign Up',
-                  onPressed: () {
-                    //if (isOtpValid) {
-                    // Get selected role from SignupController
-                    String userRole = signupController.selectedRole.value;
+                  ),
+                ],
+              ),
+              sh24,
+              CustomButton(
+                text: 'Sign Up',
+                onPressed: () {
+                  //if (isOtpValid) {
+                  // Get selected role from SignupController
+                  String userRole = signupController.selectedRole.value;
 
-                    // Navigate to the appropriate dashboard
-                    switch (userRole) {
-                      case 'customer':
-                        Get.offAll(() => DashboardView());
-                        break;
-                      case 'driver':
-                        Get.offAll(() => DriverDashboardView());
-                        break;
-                      default:
-                        Get.offAll(() => const LoginView());
-                        break;
-                    }
-                    // } else {
-                    // // Show error if OTP is invalid
-                    // Get.snackbar('Error', 'Invalid OTP. Please try again.');
-                    // }
-                  },
-                  gradientColors: AppColors.gradientColor,
-                ),
-                sh10,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // Navigate to the appropriate dashboard
+                  switch (userRole) {
+                    case 'customer':
+                      Get.offAll(() => DashboardView());
+                      break;
+                    case 'driver':
+                      Get.offAll(() => DriverDashboardView());
+                      break;
+                    default:
+                      Get.offAll(() => const LoginView());
+                      break;
+                  }
+                  // } else {
+                  // // Show error if OTP is invalid
+                  // Get.snackbar('Error', 'Invalid OTP. Please try again.');
+                  // }
+                },
+                gradientColors: AppColors.gradientColor,
+              ),
+              sh10,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Expanded(child: Divider()),
+                  sw10,
+                  Text(
+                    'Or sign in with',
+                    style: h4,
+                  ),
+                  sw10,
+                  const Expanded(child: Divider()),
+                ],
+              ),
+              sh10,
+              GoogleButton(
+                assetPath: AppImages.google,
+                label: 'Continue with Google',
+                onTap: () {},
+              ),
+              sh12,
+              GoogleButton(
+                assetPath: AppImages.apple,
+                label: 'Continue with Apple',
+                onTap: () {},
+              ),
+              sh20,
+              GestureDetector(
+                onTap: () {
+                  Get.offAll(
+                    () => const LoginView(),
+                    transition: Transition.fadeIn,
+                    duration: Duration(milliseconds: 500),
+                  );
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Expanded(child: Divider()),
-                    sw10,
                     Text(
-                      'Or sign in with',
+                      'Already have an Account? ',
                       style: h4,
                     ),
-                    sw10,
-                    const Expanded(child: Divider()),
+                    Text(
+                      'Sign In',
+                      style: h4.copyWith(
+                        color: AppColors.textColor,
+                      ),
+                    ),
                   ],
                 ),
-                sh10,
-                GoogleButton(
-                  assetPath: AppImages.google,
-                  label: 'Continue with Google',
-                  onTap: () {},
-                ),
-                sh12,
-                GoogleButton(
-                  assetPath: AppImages.apple,
-                  label: 'Continue with Apple',
-                  onTap: () {},
-                ),
-                sh20,
-                GestureDetector(
-                  onTap: () {
-                    Get.offAll(
-                      () => const LoginView(),
-                      transition: Transition.fadeIn,
-                      duration: Duration(milliseconds: 500),
-                    );
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Already have an Account? ',
-                        style: h4,
-                      ),
-                      Text(
-                        'Sign In',
-                        style: h4.copyWith(
-                          color: AppColors.textColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                sh30,
-              ],
-            ),
+              ),
+              sh30,
+            ],
           ),
         ),
       ),
