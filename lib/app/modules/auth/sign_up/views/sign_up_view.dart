@@ -10,9 +10,8 @@ import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/helper/sign_up_body_widget.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_button.dart';
+import '../../../../../common/widgets/custom_loader.dart';
 import '../../../../../common/widgets/google_button.dart';
-import '../../../driver/driver_dashboard/views/driver_dashboard_view.dart';
-import '../../../user/dashboard/views/dashboard_view.dart';
 import '../controllers/sign_up_controller.dart';
 
 class SignUpView extends GetView<SignUpController> {
@@ -27,11 +26,13 @@ class SignUpView extends GetView<SignUpController> {
         toolbarHeight: 90,
         scrolledUnderElevation: 0,
         backgroundColor: AppColors.mainColor,
-        title: Image.asset(AppImages.splashLogo,
+        title: Image.asset(
+          AppImages.splashLogo,
           scale: 4,
           height: 100,
           width: 100,
-          fit: BoxFit.contain,),
+          fit: BoxFit.contain,
+        ),
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
@@ -40,14 +41,6 @@ class SignUpView extends GetView<SignUpController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Image.asset(
-              //   AppImages.splashLogo,
-              //   scale: 4,
-              //   height: 100,
-              //   width: 100,
-              //   fit: BoxFit.contain,
-              // ),
-              // sh12,
               Text(
                 'Register your Account',
                 style: h2.copyWith(
@@ -71,10 +64,7 @@ class SignUpView extends GetView<SignUpController> {
                         children: [
                           TextSpan(text: 'By agreeing to the ', style: h4),
                           TextSpan(
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                //Get.to(() => TermsAndConditionsView());
-                              },
+                            recognizer: TapGestureRecognizer()..onTap = () {},
                             text: 'Terms & Condition',
                             style: h4.copyWith(color: AppColors.textColor),
                           ),
@@ -85,31 +75,18 @@ class SignUpView extends GetView<SignUpController> {
                 ],
               ),
               sh24,
-              CustomButton(
-                text: 'Sign Up',
-                onPressed: () {
-                  //if (isOtpValid) {
-                  // Get selected role from SignupController
-                  String userRole = signupController.selectedRole.value;
-
-                  // Navigate to the appropriate dashboard
-                  switch (userRole) {
-                    case 'customer':
-                      Get.offAll(() => DashboardView());
-                      break;
-                    case 'driver':
-                      Get.offAll(() => DriverDashboardView());
-                      break;
-                    default:
-                      Get.offAll(() => const LoginView());
-                      break;
-                  }
-                  // } else {
-                  // // Show error if OTP is invalid
-                  // Get.snackbar('Error', 'Invalid OTP. Please try again.');
-                  // }
+              Obx(
+                    () {
+                  return signupController.isLoading.value == true
+                      ? CustomLoader(color: AppColors.white)
+                      : CustomButton(
+                    text: 'Sign Up',
+                    onPressed: () async {
+                      await signupController.registerUser();
+                    },
+                    gradientColors: AppColors.gradientColor,
+                  );
                 },
-                gradientColors: AppColors.gradientColor,
               ),
               sh10,
               Row(

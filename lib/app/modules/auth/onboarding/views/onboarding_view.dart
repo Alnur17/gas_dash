@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/auth/login/views/login_view.dart';
 import 'package:gas_dash/app/modules/auth/sign_up/views/sign_up_view.dart';
+import 'package:gas_dash/common/app_constant/app_constant.dart';
+import 'package:gas_dash/common/helper/local_store.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/widgets/custom_background.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
@@ -113,6 +115,7 @@ class _OnboardingViewState extends State<OnboardingView> {
                       child: CustomButton(
                     text: 'Open Account',
                     onPressed: () {
+                      LocalStorage.saveData(key: AppConstant.onboardingDone, data: "onboardingDone");
                       Get.to(() => SignUpView());
                     },
                     gradientColors: AppColors.gradientColor,
@@ -136,6 +139,7 @@ class _OnboardingViewState extends State<OnboardingView> {
                   sw8,
                   GestureDetector(
                     onTap: () {
+                      LocalStorage.saveData(key: AppConstant.onboardingDone, data: "onboardingDone");
                       Get.to(() => LoginView());
                     },
                     child: Text(

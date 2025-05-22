@@ -6,8 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 import '../../common/app_color/app_colors.dart';
-import '../../common/app_constant/app_constant.dart';
-import '../../common/helper/local_store.dart';
 import '../../common/widgets/custom_snackbar.dart';
 
 
@@ -41,10 +39,10 @@ class BaseClient {
   }
   static patchRequest({required String api, body,}) async {
 
-    String token = LocalStorage.getData(key: AppConstant.accessToken);
+    //String token = LocalStorage.getData(key: AppConstant.token);
     var headers = {
       'Content-Type': "application/json",
-      "Authorization": token
+     // "Authorization": token
     };
     debugPrint("API Hit: $api");
     debugPrint("body: $body");
@@ -57,10 +55,10 @@ class BaseClient {
   }
 
   static putRequest({required String api, body}) async {
-    String token = LocalStorage.getData(key: AppConstant.accessToken);
+    //String token = LocalStorage.getData(key: AppConstant.token);
     var headers = {
       'Content-Type': "application/json",
-      "Authorization": "Bearer, $token"
+      //"Authorization": "Bearer, $token"
     };
     debugPrint("API Hit: $api");
     debugPrint("body: $body");
@@ -75,10 +73,10 @@ class BaseClient {
 
   static deleteRequest({required String api, body,}) async {
 
-    String token = LocalStorage.getData(key: AppConstant.accessToken);
+   // String token = LocalStorage.getData(key: AppConstant.token);
     var headers = {
       'Content-Type': "application/json",
-      "Authorization": token
+     // "Authorization": token
     };
     debugPrint("API Hit: $api");
     debugPrint("body: $body");

@@ -9,8 +9,10 @@ import 'package:gas_dash/app/modules/user/subscription/views/subscription_view.d
 import 'package:get/get.dart';
 
 import '../../../../../common/app_color/app_colors.dart';
+import '../../../../../common/app_constant/app_constant.dart';
 import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
+import '../../../../../common/helper/local_store.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_list_tile.dart';
 import '../../../auth/login/views/login_view.dart';
@@ -102,7 +104,10 @@ class ProfileView extends GetView<ProfileController> {
             ),
             sh12,
             CustomListTile(
-              onTap: () {
+              onTap: () async  {
+                await LocalStorage.removeData(key: AppConstant.accessToken);
+                await LocalStorage.removeData(key: AppConstant.refreshToken);
+                await LocalStorage.removeData(key: AppConstant.role);
                 Get.offAll(()=> LoginView());
               },
               leadingImage: AppImages.logout,

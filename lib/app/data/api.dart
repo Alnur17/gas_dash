@@ -1,29 +1,22 @@
 class Api {
   /// base url
-
-  static const baseUrl = "http://172.252.13.74:5007/api/v1";
-  static const socket = "http://172.252.13.74:4000";
-
+  static const baseUrl = "http://192.168.10.160:8000/api/v1";
 
   ///auth
-  static const register = "$baseUrl/users/register"; //done
-  static const login = "$baseUrl/auth/login"; //done
-  static const forgotPassword = "$baseUrl/auth/forget-password"; //done
-  static const otpVerify = "$baseUrl/otp/verify-otp"; //done
-  static const reSendOtp = "$baseUrl/otp/resend-otp"; // done
-  static const resetPassword = "$baseUrl/auth/reset-password"; //done
-  static const changePassword = "$baseUrl/auth/change-password"; // done
+  static const register = "$baseUrl/users/create"; //
+  static const login = "$baseUrl/auth/login"; //
+  static const forgotPassword = "$baseUrl/auth/forgot-password"; //
+  static const otpVerify = "$baseUrl/otp/verify-otp"; //
+  static const reSendOtp = "$baseUrl/otp/resend-otp"; //
+  static const resetPassword = "$baseUrl/auth/reset-password"; //
+  static const changePassword = "$baseUrl/auth/change-password"; //
 
   ///Sessions Data
   static const sessions = "$baseUrl/sessions"; //done
 
   ///Trainers Data
-  // static trainers(String? query) {
-  //   return query?.isNotEmpty ?? false
-  //       ? "$baseUrl/trainers?searchTerm=$query"
-  //       : "$baseUrl/trainers";
-  // } //done
-   static const trainers = "$baseUrl/trainers";//done
+
+  static const trainers = "$baseUrl/trainers";//done
 
    static const recommendedTrainers = "$baseUrl/trainers/recommended"; //done
 

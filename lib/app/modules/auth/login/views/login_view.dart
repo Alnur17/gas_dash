@@ -8,14 +8,24 @@ import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_button.dart';
+import '../../../../../common/widgets/custom_loader.dart';
 import '../../../../../common/widgets/custom_textfield.dart';
 import '../../../../../common/widgets/google_button.dart';
-import '../../../user/dashboard/views/dashboard_view.dart';
 import '../../forgot_password/views/forgot_password_view.dart';
 import '../controllers/login_controller.dart';
 
-class LoginView extends GetView<LoginController> {
+class LoginView extends StatefulWidget {
   const LoginView({super.key});
+
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+  LoginController loginController = Get.put(LoginController());
+
+  TextEditingController emailTEController = TextEditingController();
+  TextEditingController passwordTEController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +35,13 @@ class LoginView extends GetView<LoginController> {
         toolbarHeight: 90,
         scrolledUnderElevation: 0,
         backgroundColor: AppColors.mainColor,
-        title: Image.asset(AppImages.splashLogo,
+        title: Image.asset(
+          AppImages.splashLogo,
           scale: 4,
           height: 100,
           width: 100,
-          fit: BoxFit.contain,),
+          fit: BoxFit.contain,
+        ),
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
@@ -63,8 +75,9 @@ class LoginView extends GetView<LoginController> {
                 children: [
                   Text('Email', style: h4),
                   sh8,
-                  const CustomTextField(
+                   CustomTextField(
                     hintText: 'Your email',
+                    controller: emailTEController,
                   ),
                   const SizedBox(height: 12),
                   Text('Password', style: h4),
@@ -75,6 +88,7 @@ class LoginView extends GetView<LoginController> {
                       scale: 4,
                     ),
                     hintText: '**********',
+                    controller: passwordTEController,
                   ),
                 ],
               ),
@@ -112,11 +126,21 @@ class LoginView extends GetView<LoginController> {
                 ],
               ),
               sh24,
-              CustomButton(
-                text: 'Login',
-                onPressed: () {
-                  Get.to(() => const DashboardView());
-                },gradientColors: AppColors.gradientColor,
+              Obx(
+                    () {
+                  return loginController.isLoading.value == true
+                      ? CustomLoader(color: AppColors.white)
+                      : CustomButton(
+                    text: 'Login',
+                    onPressed: () {
+                      loginController.userLogin(
+                        email: emailTEController.text,
+                        password: passwordTEController.text,
+                      );
+                    },
+                    gradientColors: AppColors.gradientColor,
+                  );
+                },
               ),
               sh10,
               Row(

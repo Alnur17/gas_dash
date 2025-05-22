@@ -27,13 +27,13 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              _buildRadioOption('Customer', 'customer'),
+              _buildRadioOption('Customer', 'user'),
               _buildRadioOption('Driver', 'driver'),
             ],
           ),
           sh16,
           Obx(
-            () => signupController.selectedRole.value == 'customer'
+            () => signupController.selectedRole.value == 'user'
                 ? _buildCustomerInterface()
                 : signupController.selectedRole.value == 'driver'
                     ? _buildDriverInterface()
@@ -75,6 +75,7 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
         sh8,
         CustomTextField(
           hintText: 'Full name',
+          controller: signupController.fullNameController,
         ),
         sh24,
         Text(
@@ -85,6 +86,7 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
         CustomTextField(
           //preIcon: Image.asset(AppImages.message, scale: 4),
           hintText: 'Enter your email',
+          controller: signupController.emailController,
         ),
         sh24,
         Text(
@@ -95,7 +97,9 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
         CustomTextField(
           //preIcon: Image.asset(AppImages.message, scale: 4),
           hintText: 'Enter your location',
-        ),sh24,
+          controller: signupController.locationController,
+        ),
+        sh24,
         Text(
           'Country',
           style: h5,
@@ -104,6 +108,7 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
         CustomTextField(
           //preIcon: Image.asset(AppImages.message, scale: 4),
           hintText: 'Enter your country name',
+          controller: signupController.countryController,
         ),
         sh24,
         Text(
@@ -114,6 +119,7 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
         CustomTextField(
           //preIcon: Image.asset(AppImages.message, scale: 4),
           hintText: 'Enter your zip code',
+          controller: signupController.zipCodeController,
         ),
         sh24,
         Text(
@@ -124,6 +130,7 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
         CustomTextField(
           sufIcon: Image.asset(AppImages.eyeClose, scale: 4),
           hintText: 'Enter your password',
+          controller: signupController.passwordController,
         ),
         sh24,
         Text(
@@ -134,11 +141,11 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
         CustomTextField(
           sufIcon: Image.asset(AppImages.eyeClose, scale: 4),
           hintText: 'Confirm your password',
+          controller: signupController.confirmPasswordController,
         ),
       ],
     );
   }
-
 
   Widget _buildDriverInterface() {
     return Column(
@@ -151,6 +158,7 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
         sh8,
         CustomTextField(
           hintText: 'Full name',
+          controller: signupController.driverFullNameController,
         ),
         sh24,
         Text(
@@ -161,6 +169,7 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
         CustomTextField(
           //preIcon: Image.asset(AppImages.message, scale: 4),
           hintText: 'Enter your email',
+          controller: signupController.driverEmailController,
         ),
         sh24,
         Text(
@@ -171,6 +180,7 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
         CustomTextField(
           sufIcon: Image.asset(AppImages.eyeClose, scale: 4),
           hintText: 'Enter your password',
+          controller: signupController.driverPasswordController,
         ),
         sh24,
         Text(
@@ -181,10 +191,9 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
         CustomTextField(
           sufIcon: Image.asset(AppImages.eyeClose, scale: 4),
           hintText: 'Confirm your password',
+          controller: signupController.driverConfirmPasswordController,
         ),
       ],
     );
   }
-
-
 }
