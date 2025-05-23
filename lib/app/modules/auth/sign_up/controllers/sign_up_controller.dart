@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/auth/login/views/login_view.dart';
 import 'package:gas_dash/app/modules/auth/sign_up/views/sign_up_otp_verify_view.dart';
 import 'package:get/get.dart';
 
@@ -103,7 +104,7 @@ class SignUpController extends GetxController {
     }
   }
 
-  Future<void> verifyOtp({required String otp}) async {
+  Future<void> verifyOtpForSignUp({required String otp}) async {
     try {
       isLoading(true);
 
@@ -128,20 +129,24 @@ class SignUpController extends GetxController {
       print('OTP verification response data: $data');
 
       if (data != null) {
-        final authToken = data['data']?['token'];
-        if (authToken != null && authToken.toString().isNotEmpty) {
-          Get.snackbar("Success", "OTP Verified Successfully.");
 
-          if (selectedRole.value == "user") {
-            Get.offAll(() => DashboardView());
-          } else if (selectedRole.value == "driver") {
-            Get.offAll(() => DriverDashboardView());
-          } else {
-            Get.snackbar("Error", 'Something wrong with user role');
-          }
-        } else {
-          Get.snackbar('Error', 'Auth token is missing in response.');
-        }
+        Get.offAll(() => LoginView());
+        isLoading(false);
+        //final authToken = data['data']?['token'];
+        // if (authToken != null && authToken.toString().isNotEmpty) {
+        //   Get.snackbar("Success", "OTP Verified Successfully.");
+        //   // if (selectedRole.value == "user") {
+        //   //   Get.offAll(() => DashboardView());
+        //   // } else if (selectedRole.value == "driver") {
+        //   //   Get.offAll(() => DriverDashboardView());
+        //   // } else {
+        //   //   Get.snackbar("Error", 'Something wrong with user role');
+        //   // }
+        // } else {
+        //   Get.snackbar('Error', 'Auth token is missing in response.');
+        // }
+      }else {
+        throw 'verify otp in Failed!';
       }
     } catch (e) {
       Get.snackbar("Error", e.toString());
@@ -150,4 +155,3 @@ class SignUpController extends GetxController {
     }
   }
 }
-

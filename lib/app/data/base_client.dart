@@ -37,19 +37,15 @@ class BaseClient {
 
     return response;
   }
-  static patchRequest({required String api, body,}) async {
+  static patchRequest({required String api, body,header}) async {
 
-    //String token = LocalStorage.getData(key: AppConstant.token);
-    var headers = {
-      'Content-Type': "application/json",
-     // "Authorization": token
-    };
+
     debugPrint("API Hit: $api");
     debugPrint("body: $body");
     http.Response response = await http.patch(
       Uri.parse(api),
       body: body,
-      headers: headers,
+      headers: header
     );
     return response;
   }
