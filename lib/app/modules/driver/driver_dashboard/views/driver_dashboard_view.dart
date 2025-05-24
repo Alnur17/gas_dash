@@ -23,11 +23,11 @@ class _DriverDashboardViewState extends State<DriverDashboardView> {
   final DriverDashboardController dashboardController =
       Get.put(DriverDashboardController());
 
-  static final List<Widget> _views = const [
-    DriverHomeView(),
-    DriverHistoryView(),
-    DriverEarningView(),
-    DriverMessageView(),
+  static final List<Widget> _views = [
+    const DriverHomeView(),
+    const DriverHistoryView(),
+    const DriverEarningView(),
+    const DriverMessageView(),
     DriverProfileView(),
   ];
 

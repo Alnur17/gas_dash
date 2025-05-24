@@ -54,12 +54,12 @@ class BaseClient {
     return response;
   }
 
-  static putRequest({required String api, body}) async {
+  static putRequest({required String api, body,headers}) async {
     //String token = LocalStorage.getData(key: AppConstant.token);
-    var headers = {
-      'Content-Type': "application/json",
-      //"Authorization": "Bearer, $token"
-    };
+    // var headers = {
+    //   'Content-Type': "application/json",
+    //   //"Authorization": "Bearer, $token"
+    // };
     debugPrint("API Hit: $api");
     debugPrint("body: $body");
     http.Response response = await http.put(
@@ -71,13 +71,13 @@ class BaseClient {
   }
 
 
-  static deleteRequest({required String api, body,}) async {
+  static deleteRequest({required String api, body,headers}) async {
 
    // String token = LocalStorage.getData(key: AppConstant.token);
-    var headers = {
-      'Content-Type': "application/json",
-     // "Authorization": token
-    };
+   //  var headers = {
+   //    'Content-Type': "application/json",
+   //   // "Authorization": token
+   //  };
     debugPrint("API Hit: $api");
     debugPrint("body: $body");
     http.Response response = await http.delete(

@@ -130,7 +130,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.DRIVER_PROFILE,
-      page: () => const DriverProfileView(),
+      page: () => DriverProfileView(),
       binding: DriverProfileBinding(),
     ),
     GetPage(
