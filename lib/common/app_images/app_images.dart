@@ -130,6 +130,7 @@ class AppImages {
   static const checkMark = "assets/icons/checkmark.png";
   static const subsRight = "assets/icons/subs right.png";
   static const star = "assets/icons/star.png";
+  static const locationBlue = "assets/icons/location blue.png";
   static const estimatedTime = "assets/icons/estimated time.png";
 
   //================ Images ==================>

@@ -3,12 +3,12 @@ class Api {
   static const baseUrl = "http://192.168.10.160:8000/api/v1";
 
   ///auth
-  static const register = "$baseUrl/users/create"; //
-  static const login = "$baseUrl/auth/login"; //
-  static const forgotPassword = "$baseUrl/auth/forgot-password"; //
-  static const otpVerify = "$baseUrl/otp/verify-otp"; //
+  static const register = "$baseUrl/users/create"; //done
+  static const login = "$baseUrl/auth/login"; //done
+  static const forgotPassword = "$baseUrl/auth/forgot-password"; //done
+  static const otpVerify = "$baseUrl/otp/verify-otp"; //done
   static const reSendOtp = "$baseUrl/otp/resend-otp"; //
-  static const resetPassword = "$baseUrl/auth/reset-password"; //
+  static const resetPassword = "$baseUrl/auth/reset-password"; //done
   static const changePassword = "$baseUrl/auth/change-password"; //
 
   ///Sessions Data

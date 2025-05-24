@@ -18,9 +18,10 @@ import '../../../../../common/widgets/custom_list_tile.dart';
 import '../../../auth/login/views/login_view.dart';
 import '../controllers/profile_controller.dart';
 
-
 class ProfileView extends GetView<ProfileController> {
-  const ProfileView({super.key});
+  ProfileView({super.key});
+
+  final ProfileController profileController = Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {
@@ -37,21 +38,28 @@ class ProfileView extends GetView<ProfileController> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             sh20,
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage(AppImages.profileImageTwo),
+            Obx(
+              () => CircleAvatar(
+                radius: 50,
+                backgroundColor: AppColors.white,
+                backgroundImage: NetworkImage(
+                    profileController.myProfileData.value?.image ??
+                        AppImages.profileImageTwo),
+              ),
             ),
             sh8,
-            Text(
-              'Daniel Martinez',
-              style: h5.copyWith(
-                fontWeight: FontWeight.w500,
+            Obx(
+              () => Text(
+                profileController.myProfileName.value,
+                style: h5.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
             sh20,
             CustomListTile(
               onTap: () {
-                Get.to(()=> EditProfileView());
+                Get.to(() => EditProfileView());
               },
               leadingImage: AppImages.editProfile,
               title: 'Edit Profile',
@@ -60,34 +68,34 @@ class ProfileView extends GetView<ProfileController> {
             sh12,
             CustomListTile(
               onTap: () {
-                Get.to(()=> ChangePasswordView());
+                Get.to(() => ChangePasswordView());
               },
               leadingImage: AppImages.changePass,
               title: 'Change  Password ',
               trailingImage: AppImages.arrowRightSmall,
-            ),sh12,
+            ),
+            sh12,
             CustomListTile(
               onTap: () {
-                Get.to(()=> TrackYourOrderView());
+                Get.to(() => TrackYourOrderView());
               },
-              leadingImage: AppImages.changePass,
+              leadingImage: AppImages.locationBlue,
               title: 'Track your Order',
               trailingImage: AppImages.arrowRightSmall,
             ),
             sh12,
             CustomListTile(
               onTap: () {
-                Get.to(()=> SubscriptionView());
+                Get.to(() => SubscriptionView());
               },
               leadingImage: AppImages.subscription,
               title: 'Subscription',
               trailingImage: AppImages.arrowRightSmall,
             ),
             sh12,
-
             CustomListTile(
               onTap: () {
-                Get.to(()=> TermsAndConditionsView());
+                Get.to(() => TermsAndConditionsView());
               },
               leadingImage: AppImages.termsAndConditions,
               title: 'Terms and conditions',
@@ -96,7 +104,7 @@ class ProfileView extends GetView<ProfileController> {
             sh12,
             CustomListTile(
               onTap: () {
-                Get.to(()=> PoliciesView());
+                Get.to(() => PoliciesView());
               },
               leadingImage: AppImages.policy,
               title: 'Privacy and Policies',
@@ -104,11 +112,11 @@ class ProfileView extends GetView<ProfileController> {
             ),
             sh12,
             CustomListTile(
-              onTap: () async  {
+              onTap: () async {
                 await LocalStorage.removeData(key: AppConstant.accessToken);
                 await LocalStorage.removeData(key: AppConstant.refreshToken);
                 await LocalStorage.removeData(key: AppConstant.role);
-                Get.offAll(()=> LoginView());
+                Get.offAll(() => LoginView());
               },
               leadingImage: AppImages.logout,
               title: 'Log Out',
