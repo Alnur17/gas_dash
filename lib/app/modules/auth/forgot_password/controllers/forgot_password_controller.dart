@@ -37,6 +37,7 @@ class ForgotPasswordController extends GetxController {
     });
   }
 
+
   ///forgot Password Controller
   Future forgotPassword({
     required String email,
