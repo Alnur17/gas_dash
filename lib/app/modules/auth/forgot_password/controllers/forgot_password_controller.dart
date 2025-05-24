@@ -52,7 +52,7 @@ class ForgotPasswordController extends GetxController {
       };
       dynamic responseBody = await BaseClient.handleResponse(
         await BaseClient.patchRequest(
-            api: Api.forgotPassword, body: jsonEncode(map),header: headers),
+            api: Api.forgotPassword, body: jsonEncode(map),headers: headers),
       );
 
       if (responseBody != null) {
@@ -192,7 +192,7 @@ class ForgotPasswordController extends GetxController {
       print(headers);
       dynamic responseBody = await BaseClient.handleResponse(
         await BaseClient.patchRequest(
-            api: Api.resetPassword, body: jsonEncode(map), header: headers),
+            api: Api.resetPassword, body: jsonEncode(map), headers: headers),
       );
 
       if (responseBody != null) {
