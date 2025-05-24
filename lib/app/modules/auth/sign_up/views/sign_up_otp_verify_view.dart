@@ -96,7 +96,7 @@ class SignUpOtpVerifyView extends GetView {
                     : CustomButton(
                   text: 'Confirm',
                   onPressed: () {
-                    signUpController.verifyOtp(otp: otpController.text.trim());
+                    signUpController.verifyOtpForSignUp(otp: otpController.text.trim());
                   },
                   gradientColors: AppColors.gradientColor,
                 );
