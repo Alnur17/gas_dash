@@ -2,22 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/user/home/views/notification_view.dart';
 import 'package:gas_dash/app/modules/user/jump_start_car_battery/views/jump_start_car_battery_view.dart';
 import 'package:gas_dash/app/modules/user/order_fuel/views/order_fuel_view.dart';
+import 'package:gas_dash/app/modules/user/profile/controllers/profile_controller.dart';
 import 'package:gas_dash/app/modules/user/subscription/views/subscription_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
+import 'package:gas_dash/common/helper/service_card.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
 import 'package:gas_dash/common/widgets/custom_row_header.dart';
-
 import 'package:get/get.dart';
-
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/helper/fuel_card.dart';
 import '../../../../../common/helper/fuel_order_card.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
-  const HomeView({super.key});
+  HomeView({super.key});
+
+  final profileController = Get.put(ProfileController());
+  final homeController = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
@@ -36,24 +39,25 @@ class HomeView extends GetView<HomeController> {
               'GAS DASH',
               style: h3.copyWith(fontWeight: FontWeight.w700),
             ),
-            Spacer(),
+            const Spacer(),
             GestureDetector(
               onTap: () {
-                Get.to(()=> NotificationView());
+                Get.to(() => NotificationView());
               },
               child: Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: ShapeDecoration(
-                    shape: CircleBorder(
-                      side: BorderSide(
-                        color: AppColors.silver,
-                      ),
+                padding: const EdgeInsets.all(8),
+                decoration: ShapeDecoration(
+                  shape: CircleBorder(
+                    side: BorderSide(
+                      color: AppColors.silver,
                     ),
                   ),
-                  child: Image.asset(
-                    AppImages.notification,
-                    scale: 4,
-                  )),
+                ),
+                child: Image.asset(
+                  AppImages.notification,
+                  scale: 4,
+                ),
+              ),
             ),
           ],
         ),
@@ -65,8 +69,8 @@ class HomeView extends GetView<HomeController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              padding: EdgeInsets.all(12),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: AppColors.silver),
@@ -76,16 +80,23 @@ class HomeView extends GetView<HomeController> {
                 children: [
                   Row(
                     children: [
-                      CircleAvatar(
-                        radius: 25,
-                        backgroundImage: NetworkImage(AppImages.profileImage),
+                      Obx(
+                            () => CircleAvatar(
+                          radius: 25,
+                          backgroundColor: AppColors.white,
+                          backgroundImage: NetworkImage(
+                            profileController.myProfileData.value?.image ??
+                                AppImages.profileImageTwo,
+                          ),
+                        ),
                       ),
                       sw8,
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Clara',
+                            profileController.myProfileData.value?.fullname ??
+                                'Unknown',
                             style: h3.copyWith(
                               fontWeight: FontWeight.w700,
                             ),
@@ -116,113 +127,86 @@ class HomeView extends GetView<HomeController> {
               ),
             ),
             sh16,
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.silver),
-                gradient: LinearGradient(
-                  colors: AppColors.gradientColorBlue,
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
+            Obx(() {
+              if (controller.isLoading.value) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              if (controller.errorMessage.isNotEmpty) {
+                return Center(
+                  child: Text(
+                    controller.errorMessage.value,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                );
+              }
+
+              final data = controller.fuelInfo.value?.data ?? [];
+
+              if (data.isEmpty) {
+                return const Center(
+                  child: Text('No Fuel Price Data Available'),
+                );
+              }
+
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.silver),
+                  gradient: LinearGradient(
+                    colors: AppColors.gradientColorBlue,
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                  ),
                 ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Gas prices',
-                      style: h3.copyWith(color: AppColors.white)),
-                  sh8,
-                  Row(
-                    children: [
-                      Image.asset(
-                        AppImages.unleaded,
-                        scale: 4,
-                      ),
-                      sw8,
-                      Text(
-                        'UNLEADED',
-                        style: h3.copyWith(
-                          fontSize: 14,
-                          color: AppColors.white,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Gas prices',
+                        style: h3.copyWith(color: AppColors.white)),
+                    const SizedBox(height: 8),
+                    // Dynamically build price rows
+                    for (var fuel in data)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Row(
+                          children: [
+                            _getFuelIcon(fuel.fuelName ?? ''),
+                            const SizedBox(width: 8),
+                            Text(
+                              fuel.fuelName?.toUpperCase() ?? '',
+                              style: h3.copyWith(
+                                fontSize: 14,
+                                color: AppColors.white,
+                              ),
+                            ),
+                            const Spacer(),
+                            CustomButton(
+                              height: 40,
+                              width: 100,
+                              text: (fuel.fuelPrice ?? 0).toStringAsFixed(2),
+                              onPressed: () {},
+                              borderRadius: 8,
+                              backgroundColor:
+                              _getFuelColor(fuel.fuelName ?? ''),
+                            ),
+                          ],
                         ),
                       ),
-                      Spacer(),
-                      CustomButton(
-                        height: 40,
-                        width: 100,
-                        text: '3.79',
-                        onPressed: () {},
-                        borderRadius: 8,
-                        backgroundColor: AppColors.blueTurquoise,
-                      ),
-                    ],
-                  ),
-                  sh12,
-                  Row(
-                    children: [
-                      Image.asset(
-                        AppImages.premium,
-                        scale: 4,
-                      ),
-                      sw8,
-                      Text(
-                        'PREMIUM',
-                        style: h3.copyWith(
-                          fontSize: 14,
-                          color: AppColors.white,
-                        ),
-                      ),
-                      Spacer(),
-                      CustomButton(
-                        height: 40,
-                        width: 100,
-                        text: '3.79',
-                        onPressed: () {},
-                        borderRadius: 8,
-                        backgroundColor: AppColors.grey,
-                      ),
-                    ],
-                  ),
-                  sh12,
-                  Row(
-                    children: [
-                      Image.asset(
-                        AppImages.diesel,
-                        scale: 4,
-                      ),
-                      sw8,
-                      Text(
-                        'DIESEL',
-                        style: h3.copyWith(
-                          fontSize: 14,
-                          color: AppColors.white,
-                        ),
-                      ),
-                      Spacer(),
-                      CustomButton(
-                        height: 40,
-                        width: 100,
-                        text: '4.15',
-                        onPressed: () {},
-                        borderRadius: 8,
-                        backgroundColor: AppColors.green,
-                      ),
-                    ],
-                  ),
-                  sh12,
-                ],
-              ),
-            ),
+                  ],
+                ),
+              );
+            }),
             sh16,
             Container(
               height: 180,
               width: double.infinity,
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              padding: EdgeInsets.symmetric(
-                horizontal: 20,
-              ),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 image: DecorationImage(
@@ -257,7 +241,7 @@ class HomeView extends GetView<HomeController> {
                     onPressed: () {},
                     gradientColors: AppColors.gradientColor,
                     width: 150,
-                  )
+                  ),
                 ],
               ),
             ),
@@ -311,55 +295,52 @@ class HomeView extends GetView<HomeController> {
                 ),
               ),
             ),
-            sh12,
-            Container(
-              width: double.infinity,
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.silver),
-                gradient: LinearGradient(
-                  colors: AppColors.gradientColorBlue,
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Jump Start Car Battery',
-                    style: h5.copyWith(
-                      color: AppColors.white,
-                      fontWeight: FontWeight.w700,
+            Obx(() {
+              if (controller.isLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (controller.errorMessage.isNotEmpty) {
+                return Center(
+                  child: Text(
+                    controller.errorMessage.value,
+                    style: const TextStyle(color: Colors.red, fontSize: 16),
+                  ),
+                );
+              }
+              if (controller.services.isEmpty) {
+                return const Center(child: Text('No services found'));
+              }
+              return ListView.builder(
+                shrinkWrap: true,
+                primary: false,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                itemCount: controller.services.length,
+                itemBuilder: (context, index) {
+                  final service = controller.services[index];
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      bottom: index == controller.services.length - 1 ? 0 : 8,
                     ),
-                  ),
-                  Text(
-                    '\$25',
-                    style: h3.copyWith(
-                      color: AppColors.white,
-                      fontWeight: FontWeight.w400,
+                    child: ServiceCard(
+                      title: service.serviceName ?? 'Unnamed Service',
+                      price: '\$${service.price?.toStringAsFixed(2) ?? 'N/A'}',
+                      buttonText: 'Order Now',
+                      onServiceTap: () {
+                        Get.to(() => JumpStartCarBatteryView());
+                        // if (service.serviceName?.toLowerCase() ==
+                        //     'jump start car battery') {
+                        //   Get.to(() => JumpStartCarBatteryView());
+                        // }
+                      },
                     ),
-                  ),
-                  sh12,
-                  CustomButton(
-                    text: 'Order Now',
-                    onPressed: () {
-                      Get.to(() => JumpStartCarBatteryView());
-                    },
-                    gradientColors: AppColors.gradientColor,
-                    width: 150,
-                    height: 40,
-                  ),
-                ],
-              ),
-            ),
-            sh16,
+                  );
+                },
+              );
+            }),
             Container(
               height: 250,
               width: double.infinity,
-              margin: EdgeInsets.symmetric(horizontal: 20),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 image: DecorationImage(
@@ -378,7 +359,7 @@ class HomeView extends GetView<HomeController> {
                     child: Container(
                       decoration: BoxDecoration(
                         color: AppColors.blurBack,
-                        borderRadius: BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                           bottomLeft: Radius.circular(20),
                           bottomRight: Radius.circular(20),
                         ),
@@ -407,10 +388,10 @@ class HomeView extends GetView<HomeController> {
                           onPressed: () {},
                           gradientColors: AppColors.gradientColor,
                           width: 150,
-                        )
+                        ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -429,5 +410,31 @@ class HomeView extends GetView<HomeController> {
         ),
       ),
     );
+  }
+
+  Widget _getFuelIcon(String fuelName) {
+    switch (fuelName.toLowerCase()) {
+      case 'unleaded':
+        return Image.asset(AppImages.unleaded, scale: 4);
+      case 'premium':
+        return Image.asset(AppImages.premium, scale: 4);
+      case 'diesel':
+        return Image.asset(AppImages.diesel, scale: 4);
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  Color _getFuelColor(String fuelName) {
+    switch (fuelName.toLowerCase()) {
+      case 'unleaded':
+        return AppColors.blueTurquoise;
+      case 'premium':
+        return AppColors.grey;
+      case 'diesel':
+        return AppColors.green;
+      default:
+        return AppColors.grey;
+    }
   }
 }

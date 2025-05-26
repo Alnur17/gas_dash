@@ -7,12 +7,16 @@ class Api {
   static const login = "$baseUrl/auth/login"; //done
   static const forgotPassword = "$baseUrl/auth/forgot-password"; //done
   static const otpVerify = "$baseUrl/otp/verify-otp"; //done
-  static const reSendOtp = "$baseUrl/otp/resend-otp"; //
+  static const reSendOtp = "$baseUrl/otp/resend-otp"; //done
   static const resetPassword = "$baseUrl/auth/reset-password"; //done
   static const changePassword = "$baseUrl/auth/change-password"; //
 
-  ///Sessions Data
-  static const sessions = "$baseUrl/sessions"; //done
+  ///Gas Prices
+  static const fuelInfo = "$baseUrl/fuelInfo"; //done
+
+
+  ///Services
+  static const service = "$baseUrl/services/"; //
 
   ///Trainers Data
 

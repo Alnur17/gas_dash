@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "694698990045",
+    "project_id": "notes-app-7acc8",
+    "storage_bucket": "notes-app-7acc8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:694698990045:android:f3208bfbe9f3d1586afe34",
+        "android_client_info": {
+          "package_name": "com.dominiquemorris.gas_dash"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAy8SQU2fht5nfreqjOA0DDx8Omw87XGTk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:694698990045:android:752e219e8f0f5aed6afe34",
+        "android_client_info": {
+          "package_name": "com.example.notes_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAy8SQU2fht5nfreqjOA0DDx8Omw87XGTk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

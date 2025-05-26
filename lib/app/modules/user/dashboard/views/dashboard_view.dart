@@ -24,7 +24,7 @@ class _DashboardViewState extends State<DashboardView> {
       Get.put(DashboardController());
 
   static final List<Widget> _views = [
-    const HomeView(),
+    HomeView(),
     OrderHistoryView(),
     MessageView(),
     ProfileView(),

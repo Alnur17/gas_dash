@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/auth/sign_up/views/sign_up_view.dart';
+import 'package:gas_dash/app/modules/user/dashboard/views/dashboard_view.dart';
 
 import 'package:get/get.dart';
 
@@ -11,6 +12,7 @@ import '../../../../../common/widgets/custom_button.dart';
 import '../../../../../common/widgets/custom_loader.dart';
 import '../../../../../common/widgets/custom_textfield.dart';
 import '../../../../../common/widgets/google_button.dart';
+import '../../auth_controller/auth_controller.dart';
 import '../../forgot_password/views/forgot_password_view.dart';
 import '../controllers/login_controller.dart';
 
@@ -23,6 +25,7 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   LoginController loginController = Get.put(LoginController());
+  AuthController authController = Get.put(AuthController());
 
   TextEditingController emailTEController = TextEditingController();
   TextEditingController passwordTEController = TextEditingController();
@@ -160,7 +163,14 @@ class _LoginViewState extends State<LoginView> {
               GoogleButton(
                 assetPath: AppImages.google,
                 label: 'Continue with Google',
-                onTap: () {},
+                onTap: () async {
+                  await authController.signInWithGoogle();
+                  if (authController.user.value != null) {
+                    Get.offAll(()=> DashboardView());
+                  } else {
+                    Get.snackbar('Error', 'Google Sign-In failed');
+                  }
+                },
               ),
               sh12,
               GoogleButton(
