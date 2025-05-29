@@ -12,6 +12,7 @@ import '../../../../../common/helper/location_card.dart';
 import '../../../../../common/helper/vehicle_card.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
+import '../../../../../common/widgets/custom_textfield.dart';
 import '../../order_fuel/controllers/order_fuel_controller.dart';
 import '../controllers/jump_start_car_battery_controller.dart';
 
@@ -20,6 +21,100 @@ class JumpStartCarBatteryView extends GetView<JumpStartCarBatteryController> {
 
   final OrderFuelController orderFuelController =
       Get.put(OrderFuelController());
+
+  void _showAddVehicleDialog() {
+    orderFuelController.resetForm();
+
+    Get.dialog(
+      Dialog(
+        backgroundColor: AppColors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Add Vehicle Details',
+                    style: h3.copyWith(fontSize: 20),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Make TextField
+                Text(
+                  'Make',
+                  style: h5,
+                ),
+                CustomTextField(
+                  hintText: 'Ford',
+                  controller: orderFuelController.makeController,
+                  onChange: (value) {
+                    orderFuelController.selectedMake.value = value;
+                    orderFuelController.selectedModel.value = null;
+                    orderFuelController.modelController.clear();
+                  },
+                ),
+                const SizedBox(height: 12),
+
+                // Model TextField
+                Text(
+                  'Model',
+                  style: h5,
+                ),
+                CustomTextField(
+                  hintText: 'Enter vehicle model',
+                  controller: orderFuelController.modelController,
+                  onChange: (value) {
+                    orderFuelController.selectedModel.value = value;
+                  },
+                ),
+                const SizedBox(height: 12),
+
+                // Year TextField
+                Text(
+                  'Year',
+                  style: h5,
+                ),
+                CustomTextField(
+                  hintText: 'Enter vehicle year',
+                  controller: orderFuelController.yearController,
+                  onChange: (value) {
+                    orderFuelController.selectedYear.value = value;
+                  },
+                ),
+                const SizedBox(height: 12),
+
+                Text(
+                  'Fuel Level',
+                  style: h5,
+                ),
+                CustomTextField(
+                  hintText: 'e.g. 20%',
+                  controller: orderFuelController.fuelLevelController,
+                ),
+                const SizedBox(height: 20),
+
+                CustomButton(
+                  text: 'Confirm',
+                  onPressed: () {
+                    orderFuelController.confirmVehicle();
+                  },
+                  gradientColors: AppColors.gradientColorGreen,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,8 +159,12 @@ class JumpStartCarBatteryView extends GetView<JumpStartCarBatteryController> {
             ),
             sh20,
             VehicleCard(
-              onAddCarTap: () {},
-              onSelectCarTap: () {},
+              onAddCarTap: () {
+                _showAddVehicleDialog();
+              },
+              onSelectCarTap: () {
+                orderFuelController.showVehicleSelectionDialog();
+              },
               imageAssetPath: AppImages.addCar,
             ),
             sh20,

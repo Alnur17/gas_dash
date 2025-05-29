@@ -66,15 +66,19 @@ class Data {
   final DateTime? updatedAt;
   final int? v;
 
-  factory Data.fromJson(Map<String, dynamic> json){
+  factory Data.fromJson(Map<String, dynamic> json) {
     return Data(
       location: json["location"] == null ? null : Location.fromJson(json["location"]),
       id: json["_id"],
       vehicleId: json["vehicleId"],
       userId: json["userId"] == null ? null : UserId.fromJson(json["userId"]),
       amount: json["amount"],
-      deliveryFee: json["deliveryFee"],
-      price: json["price"],
+      deliveryFee: json["deliveryFee"] is String
+          ? double.tryParse(json["deliveryFee"])
+          : (json["deliveryFee"] as num?)?.toDouble(),
+      price: json["price"] is String
+          ? double.tryParse(json["price"])
+          : (json["price"] as num?)?.toDouble(),
       presetAmount: json["presetAmount"],
       customAmount: json["customAmount"],
       tip: json["tip"],
@@ -83,7 +87,9 @@ class Data {
       cancelReason: json["cancelReason"],
       fuelType: json["fuelType"],
       isPaid: json["isPaid"],
-      finalAmountOfPayment: json["finalAmountOfPayment"],
+      finalAmountOfPayment: json["finalAmountOfPayment"] is String
+          ? double.tryParse(json["finalAmountOfPayment"])
+          : (json["finalAmountOfPayment"] as num?)?.toDouble(),
       zipCode: json["zipCode"],
       servicesFee: json["servicesFee"],
       createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
@@ -91,7 +97,6 @@ class Data {
       v: json["__v"],
     );
   }
-
 }
 
 class Location {

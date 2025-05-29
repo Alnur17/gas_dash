@@ -17,7 +17,6 @@ import '../../../../../common/widgets/custom_button.dart';
 import '../../../../../common/widgets/custom_snackbar.dart';
 import '../../../../../common/widgets/custom_textfield.dart';
 import '../../../../data/base_client.dart';
-import '../../jump_start_car_battery/views/final_confirmation_view.dart';
 import '../model/final_confirmation_model.dart';
 import '../model/vechicle_model.dart'; // Import BaseClient
 
@@ -216,7 +215,7 @@ class OrderFuelController extends GetxController {
         );
         // Navigate to FinalConfirmationView with the order ID
         Get.to(() => FuelTypeFinalConfirmationView(orderId: orderId));
-        await fuelTypeFinalConfirmation(orderId);
+        //await fuelTypeFinalConfirmation(orderId);
       }
     } catch (e) {
       Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
