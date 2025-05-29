@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
+import '../../app/modules/user/order_fuel/controllers/order_fuel_controller.dart';
 import '../app_color/app_colors.dart';
 import '../app_images/app_images.dart';
 import '../app_text_style/styles.dart';
@@ -26,6 +27,8 @@ class LocationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final OrderFuelController controller = Get.find<OrderFuelController>();
+
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 12,
@@ -58,19 +61,46 @@ class LocationCard extends StatelessWidget {
             style: locationTextStyle ?? h6,
           ),
           sh12,
-          CustomButton(
-            text: buttonText,
-            onPressed: onButtonPressed,
-            height: 40,
-            width: 180,
-            borderRadius: 8,
-            backgroundColor: Colors.blue[50],
-            imageAssetPath: AppImages.edit,
-            iconColor: AppColors.blueLight,
-            textStyle: buttonTextStyle ??
-                h5.copyWith(
+          Obx(() => Text(
+            'Zip Code: ${controller.zipCode.value?.isNotEmpty == true ? controller.zipCode.value : 'Not set'}',
+            style: h6,
+          )),
+          sh12,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Expanded(
+                child: CustomButton(
+                  text: buttonText,
+                  onPressed: onButtonPressed,
+                  height: 40,
+                  borderRadius: 8,
+                  backgroundColor: Colors.blue[50],
+                  //imageAssetPath: AppImages.edit,
+                  iconColor: AppColors.blueLight,
+                  textStyle: buttonTextStyle ??
+                      h5.copyWith(
+                        color: AppColors.blueLight,
+                      ),
+                ),
+              ),
+              sw8,
+              CustomButton(
+                text: 'Set Zip Code',
+                onPressed: () {
+                  controller.promptForZipCode();
+                },
+                height: 40,
+                width: 120,
+                borderRadius: 8,
+                backgroundColor: Colors.blue[50],
+                //imageAssetPath: AppImages.edit,
+                iconColor: AppColors.blueLight,
+                textStyle: h5.copyWith(
                   color: AppColors.blueLight,
                 ),
+              ),
+            ],
           ),
         ],
       ),

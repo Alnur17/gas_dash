@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/user/emergency_fuel/views/schedule_delivery_view.dart';
+import 'package:gas_dash/app/modules/user/jump_start_car_battery/views/final_confirmation_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
-import 'package:gas_dash/common/helper/earnings_card.dart';
+import 'package:gas_dash/common/helper/local_store.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/widgets/custom_textfield.dart';
 
@@ -15,7 +16,16 @@ import '../../../../../common/widgets/custom_button.dart';
 import '../controllers/order_fuel_controller.dart';
 
 class OrderFuelView extends GetView<OrderFuelController> {
-  OrderFuelView({super.key});
+  final String? fuelName;
+  final String? number;
+  final double? fuelPrice;
+
+  OrderFuelView({
+    super.key,
+    this.fuelName,
+    this.number,
+    this.fuelPrice,
+  });
 
   final OrderFuelController orderFuelController =
       Get.put(OrderFuelController());
@@ -29,134 +39,85 @@ class OrderFuelView extends GetView<OrderFuelController> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Obx(() {
-            return SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                   Align(
-                     alignment: Alignment.center,
-                     child: Text(
-                      'Add Vehicle Details',
-                      style: h3.copyWith(fontSize: 20),
-                      textAlign: TextAlign.center,
-                                       ),
-                   ),
-                  const SizedBox(height: 16),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Add Vehicle Details',
+                    style: h3.copyWith(fontSize: 20),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 16),
 
-                  // Make Dropdown
-                  Text(
-                    'Make',
-                    style: h5,
-                  ),
-                  DropdownButtonFormField<String>(
-                    value: orderFuelController.selectedMake.value,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                    ),
-                    items: orderFuelController.makes
-                        .map((make) => DropdownMenuItem<String>(
-                              value: make,
-                              child: Text(make,style: h5,),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      orderFuelController.selectedMake.value = value;
-                      orderFuelController.selectedModel.value = null;
-                    },
-                  ),
+                // Make TextField
+                Text(
+                  'Make',
+                  style: h5,
+                ),
+                CustomTextField(
+                  hintText: 'Ford',
+                  controller: orderFuelController.makeController,
+                  onChange: (value) {
+                    orderFuelController.selectedMake.value = value;
+                    orderFuelController.selectedModel.value = null;
+                    orderFuelController.modelController.clear();
+                  },
+                ),
+                const SizedBox(height: 12),
 
-                  const SizedBox(height: 12),
+                // Model TextField
+                Text(
+                  'Model',
+                  style: h5,
+                ),
+                CustomTextField(
+                  hintText: 'Enter vehicle model',
+                  controller: orderFuelController.modelController,
+                  onChange: (value) {
+                    orderFuelController.selectedModel.value = value;
+                  },
+                ),
+                const SizedBox(height: 12),
 
-                  // Model Dropdown
-                  Text(
-                    'Model',
-                    style: h5,
-                  ),
-                  DropdownButtonFormField<String>(
-                    value: orderFuelController.selectedModel.value,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                    ),
-                    items: (orderFuelController.selectedMake.value != null
-                            ? orderFuelController.modelsByMake[
-                                    orderFuelController.selectedMake.value] ??
-                                []
-                            : [])
-                        .map((model) => DropdownMenuItem<String>(
-                              value: model,
-                              child: Text(model,style: h5,),
-                            ))
-                        .toList(),
-                    onChanged: orderFuelController.selectedMake.value == null
-                        ? null
-                        : (value) {
-                            orderFuelController.selectedModel.value = value;
-                          },
-                  ),
+                // Year TextField
+                Text(
+                  'Year',
+                  style: h5,
+                ),
+                CustomTextField(
+                  hintText: 'Enter vehicle year',
+                  controller: orderFuelController.yearController,
+                  onChange: (value) {
+                    orderFuelController.selectedYear.value = value;
+                  },
+                ),
+                const SizedBox(height: 12),
 
-                  const SizedBox(height: 12),
+                Text(
+                  'Fuel Level',
+                  style: h5,
+                ),
+                CustomTextField(
+                  hintText: 'e.g. 20%',
+                  controller: orderFuelController.fuelLevelController,
+                ),
+                const SizedBox(height: 20),
 
-                  // Year Dropdown
-                  Text(
-                    'Year',
-                    style: h5,
-                  ),
-                  DropdownButtonFormField<String>(
-                    value: orderFuelController.selectedYear.value,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                    ),
-                    items: orderFuelController.years
-                        .map((year) => DropdownMenuItem<String>(
-                              value: year,
-                              child: Text(
-                                year,
-                                style: h5,
-                              ),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      orderFuelController.selectedYear.value = value;
-                    },
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  Text(
-                    'Fuel Level',
-                    style: h5,
-                  ),
-                  CustomTextField(
-                    hintText: 'e.g. 20%',
-                    controller: orderFuelController.fuelLevelController,
-                  ),
-                  const SizedBox(height: 20),
-
-                  CustomButton(
-                    text: 'Confirm',
-                    onPressed: () {
-                      orderFuelController.confirmVehicle();
-                    },
-                    gradientColors: AppColors.gradientColorGreen,
-                  ),
-                ],
-              ),
-            );
-          }),
+                CustomButton(
+                  text: 'Confirm',
+                  onPressed: () {
+                    orderFuelController.confirmVehicle();
+                  },
+                  gradientColors: AppColors.gradientColorGreen,
+                ),
+              ],
+            ),
+          ),
         ),
       ),
       barrierDismissible: false,
@@ -196,27 +157,64 @@ class OrderFuelView extends GetView<OrderFuelController> {
                 style: h3,
               ),
               sh20,
-              EarningsCard(
-                title: 'Unleaded Fuel',
-                amount: '87',
-                gradientColor: AppColors.gradientColorBlue,
+              Container(
+                width: double.infinity,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(10),
+                  image: DecorationImage(
+                    image: AssetImage(AppImages.oilLoader),
+                    alignment: Alignment.centerRight,
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            number ?? '',
+                            style: h1.copyWith(color: AppColors.white),
+                          ),
+                          Text(
+                            '$fuelName Fuel',
+                            style: h2.copyWith(
+                              fontSize: 20,
+                              color: AppColors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
               sh20,
-
-              // Insert AmountToggleSection here
-              const AmountToggleSection(),
+              AmountToggleSection(
+                fuelPrice: fuelPrice,
+              ),
               sh20,
-
-              LocationCard(
-                locationText: '1901 Thorn ridge Cir. Shiloh',
-                buttonText: 'Change Location',
-                onButtonPressed: () {},
+              Obx(
+                () => LocationCard(
+                  locationText: orderFuelController.currentLocation.value,
+                  buttonText: 'Change Location',
+                  onButtonPressed: () {
+                    orderFuelController.fetchCurrentLocation();
+                  },
+                ),
               ),
               sh20,
               VehicleCard(
-                buttonText: 'Add',
-                onButtonPressed: () {
+                onAddCarTap: () {
                   _showAddVehicleDialog();
+                },
+                onSelectCarTap: () {
+                  orderFuelController.showVehicleSelectionDialog();
                 },
                 imageAssetPath: AppImages.addCar,
               ),
@@ -231,7 +229,43 @@ class OrderFuelView extends GetView<OrderFuelController> {
         child: CustomButton(
           text: 'Next',
           onPressed: () {
-            Get.to(() => ScheduleDeliveryView());
+            // Validate required fields
+            if (orderFuelController.confirmedVehicle.value == null) {
+              Get.snackbar('Error', 'Please select or add a vehicle',
+                  snackPosition: SnackPosition.BOTTOM);
+              return;
+            }
+            if (orderFuelController.latitude.value == null ||
+                controller.longitude.value == null) {
+              Get.snackbar('Error', 'Location not available',
+                  snackPosition: SnackPosition.BOTTOM);
+              return;
+            }
+
+            // Get amount from AmountToggleSection
+            double amount = 0.0;
+            if (orderFuelController.presetEnabled.value) {
+              amount = orderFuelController
+                  .parseGallons(orderFuelController.selectedPresetAmount.value);
+            } else if (orderFuelController.customEnabled.value) {
+              amount = orderFuelController.parseGallons(orderFuelController
+                      .customAmountController.text.isEmpty
+                  ? '0 gallons'
+                  : '${orderFuelController.customAmountController.text} gallons');
+            } else {
+              Get.snackbar('Error', 'Please select an amount',
+                  snackPosition: SnackPosition.BOTTOM);
+              return;
+            }
+
+            // Call createOrder
+            orderFuelController.createOrder(
+              vehicleId: orderFuelController.selectedVehicle.value?.id ?? '',
+              presetAmount: orderFuelController.presetEnabled.value,
+              customAmount: orderFuelController.customEnabled.value,
+              amount: amount,
+              fuelType: fuelName ?? 'Premium',
+            );
           },
           gradientColors: AppColors.gradientColorGreen,
         ),
@@ -240,28 +274,15 @@ class OrderFuelView extends GetView<OrderFuelController> {
   }
 }
 
-class AmountToggleSection extends StatefulWidget {
-  const AmountToggleSection({super.key});
+class AmountToggleSection extends StatelessWidget {
+  final double? fuelPrice;
 
-  @override
-  State<AmountToggleSection> createState() => _AmountToggleSectionState();
-}
-
-class _AmountToggleSectionState extends State<AmountToggleSection> {
-  bool presetEnabled = false;
-  bool customEnabled = false;
-
-  String selectedPresetAmount = '20 gallons';
-
-  final presetAmounts = [
-    '10 gallons',
-    '15 gallons',
-    '20 gallons',
-    '25 gallons',
-  ];
+  const AmountToggleSection({super.key, this.fuelPrice});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<OrderFuelController>();
+
     const labelStyle = TextStyle(
       fontWeight: FontWeight.w600,
       fontSize: 13,
@@ -325,28 +346,26 @@ class _AmountToggleSectionState extends State<AmountToggleSection> {
           border: Border.all(color: const Color(0xFFE5E7EB)),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 14),
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton<String>(
-            value: selectedPresetAmount,
-            isExpanded: true,
-            icon:
-                const Icon(Icons.keyboard_arrow_down, color: Color(0xFF9CA3AF)),
-            style: inputTextStyle,
-            items: presetAmounts.map((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value, style: inputTextStyle),
-              );
-            }).toList(),
-            onChanged: (val) {
-              if (val != null) {
-                setState(() {
-                  selectedPresetAmount = val;
-                });
-              }
-            },
-          ),
-        ),
+        child: Obx(() => DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: controller.selectedPresetAmount.value,
+                isExpanded: true,
+                icon: const Icon(Icons.keyboard_arrow_down,
+                    color: Color(0xFF9CA3AF)),
+                style: inputTextStyle,
+                items: controller.presetAmounts.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value, style: inputTextStyle),
+                  );
+                }).toList(),
+                onChanged: (val) {
+                  if (val != null) {
+                    controller.selectedPresetAmount.value = val;
+                  }
+                },
+              ),
+            )),
       );
     }
 
@@ -376,50 +395,66 @@ class _AmountToggleSectionState extends State<AmountToggleSection> {
 
     Widget buildAmountInput() {
       return TextField(
-        decoration: inputDecoration('20 gallons'),
+        controller: controller.customAmountController,
+        decoration: inputDecoration('Enter gallons (e.g., 20)'),
         style: inputTextStyle,
+        keyboardType: TextInputType.number,
+        onChanged: (value) {
+          controller.update(); // Trigger UI update
+        },
       );
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Preset Amounts Toggle
-        buildToggle(
-          label: 'Preset Amounts',
-          enabled: presetEnabled,
-          onTap: () => setState(() => presetEnabled = !presetEnabled),
-        ),
-        const SizedBox(height: 8),
-        if (presetEnabled) ...[
-          Text('Amounts', style: labelStyle),
-          const SizedBox(height: 6),
-          buildAmountDropdown(),
-          const SizedBox(height: 12),
-          Text('Price', style: labelStyle),
-          const SizedBox(height: 6),
-          buildReadOnlyPrice('\$21.00'),
-        ],
-
-        const SizedBox(height: 24),
-
-        // Custom Amounts Toggle
-        buildToggle(
-          label: 'Custom Amounts',
-          enabled: customEnabled,
-          onTap: () => setState(() => customEnabled = !customEnabled),
-        ),
-        const SizedBox(height: 8),
-        if (customEnabled) ...[
-          Text('Amounts', style: labelStyle),
-          const SizedBox(height: 6),
-          buildAmountInput(),
-          const SizedBox(height: 12),
-          Text('Price', style: labelStyle),
-          const SizedBox(height: 6),
-          buildReadOnlyPrice('\$21.00'),
-        ],
-      ],
-    );
+    return Obx(() => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            buildToggle(
+              label: 'Preset Amounts',
+              enabled: controller.presetEnabled.value,
+              onTap: controller.togglePreset,
+            ),
+            const SizedBox(height: 8),
+            if (controller.presetEnabled.value) ...[
+              Text('Amounts', style: labelStyle),
+              const SizedBox(height: 6),
+              buildAmountDropdown(),
+              const SizedBox(height: 12),
+              Text('Price', style: labelStyle),
+              const SizedBox(height: 6),
+              buildReadOnlyPrice(
+                controller.calculatePrice(
+                  controller
+                      .parseGallons(controller.selectedPresetAmount.value),
+                  fuelPrice,
+                ),
+              ),
+            ],
+            const SizedBox(height: 24),
+            buildToggle(
+              label: 'Custom Amounts',
+              enabled: controller.customEnabled.value,
+              onTap: controller.toggleCustom,
+            ),
+            const SizedBox(height: 8),
+            if (controller.customEnabled.value) ...[
+              Text('Amounts', style: labelStyle),
+              const SizedBox(height: 6),
+              buildAmountInput(),
+              const SizedBox(height: 12),
+              Text('Price', style: labelStyle),
+              const SizedBox(height: 6),
+              buildReadOnlyPrice(
+                controller.calculatePrice(
+                  controller.parseGallons(
+                    controller.customAmountController.text.isEmpty
+                        ? '0 gallons'
+                        : '${controller.customAmountController.text} gallons',
+                  ),
+                  fuelPrice,
+                ),
+              ),
+            ],
+          ],
+        ));
   }
 }

@@ -140,7 +140,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.JUMP_START_CAR_BATTERY,
-      page: () => const JumpStartCarBatteryView(),
+      page: () =>  JumpStartCarBatteryView(),
       binding: JumpStartCarBatteryBinding(),
     ),
     GetPage(

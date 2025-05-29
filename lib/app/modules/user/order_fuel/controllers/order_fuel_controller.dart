@@ -1,44 +1,529 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/data/api.dart';
+import 'package:gas_dash/app/modules/user/order_fuel/views/fuel_type_final_confirmation_view.dart';
+import 'package:gas_dash/common/app_constant/app_constant.dart';
+import 'package:gas_dash/common/helper/local_store.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
+import '../../../../../common/app_color/app_colors.dart';
+import '../../../../../common/app_images/app_images.dart';
+import '../../../../../common/app_text_style/styles.dart';
+import '../../../../../common/widgets/custom_button.dart';
+import '../../../../../common/widgets/custom_snackbar.dart';
+import '../../../../../common/widgets/custom_textfield.dart';
+import '../../../../data/base_client.dart';
+import '../../jump_start_car_battery/views/final_confirmation_view.dart';
+import '../model/final_confirmation_model.dart';
+import '../model/vechicle_model.dart'; // Import BaseClient
 
 class OrderFuelController extends GetxController {
-  final makes = ['Ford', 'Toyota', 'Honda'];
-  final modelsByMake = {
-    'Ford': ['F-150', 'Mustang', 'Explorer'],
-    'Toyota': ['Corolla', 'Camry', 'RAV4'],
-    'Honda': ['Civic', 'Accord', 'CR-V'],
-  };
-  final years = List.generate(30, (index) => (2025 - index).toString());
+  // TextEditingControllers for text fields
+  final TextEditingController makeController = TextEditingController();
+  final TextEditingController modelController = TextEditingController();
+  final TextEditingController yearController = TextEditingController();
+  final TextEditingController fuelLevelController = TextEditingController();
+
+  // Observables for selected values
+  var currentLocation = 'Fetching location...'.obs;
+  var latitude = RxnDouble(); // Add latitude observable
+  var longitude = RxnDouble(); // Add longitude observable
+  var zipCode = RxnString(); // Add zip code observable
 
   var selectedMake = RxnString();
   var selectedModel = RxnString();
   var selectedYear = RxnString();
-  var fuelLevelController = TextEditingController();
-
   var confirmedVehicle = Rxn<Map<String, String>>();
+  var userId = RxnString();
+
+  var vehiclesList = <Datum>[].obs;
+  var selectedVehicle = Rxn<Datum>();
+
+  var presetEnabled = false.obs;
+  var customEnabled = false.obs;
+  var selectedPresetAmount = '5 gallons'.obs;
+  final TextEditingController customAmountController = TextEditingController();
+  final presetAmounts = [
+    '5 gallons',
+    '10 gallons',
+    '15 gallons',
+    '20 gallons',
+    '25 gallons',
+  ];
+
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchCurrentLocation();
+    selectedMake.listen((value) {
+      makeController.text = value ?? '';
+      if (value == null) {
+        modelController.clear();
+        selectedModel.value = null;
+      }
+    });
+    selectedModel.listen((value) {
+      modelController.text = value ?? '';
+    });
+    selectedYear.listen((value) {
+      yearController.text = value ?? '';
+    });
+  }
+
+  void promptForZipCode() {
+    final TextEditingController zipController = TextEditingController();
+    Get.dialog(
+      Dialog(
+        backgroundColor: AppColors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  'Enter Zip Code',
+                  style: h3.copyWith(fontSize: 20),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                hintText: 'Enter zip code (e.g., 90001)',
+                controller: zipController,
+                onChange: (value) {
+                  zipCode.value = value;
+                },
+              ),
+              const SizedBox(height: 20),
+              CustomButton(
+                text: 'Confirm',
+                onPressed: () {
+                  if (zipCode.value != null &&
+                      zipCode.value!.isNotEmpty &&
+                      RegExp(r'^\d{5}$').hasMatch(zipCode.value!)) {
+                    Get.back(); // Close dialog
+                  } else {
+                    Get.snackbar('Error', 'Please enter a valid 5-digit zip code',
+                        snackPosition: SnackPosition.BOTTOM);
+                  }
+                },
+                gradientColors: AppColors.gradientColorGreen,
+              ),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+
+  double parseGallons(String amount) {
+    try {
+      return double.parse(amount.replaceAll(' gallons', ''));
+    } catch (e) {
+      return 0.0;
+    }
+  }
+
+  String calculatePrice(double gallons, double? fuelPrice) {
+    if (fuelPrice != null) {
+      double totalPrice = gallons * fuelPrice;
+      return '\$${totalPrice.toStringAsFixed(2)}';
+    }
+    return '\$0.00';
+  }
+
+  void togglePreset() {
+    presetEnabled.value = !presetEnabled.value;
+    if (presetEnabled.value) customEnabled.value = false;
+  }
+
+  void toggleCustom() {
+    customEnabled.value = !customEnabled.value;
+    if (customEnabled.value) presetEnabled.value = false;
+  }
+
+  Future<void> createOrder({
+    required String vehicleId,
+    required bool presetAmount,
+    required bool customAmount,
+    required double amount,
+    required String fuelType,
+  })
+  async {
+    try {
+      // Get the access token from local storage
+      final String token = LocalStorage.getData(key: AppConstant.accessToken);
+
+      // Prepare the request body
+      final Map<String, dynamic> orderData = {
+        'location': {
+          'coordinates': [
+            longitude.value ?? 90.4125, // Use stored longitude or fallback
+            latitude.value ?? 23.8103, // Use stored latitude or fallback
+          ],
+        },
+        'vehicleId': vehicleId,
+        'presetAmount': presetAmount,
+        'customAmount': customAmount,
+        'amount': amount,
+        'fuelType': fuelType,
+        'orderType': 'Fuel',
+        'zipCode': zipCode.value ?? '90001', // Use stored zip code or fallback
+        //"orderStatus": "Pending",
+        'cancelReason': '',
+      };
+
+      // Convert the body to JSON
+      String body = jsonEncode(orderData);
+
+      // Headers for the request
+      var headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+
+      // Make the POST request
+      http.Response response = await BaseClient.postRequest(
+        api: Api.createOrder,
+        body: body,
+        headers: headers,
+      );
+
+      // Handle the response
+      var responseData = await BaseClient.handleResponse(response);
+      if (responseData != null) {
+        String? orderId = responseData['data']?['_id'];
+        if (orderId == null) {
+          Get.snackbar('Error', 'Failed to retrieve order ID',
+              snackPosition: SnackPosition.BOTTOM);
+          return;
+        }
+
+        kSnackBar(
+          message: 'Order created successfully!',
+          bgColor: AppColors.green,
+        );
+        // Navigate to FinalConfirmationView with the order ID
+        Get.to(() => FuelTypeFinalConfirmationView(orderId: orderId));
+        await fuelTypeFinalConfirmation(orderId);
+      }
+    } catch (e) {
+      Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+    }
+  }
+
+  Future<FinalConfirmationModel?> fuelTypeFinalConfirmation(String id) async {
+    try {
+      final String token = LocalStorage.getData(key: AppConstant.accessToken);
+      var headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+
+      // Make the GET request
+      http.Response response = await BaseClient.getRequest(
+        api: Api.orderDataConfirmation(id),
+        headers: headers,
+      );
+
+      // Handle the response
+      var responseData = await BaseClient.handleResponse(response);
+      if (responseData != null) {
+        FinalConfirmationModel orderModel = FinalConfirmationModel.fromJson(responseData);
+        if (orderModel.success == true && orderModel.data != null) {
+          kSnackBar(
+            message: orderModel.message ?? 'Order details fetched successfully!',
+            bgColor: AppColors.green,
+          );
+          return orderModel;
+        } else {
+          Get.snackbar('Error', orderModel.message ?? 'Failed to fetch order details',
+              snackPosition: SnackPosition.BOTTOM);
+          return null;
+        }
+      } else {
+        Get.snackbar('Error', 'Failed to fetch order details',
+            snackPosition: SnackPosition.BOTTOM);
+        return null;
+      }
+    } catch (e) {
+      Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+      return null;
+    }
+  }
+
+  Future<void> showVehicleSelectionDialog() async {
+    // Fetch the vehicles first
+    await fetchMyVehicles();
+
+    // If no vehicles are available, show a snackbar
+    if (vehiclesList.isEmpty) {
+      Get.snackbar('No Vehicles', 'No vehicles found. Please add a vehicle.',
+          snackPosition: SnackPosition.BOTTOM);
+      return;
+    }
+
+    // Reset the selected vehicle
+    selectedVehicle.value = null;
+
+    // Show the vehicle selection dialog
+    Get.dialog(
+      Dialog(
+        backgroundColor: AppColors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  'Select Vehicle',
+                  style: h3.copyWith(fontSize: 20),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 16),
+              // List of vehicles with radio buttons
+              Obx(() => Column(
+                    children: vehiclesList.map((vehicle) {
+                      return RadioListTile<Datum>(
+                        value: vehicle,
+                        groupValue: selectedVehicle.value,
+                        onChanged: (Datum? value) {
+                          selectedVehicle.value = value;
+                        },
+                        title: Text(
+                          '${vehicle.year} ${vehicle.make} ${vehicle.model}',
+                          style: h5,
+                        ),
+                        secondary: Image.asset(
+                          AppImages.car, // Use a generic car image
+                          scale: 4,
+                        ),
+                      );
+                    }).toList(),
+                  )),
+              const SizedBox(height: 20),
+              CustomButton(
+                text: 'Confirm',
+                onPressed: () {
+                  if (selectedVehicle.value != null) {
+                    // Set the confirmed vehicle
+                    confirmedVehicle.value = {
+                      'make': selectedVehicle.value!.make!,
+                      'model': selectedVehicle.value!.model!,
+                      'year': selectedVehicle.value!.year.toString(),
+                      'fuelLevel': selectedVehicle.value!.fuelLevel.toString(),
+                    };
+                    Get.back(); // Close the dialog
+                    kSnackBar(
+                        message: 'Vehicle selected successfully!',
+                        bgColor: AppColors.green);
+                  } else {
+                    Get.snackbar('Error', 'Please select a vehicle',
+                        snackPosition: SnackPosition.BOTTOM);
+                  }
+                },
+                gradientColors: AppColors.gradientColorGreen,
+              ),
+              const SizedBox(height: 10),
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    Get.back(); // Close the dialog
+                  },
+                  child: Text(
+                    'Cancel',
+                    style: h5.copyWith(color: AppColors.blueLight),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  Future<void> fetchMyVehicles() async {
+    try {
+      final String token = LocalStorage.getData(key: AppConstant.accessToken);
+      var headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      };
+      final response = await BaseClient.getRequest(
+        api: Api.getMyVehicle,
+        headers: headers,
+      );
+      final jsonBody = await BaseClient.handleResponse(response);
+
+      VehicleModel vehicleModel = VehicleModel.fromJson(jsonBody);
+
+      if (vehicleModel.success == true && vehicleModel.data != null) {
+        vehiclesList.value = vehicleModel.data!.data;
+      } else {
+        vehiclesList.clear();
+        Get.snackbar(
+            'Error', vehicleModel.message ?? 'Failed to load vehicles');
+      }
+    } catch (e) {
+      vehiclesList.clear();
+      Get.snackbar('Error', e.toString());
+    }
+  }
+
+  Future<void> fetchCurrentLocation() async {
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        currentLocation.value = 'Location services are disabled.';
+        zipCode.value = null;
+        promptForZipCode();
+        return;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          currentLocation.value = 'Location permissions are denied.';
+          zipCode.value = null;
+          promptForZipCode();
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        currentLocation.value = 'Location permissions are permanently denied.';
+        zipCode.value = null;
+        promptForZipCode();
+        return;
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+          locationSettings: LocationSettings(accuracy: LocationAccuracy.high));
+
+      latitude.value = position.latitude;
+      longitude.value = position.longitude;
+
+      List<Placemark> placeMarks =
+      await placemarkFromCoordinates(position.latitude, position.longitude);
+
+      if (placeMarks.isNotEmpty) {
+        Placemark place = placeMarks.first;
+        currentLocation.value =
+        '${place.street}, ${place.subLocality}, ${place.locality}';
+        zipCode.value = place.postalCode ?? '';
+        if (zipCode.value!.isEmpty) {
+          promptForZipCode();
+        }
+      } else {
+        currentLocation.value = 'Address not found.';
+        zipCode.value = '';
+        promptForZipCode();
+      }
+    } catch (e) {
+      currentLocation.value = 'Failed to get location: $e';
+      zipCode.value = '';
+      promptForZipCode();
+    }
+  }
+
+  @override
+  void onClose() {
+    // Dispose controllers to prevent memory leaks
+    customAmountController.dispose();
+    makeController.dispose();
+    modelController.dispose();
+    yearController.dispose();
+    fuelLevelController.dispose();
+    super.onClose();
+  }
 
   void resetForm() {
     selectedMake.value = null;
     selectedModel.value = null;
     selectedYear.value = null;
+    makeController.clear();
+    modelController.clear();
+    yearController.clear();
     fuelLevelController.clear();
   }
 
-  void confirmVehicle() {
-    if (selectedMake.value == null ||
-        selectedModel.value == null ||
-        selectedYear.value == null ||
+  Future<void> confirmVehicle() async {
+    if (makeController.text.isEmpty ||
+        modelController.text.isEmpty ||
+        yearController.text.isEmpty ||
         fuelLevelController.text.isEmpty) {
       Get.snackbar('Error', 'Please fill all fields',
           snackPosition: SnackPosition.BOTTOM);
       return;
     }
-    confirmedVehicle.value = {
-      'Make': selectedMake.value!,
-      'Model': selectedModel.value!,
-      'Year': selectedYear.value!,
-      'Fuel Level': fuelLevelController.text,
+
+    // Validate year format (4-digit number)
+    if (!RegExp(r'^\d{4}$').hasMatch(yearController.text)) {
+      Get.snackbar('Error', 'Please enter a valid 4-digit year',
+          snackPosition: SnackPosition.BOTTOM);
+      return;
+    }
+
+    final String token = LocalStorage.getData(key: AppConstant.accessToken);
+
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+    String? id = decodedToken['userId']?.toString();
+
+    print(';;;;;;;;;;;;;;;;; $id ;;;;;;;;;;;;;;;;;;;');
+    // Prepare the request body
+    Map<String, String> vehicleData = {
+      'make': makeController.text,
+      'model': modelController.text,
+      'year': yearController.text,
+      'fuelLevel': fuelLevelController.text,
+      'userId': id.toString(),
     };
-    Get.back(); // Close dialog
+    String body = jsonEncode(vehicleData);
+
+    // Headers for the request
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
+
+    try {
+      // Make the POST request
+      http.Response response = await BaseClient.postRequest(
+        api: Api.addVehicle,
+        body: body,
+        headers: headers,
+      );
+
+      // Handle the response
+      var responseData = await BaseClient.handleResponse(response);
+      if (responseData != null) {
+        // On success, update confirmedVehicle with the response data if needed
+        confirmedVehicle.value = vehicleData;
+        Get.back(); // Close dialog
+        kSnackBar(
+            message: 'Vehicle added successfully!', bgColor: AppColors.green);
+      }
+    } catch (e) {
+      Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+    }
   }
 }

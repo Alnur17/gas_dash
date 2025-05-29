@@ -1,5 +1,5 @@
-class ServiceModel {
-  ServiceModel({
+class VehicleModel {
+  VehicleModel({
     required this.success,
     required this.message,
     required this.data,
@@ -9,8 +9,8 @@ class ServiceModel {
   final String? message;
   final Data? data;
 
-  factory ServiceModel.fromJson(Map<String, dynamic> json){
-    return ServiceModel(
+  factory VehicleModel.fromJson(Map<String, dynamic> json){
+    return VehicleModel(
       success: json["success"],
       message: json["message"],
       data: json["data"] == null ? null : Data.fromJson(json["data"]),
@@ -25,43 +25,47 @@ class Data {
     required this.meta,
   });
 
-  final List<ServiceData> data;
+  final List<Datum> data;
   final Meta? meta;
 
   factory Data.fromJson(Map<String, dynamic> json){
     return Data(
-      data: json["data"] == null ? [] : List<ServiceData>.from(json["data"]!.map((x) => ServiceData.fromJson(x))),
+      data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
       meta: json["meta"] == null ? null : Meta.fromJson(json["meta"]),
     );
   }
 
 }
 
-class ServiceData {
-  ServiceData({
+class Datum {
+  Datum({
     required this.id,
-    required this.serviceName,
-    required this.price,
-    required this.status,
+    required this.make,
+    required this.model,
+    required this.year,
+    required this.fuelLevel,
+    required this.userId,
     required this.createdAt,
     required this.updatedAt,
   });
 
   final String? id;
-  final String? serviceName;
-  final double? price;
-  final bool? status;
+  final String? make;
+  final String? model;
+  final int? year;
+  final int? fuelLevel;
+  final String? userId;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  factory ServiceData.fromJson(Map<String, dynamic> json){
-    return ServiceData(
+  factory Datum.fromJson(Map<String, dynamic> json){
+    return Datum(
       id: json["_id"],
-      serviceName: json["serviceName"],
-      price: (json["price"] is int)
-          ? (json["price"] as int).toDouble()
-          : json["price"]?.toDouble(),
-      status: json["status"],
+      make: json["make"],
+      model: json["model"],
+      year: json["year"],
+      fuelLevel: json["fuelLevel"],
+      userId: json["userId"],
       createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
       updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
     );

@@ -10,6 +10,7 @@ class HomeController extends GetxController {
   var services = <ServiceData>[].obs;
   var isLoading = false.obs;
   var errorMessage = ''.obs;
+  var fuelPricesPerGallon = <String, double>{}.obs; // Reactive map to store fuel type and price
 
   @override
   void onInit() {
@@ -17,7 +18,6 @@ class HomeController extends GetxController {
     getFuelInfo();
     fetchServices();
   }
-
 
   Future<void> fetchServices() async {
     try {
@@ -48,19 +48,34 @@ class HomeController extends GetxController {
   }
 
   Future<void> getFuelInfo() async {
-    isLoading.value = true;
-    errorMessage.value = '';
-
     try {
-      final response = await BaseClient.getRequest(api: Api.fuelInfo);
+      isLoading(true);
+      errorMessage('');
 
-      final data = await BaseClient.handleResponse(response);
+      const String apiUrl = Api.fuelInfo;
 
-      fuelInfo.value = FuelInfoModel.fromJson(data);
+      final response = await BaseClient.getRequest(
+        api: apiUrl,
+      );
+
+      final jsonResponse = await BaseClient.handleResponse(response);
+
+      final fuelInfoModel = FuelInfoModel.fromJson(jsonResponse);
+
+      if (fuelInfoModel.status == "success" && fuelInfoModel.data.isNotEmpty) {
+        fuelInfo.value = fuelInfoModel;
+        // Map fuel names to their prices (up to three or all available)
+        fuelPricesPerGallon.assignAll({
+          for (var datum in fuelInfoModel.data)
+            datum.fuelName ?? 'Unknown Fuel': datum.fuelPrice ?? 0.0
+        });
+      } else {
+        errorMessage('Failed to load fuel info');
+      }
     } catch (e) {
-      errorMessage.value = e.toString();
+      errorMessage(e.toString());
     } finally {
-      isLoading.value = false;
+      isLoading(false);
     }
   }
 }

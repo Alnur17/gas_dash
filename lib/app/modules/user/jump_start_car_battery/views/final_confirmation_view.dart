@@ -8,7 +8,9 @@ import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
 
 class FinalConfirmationView extends GetView {
-  const FinalConfirmationView({super.key});
+  final String? orderId;
+
+  const FinalConfirmationView({super.key, this.orderId});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +40,7 @@ class FinalConfirmationView extends GetView {
             sh20,
             Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 20,vertical: 16),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 color: Colors.white,

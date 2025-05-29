@@ -128,22 +128,22 @@ class HomeView extends GetView<HomeController> {
             ),
             sh16,
             Obx(() {
-              if (controller.isLoading.value) {
+              if (homeController.isLoading.value) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
               }
 
-              if (controller.errorMessage.isNotEmpty) {
+              if (homeController.errorMessage.isNotEmpty) {
                 return Center(
                   child: Text(
-                    controller.errorMessage.value,
+                    homeController.errorMessage.value,
                     style: const TextStyle(color: Colors.red),
                   ),
                 );
               }
 
-              final data = controller.fuelInfo.value?.data ?? [];
+              final data = homeController.fuelInfo.value?.data ?? [];
 
               if (data.isEmpty) {
                 return const Center(
@@ -188,7 +188,7 @@ class HomeView extends GetView<HomeController> {
                             CustomButton(
                               height: 40,
                               width: 100,
-                              text: (fuel.fuelPrice ?? 0).toStringAsFixed(2),
+                              text: (fuel.fuelPrice ?? 0.0).toStringAsFixed(2),
                               onPressed: () {},
                               borderRadius: 8,
                               backgroundColor:
@@ -258,11 +258,17 @@ class HomeView extends GetView<HomeController> {
             sh12,
             FuelCard(
               title: 'UNLEADED',
-              number: '89',
+              number: '87',
               buttonText: 'Order Now',
               gradientColors: AppColors.gradientColorBlue,
               onTap: () {
-                Get.to(() => OrderFuelView());
+                final price = homeController.fuelPricesPerGallon['Unleaded'] ?? 0.0;
+                print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
+                Get.to(() => OrderFuelView(
+                  fuelName: 'Unleaded',
+                  number: '87',
+                  fuelPrice: price,
+                ));
               },
             ),
             sh16,
@@ -272,7 +278,13 @@ class HomeView extends GetView<HomeController> {
               buttonText: 'Order Now',
               gradientColors: AppColors.gradientColorGrey,
               onTap: () {
-                Get.to(() => OrderFuelView());
+                final price = homeController.fuelPricesPerGallon['Premium'] ?? 0.0;
+                print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
+                Get.to(() => OrderFuelView(
+                  fuelName: 'Premium',
+                  number: '91',
+                  fuelPrice: price,
+                ));
               },
             ),
             sh16,
@@ -282,7 +294,13 @@ class HomeView extends GetView<HomeController> {
               buttonText: 'Order Now',
               gradientColors: AppColors.gradientColorGreen,
               onTap: () {
-                Get.to(() => OrderFuelView());
+                final price = homeController.fuelPricesPerGallon['Diesel'] ?? 0.0;
+                print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
+                Get.to(() => OrderFuelView(
+                  fuelName: 'Diesel',
+                  number: '71',
+                  fuelPrice: price,
+                ));
               },
             ),
             sh16,
@@ -296,30 +314,30 @@ class HomeView extends GetView<HomeController> {
               ),
             ),
             Obx(() {
-              if (controller.isLoading.value) {
+              if (homeController.isLoading.value) {
                 return const Center(child: CircularProgressIndicator());
               }
-              if (controller.errorMessage.isNotEmpty) {
+              if (homeController.errorMessage.isNotEmpty) {
                 return Center(
                   child: Text(
-                    controller.errorMessage.value,
+                    homeController.errorMessage.value,
                     style: const TextStyle(color: Colors.red, fontSize: 16),
                   ),
                 );
               }
-              if (controller.services.isEmpty) {
+              if (homeController.services.isEmpty) {
                 return const Center(child: Text('No services found'));
               }
               return ListView.builder(
                 shrinkWrap: true,
                 primary: false,
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                itemCount: controller.services.length,
+                itemCount: homeController.services.length,
                 itemBuilder: (context, index) {
-                  final service = controller.services[index];
+                  final service = homeController.services[index];
                   return Padding(
                     padding: EdgeInsets.only(
-                      bottom: index == controller.services.length - 1 ? 0 : 8,
+                      bottom: index == homeController.services.length - 1 ? 0 : 8,
                     ),
                     child: ServiceCard(
                       title: service.serviceName ?? 'Unnamed Service',
@@ -327,10 +345,6 @@ class HomeView extends GetView<HomeController> {
                       buttonText: 'Order Now',
                       onServiceTap: () {
                         Get.to(() => JumpStartCarBatteryView());
-                        // if (service.serviceName?.toLowerCase() ==
-                        //     'jump start car battery') {
-                        //   Get.to(() => JumpStartCarBatteryView());
-                        // }
                       },
                     ),
                   );

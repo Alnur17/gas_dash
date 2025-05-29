@@ -12,10 +12,14 @@ import '../../../../../common/helper/location_card.dart';
 import '../../../../../common/helper/vehicle_card.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
+import '../../order_fuel/controllers/order_fuel_controller.dart';
 import '../controllers/jump_start_car_battery_controller.dart';
 
 class JumpStartCarBatteryView extends GetView<JumpStartCarBatteryController> {
-  const JumpStartCarBatteryView({super.key});
+  JumpStartCarBatteryView({super.key});
+
+  final OrderFuelController orderFuelController =
+      Get.put(OrderFuelController());
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +42,6 @@ class JumpStartCarBatteryView extends GetView<JumpStartCarBatteryController> {
           'Jump Start Car Battery',
           style: titleStyle,
         ),
-
         centerTitle: true,
       ),
       body: Padding(
@@ -52,25 +55,27 @@ class JumpStartCarBatteryView extends GetView<JumpStartCarBatteryController> {
               gradientColor: AppColors.gradientColorBlue,
             ),
             sh20,
-            LocationCard(
-              locationText: '1901 Thornridge Cir. Shiloh',
-              buttonText: 'Change Location',
-              onButtonPressed: () {},
+            Obx(
+              () => LocationCard(
+                locationText: orderFuelController.currentLocation.value,
+                buttonText: 'Change Location',
+                onButtonPressed: () {},
+              ),
             ),
             sh20,
             VehicleCard(
-              buttonText: 'Add',
-              onButtonPressed: () {},
+              onAddCarTap: () {},
+              onSelectCarTap: () {},
               imageAssetPath: AppImages.addCar,
             ),
             sh20,
             CustomButton(
               text: 'Next',
               onPressed: () {
-                Get.to(()=> FinalConfirmationView());
+                Get.to(() => FinalConfirmationView());
               },
               gradientColors: AppColors.gradientColorGreen,
-            )
+            ),
           ],
         ),
       ),

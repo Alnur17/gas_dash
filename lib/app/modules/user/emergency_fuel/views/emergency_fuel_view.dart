@@ -12,6 +12,7 @@ import '../controllers/emergency_fuel_controller.dart';
 
 class EmergencyFuelView extends GetView<EmergencyFuelController> {
   const EmergencyFuelView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +20,10 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
       appBar: AppBar(
         backgroundColor: AppColors.mainColor,
         scrolledUnderElevation: 0,
-        title: Text('EmergencyFuelView',style: titleStyle,),
+        title: Text(
+          'EmergencyFuelView',
+          style: titleStyle,
+        ),
         centerTitle: true,
         leading: GestureDetector(
           onTap: () {
@@ -51,7 +55,7 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
             buttonText: 'Order Now',
             gradientColors: AppColors.gradientColorBlue,
             onTap: () {
-              Get.to(() => OrderFuelView());
+              Get.to(() => OrderFuelView(fuelName: 'UNLEADED', number: '89'));
             },
           ),
           sh16,
@@ -61,7 +65,7 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
             buttonText: 'Order Now',
             gradientColors: AppColors.gradientColorGrey,
             onTap: () {
-              Get.to(() => OrderFuelView());
+              Get.to(() => OrderFuelView(fuelName: 'PREMIUM', number: '91'));
             },
           ),
           sh16,
@@ -71,7 +75,7 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
             buttonText: 'Order Now',
             gradientColors: AppColors.gradientColorGreen,
             onTap: () {
-              Get.to(() => OrderFuelView());
+              Get.to(() => OrderFuelView(fuelName: 'DIESEL', number: '71'));
             },
           ),
         ],

@@ -1,19 +1,28 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
-
 import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_button.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
+import '../controllers/order_fuel_controller.dart'; // Import the controller
+import '../model/final_confirmation_model.dart'; // Import the model
 
-class FuelTypeFinalConfirmationView extends GetView {
-  const FuelTypeFinalConfirmationView({super.key});
+class FuelTypeFinalConfirmationView extends GetView<OrderFuelController> {
+  final String? orderId;
+  const FuelTypeFinalConfirmationView({super.key, this.orderId});
 
   @override
   Widget build(BuildContext context) {
+    // Initialize the controller
+    final OrderFuelController controller = Get.find<OrderFuelController>();
+
+    // Fetch order details if orderId is provided
+    Future<FinalConfirmationModel?> orderFuture = orderId != null
+        ? controller.fuelTypeFinalConfirmation(orderId!)
+        : Future.value(null);
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -32,66 +41,109 @@ class FuelTypeFinalConfirmationView extends GetView {
         title: Text('Final Confirmation', style: titleStyle),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            sh20,
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Colors.white,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Location',
-                        style: h5.copyWith(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Text('19456 Oak St, Denver, CO 80202', style: h6),
-                    const SizedBox(height: 16),
-                    Text('Vehicle',
-                        style: h5.copyWith(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Text('Ford F-150, 2020, ~20% fuel', style: h6),
-                    const SizedBox(height: 16),
-                    Text('Fuel Type',
-                        style: h5.copyWith(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Text('Premium', style: h6),
-                    const SizedBox(height: 16),
-                    Text('Amount',
-                        style: h5.copyWith(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Text('\$15 gallons', style: h6),
-                    const SizedBox(height: 16),
-                    Text('Delivery Fee',
-                        style: h5.copyWith(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Text('\$5.00', style: h6),
-                    const SizedBox(height: 16),
-                    Text('Mandatory Tip',
-                        style: h5.copyWith(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Text('\$3.00', style: h6),
-                  ],
+      body: Obx(() {
+        // Show loading indicator while fetching location
+        if (controller.currentLocation.value == 'Fetching location...') {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              sh20,
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.white,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: FutureBuilder<FinalConfirmationModel?>(
+                    future: orderFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError || snapshot.data == null || snapshot.data!.data == null) {
+                        return Text(
+                          snapshot.hasError ? 'Error: ${snapshot.error}' : 'No order details found',
+                          style: h6,
+                        );
+                      }
+
+                      final orderData = snapshot.data!.data!;
+                      final vehicle = controller.confirmedVehicle.value;
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Location',
+                              style: h5.copyWith(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 8),
+                          Text(
+                              '${controller.currentLocation.value}, ${orderData.zipCode ?? 'N/A'}',
+                              style: h6),
+                          const SizedBox(height: 16),
+                          Text('Vehicle',
+                              style: h5.copyWith(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 8),
+                          Text(
+                              vehicle != null
+                                  ? '${vehicle['year']} ${vehicle['make']} ${vehicle['model']}, ~${vehicle['fuelLevel']}% fuel'
+                                  : 'N/A',
+                              style: h6),
+                          const SizedBox(height: 16),
+                          Text('Fuel Type',
+                              style: h5.copyWith(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 8),
+                          Text(orderData.fuelType ?? 'N/A', style: h6),
+                          const SizedBox(height: 16),
+                          Text('Amount',
+                              style: h5.copyWith(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 8),
+                          Text('${orderData.amount ?? 0} gallons', style: h6),
+                          const SizedBox(height: 16),
+                          Text('Delivery Fee',
+                              style: h5.copyWith(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 8),
+                          Text(
+                              '\$${orderData.deliveryFee?.toStringAsFixed(2) ?? '0.00'}',
+                              style: h6),
+                          const SizedBox(height: 16),
+                          Text('Mandatory Tip',
+                              style: h5.copyWith(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 8),
+                          Text(
+                              '\$${orderData.tip?.toStringAsFixed(2) ?? '0.00'}',
+                              style: h6),
+                          const SizedBox(height: 16),
+                          Text('Total Amount',
+                              style: h5.copyWith(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 8),
+                          Text(
+                              '\$${orderData.finalAmountOfPayment?.toStringAsFixed(2) ?? '0.00'}',
+                              style: h6),
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
-            sh30,
-            CustomButton(
-              text: 'Next',
-              onPressed: () {},
-              gradientColors: AppColors.gradientColorGreen,
-            ),
-          ],
-        ),
-      ),
+              sh30,
+              CustomButton(
+                text: 'Next',
+                onPressed: () {
+
+                },
+                gradientColors: AppColors.gradientColorGreen,
+              ),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

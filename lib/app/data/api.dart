@@ -18,11 +18,18 @@ class Api {
   ///Services
   static const service = "$baseUrl/services/"; //
 
-  ///Trainers Data
+  ///Add Vehicle
 
-  static const trainers = "$baseUrl/trainers";//done
+  static const addVehicle = "$baseUrl/vehicles/create"; //done
 
-   static const recommendedTrainers = "$baseUrl/trainers/recommended"; //done
+  static const getMyVehicle = "$baseUrl/vehicles/my-vehicles"; //done
+
+
+  ///Order
+  static const createOrder = "$baseUrl/orders/create-orderFuel"; //done
+
+  static  String orderDataConfirmation(String id) => "$baseUrl/orders/$id"; //
+
 
   /// get session details by id
   static getSingleSession(String id) => "$baseUrl/sessions/$id"; //done
@@ -75,7 +82,7 @@ class Api {
 
   static const String creditPackages = "$baseUrl/credits?sort=credits"; //done
 
-  static const  String createOrder = "$baseUrl/orders"; //done
+
 
   static const  String createSubscription = "$baseUrl/subscriptions"; //done
 

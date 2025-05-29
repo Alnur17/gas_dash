@@ -42,7 +42,9 @@ class Datum {
     return Datum(
       id: json["_id"],
       fuelName: json["fuelName"],
-      fuelPrice: json["fuelPrice"],
+      fuelPrice: (json["fuelPrice"] is int)
+          ? (json["fuelPrice"] as int).toDouble()
+          : json["fuelPrice"]?.toDouble(),
       zipCode: json["zipCode"] == null ? [] : List<String>.from(json["zipCode"]!.map((x) => x)),
       createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
       updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
