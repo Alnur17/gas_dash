@@ -1,6 +1,7 @@
 class Api {
   /// base url
-  static const baseUrl = "http://192.168.10.160:8000/api/v1";
+  //static const baseUrl = "http://192.168.10.160:8000/api/v1";
+  static const baseUrl = "http://172.252.13.83:8000/api/v1";
 
   ///auth
   static const register = "$baseUrl/users/create"; //done
@@ -69,6 +70,8 @@ class Api {
   static String confirmPayment(String sessionsId, String paymentId) =>
       "$baseUrl/payments/confirm-payment?sessionId=$sessionsId&paymentId=$paymentId"; //done
 
+
+  /// payment
   static const String createPayment = "$baseUrl/payments/checkout"; //done
 
   static String paymentDetails(String id) => "$baseUrl/payments/$id"; //done

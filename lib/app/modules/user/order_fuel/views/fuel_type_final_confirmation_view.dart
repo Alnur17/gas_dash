@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/payment/controllers/payment_controller.dart';
 import 'package:get/get.dart';
 import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_images/app_images.dart';
@@ -6,8 +7,8 @@ import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_button.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
-import '../controllers/order_fuel_controller.dart'; // Import the controller
-import '../model/final_confirmation_model.dart'; // Import the model
+import '../controllers/order_fuel_controller.dart';
+import '../model/final_confirmation_model.dart';
 
 class FuelTypeFinalConfirmationView extends GetView<OrderFuelController> {
   final String? orderId;
@@ -17,6 +18,7 @@ class FuelTypeFinalConfirmationView extends GetView<OrderFuelController> {
   Widget build(BuildContext context) {
     // Initialize the controller
     final OrderFuelController controller = Get.find<OrderFuelController>();
+    final PaymentController paymentController = Get.put(PaymentController());
 
     // Fetch order details if orderId is provided
     Future<FinalConfirmationModel?> orderFuture = orderId != null
@@ -136,7 +138,7 @@ class FuelTypeFinalConfirmationView extends GetView<OrderFuelController> {
               CustomButton(
                 text: 'Next',
                 onPressed: () {
-
+                  paymentController.createPaymentSession(orderId: orderId!);
                 },
                 gradientColors: AppColors.gradientColorGreen,
               ),

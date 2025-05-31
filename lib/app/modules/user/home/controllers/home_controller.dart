@@ -10,7 +10,7 @@ class HomeController extends GetxController {
   var services = <ServiceData>[].obs;
   var isLoading = false.obs;
   var errorMessage = ''.obs;
-  var fuelPricesPerGallon = <String, double>{}.obs; // Reactive map to store fuel type and price
+  var fuelPricesPerGallon = <String, double>{}.obs;
 
   @override
   void onInit() {

@@ -81,7 +81,7 @@ class HomeView extends GetView<HomeController> {
                   Row(
                     children: [
                       Obx(
-                            () => CircleAvatar(
+                        () => CircleAvatar(
                           radius: 25,
                           backgroundColor: AppColors.white,
                           backgroundImage: NetworkImage(
@@ -192,7 +192,7 @@ class HomeView extends GetView<HomeController> {
                               onPressed: () {},
                               borderRadius: 8,
                               backgroundColor:
-                              _getFuelColor(fuel.fuelName ?? ''),
+                                  _getFuelColor(fuel.fuelName ?? ''),
                             ),
                           ],
                         ),
@@ -262,13 +262,14 @@ class HomeView extends GetView<HomeController> {
               buttonText: 'Order Now',
               gradientColors: AppColors.gradientColorBlue,
               onTap: () {
-                final price = homeController.fuelPricesPerGallon['Unleaded'] ?? 0.0;
+                final price =
+                    homeController.fuelPricesPerGallon['Unleaded'] ?? 0.0;
                 print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
                 Get.to(() => OrderFuelView(
-                  fuelName: 'Unleaded',
-                  number: '87',
-                  fuelPrice: price,
-                ));
+                      fuelName: 'Unleaded',
+                      number: '87',
+                      fuelPrice: price,
+                    ));
               },
             ),
             sh16,
@@ -278,13 +279,14 @@ class HomeView extends GetView<HomeController> {
               buttonText: 'Order Now',
               gradientColors: AppColors.gradientColorGrey,
               onTap: () {
-                final price = homeController.fuelPricesPerGallon['Premium'] ?? 0.0;
+                final price =
+                    homeController.fuelPricesPerGallon['Premium'] ?? 0.0;
                 print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
                 Get.to(() => OrderFuelView(
-                  fuelName: 'Premium',
-                  number: '91',
-                  fuelPrice: price,
-                ));
+                      fuelName: 'Premium',
+                      number: '91',
+                      fuelPrice: price,
+                    ));
               },
             ),
             sh16,
@@ -294,13 +296,14 @@ class HomeView extends GetView<HomeController> {
               buttonText: 'Order Now',
               gradientColors: AppColors.gradientColorGreen,
               onTap: () {
-                final price = homeController.fuelPricesPerGallon['Diesel'] ?? 0.0;
+                final price =
+                    homeController.fuelPricesPerGallon['DIESEL'] ?? 0.0;
                 print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
                 Get.to(() => OrderFuelView(
-                  fuelName: 'Diesel',
-                  number: '71',
-                  fuelPrice: price,
-                ));
+                      fuelName: 'DIESEL',
+                      number: '71',
+                      fuelPrice: price,
+                    ));
               },
             ),
             sh16,
@@ -337,14 +340,21 @@ class HomeView extends GetView<HomeController> {
                   final service = homeController.services[index];
                   return Padding(
                     padding: EdgeInsets.only(
-                      bottom: index == homeController.services.length - 1 ? 0 : 8,
+                      bottom:
+                          index == homeController.services.length - 1 ? 0 : 8,
                     ),
                     child: ServiceCard(
                       title: service.serviceName ?? 'Unnamed Service',
                       price: '\$${service.price?.toStringAsFixed(2) ?? 'N/A'}',
                       buttonText: 'Order Now',
                       onServiceTap: () {
-                        Get.to(() => JumpStartCarBatteryView());
+                        Get.to(
+                          () => JumpStartCarBatteryView(
+                            title: service.serviceName ?? 'Unnamed Service',
+                            price:
+                                service.price?.toStringAsFixed(2) ?? 'N/A',
+                          ),
+                        );
                       },
                     ),
                   );

@@ -1,5 +1,5 @@
+
 import 'package:flutter/material.dart';
-import 'package:gas_dash/app/modules/user/jump_start_car_battery/views/final_confirmation_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
@@ -17,7 +17,14 @@ import '../../order_fuel/controllers/order_fuel_controller.dart';
 import '../controllers/jump_start_car_battery_controller.dart';
 
 class JumpStartCarBatteryView extends GetView<JumpStartCarBatteryController> {
-  JumpStartCarBatteryView({super.key});
+  final String? title;
+  final String? price;
+
+  JumpStartCarBatteryView({
+    super.key,
+    this.title,
+    this.price,
+  });
 
   final OrderFuelController orderFuelController =
       Get.put(OrderFuelController());
@@ -46,7 +53,7 @@ class JumpStartCarBatteryView extends GetView<JumpStartCarBatteryController> {
                 ),
                 const SizedBox(height: 16),
 
-                // Make TextField
+                // Make TextField3256
                 Text(
                   'Make',
                   style: h5,
@@ -141,41 +148,46 @@ class JumpStartCarBatteryView extends GetView<JumpStartCarBatteryController> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            sh16,
-            EarningsCard(
-              title: 'Jump Start Car Battery',
-              amount: '25',
-              gradientColor: AppColors.gradientColorBlue,
-            ),
-            sh20,
-            Obx(
-              () => LocationCard(
-                locationText: orderFuelController.currentLocation.value,
-                buttonText: 'Change Location',
-                onButtonPressed: () {},
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              sh16,
+              EarningsCard(
+                title: title ?? 'N/A',
+                amount: price ?? 'N/A',
+                gradientColor: AppColors.gradientColorBlue,
               ),
-            ),
-            sh20,
-            VehicleCard(
-              onAddCarTap: () {
-                _showAddVehicleDialog();
-              },
-              onSelectCarTap: () {
-                orderFuelController.showVehicleSelectionDialog();
-              },
-              imageAssetPath: AppImages.addCar,
-            ),
-            sh20,
-            CustomButton(
-              text: 'Next',
-              onPressed: () {
-                Get.to(() => FinalConfirmationView());
-              },
-              gradientColors: AppColors.gradientColorGreen,
-            ),
-          ],
+              sh20,
+              Obx(
+                () => LocationCard(
+                  locationText: orderFuelController.currentLocation.value,
+                  buttonText: 'Change Location',
+                  onButtonPressed: () {},
+                ),
+              ),
+              sh20,
+              VehicleCard(
+                onAddCarTap: () {
+                  _showAddVehicleDialog();
+                },
+                onSelectCarTap: () {
+                  orderFuelController.showVehicleSelectionDialog();
+                },
+                imageAssetPath: AppImages.addCar,
+              ),
+              sh20,
+              CustomButton(
+                text: 'Next',
+                onPressed: () {
+                  orderFuelController.createOrderForServices(
+                      vehicleId:
+                          orderFuelController.selectedVehicle.value?.id.toString() ?? '',
+                      orderType: 'Battery');
+                },
+                gradientColors: AppColors.gradientColorGreen,
+              ),
+            ],
+          ),
         ),
       ),
     );

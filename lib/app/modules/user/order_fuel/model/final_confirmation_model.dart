@@ -61,7 +61,7 @@ class Data {
   final bool? isPaid;
   final double? finalAmountOfPayment;
   final String? zipCode;
-  final int? servicesFee;
+  final double? servicesFee;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final int? v;
@@ -72,7 +72,9 @@ class Data {
       id: json["_id"],
       vehicleId: json["vehicleId"],
       userId: json["userId"] == null ? null : UserId.fromJson(json["userId"]),
-      amount: json["amount"],
+      amount: (json["amount"] is double)
+          ? (json["amount"] as double?)?.toInt()
+          : json["amount"] as int?,
       deliveryFee: json["deliveryFee"] is String
           ? double.tryParse(json["deliveryFee"])
           : (json["deliveryFee"] as num?)?.toDouble(),
@@ -81,7 +83,9 @@ class Data {
           : (json["price"] as num?)?.toDouble(),
       presetAmount: json["presetAmount"],
       customAmount: json["customAmount"],
-      tip: json["tip"],
+      tip: (json["tip"] is double)
+          ? (json["tip"] as double?)?.toInt()
+          : json["tip"] as int?,
       orderType: json["orderType"],
       orderStatus: json["orderStatus"],
       cancelReason: json["cancelReason"],
@@ -91,7 +95,9 @@ class Data {
           ? double.tryParse(json["finalAmountOfPayment"])
           : (json["finalAmountOfPayment"] as num?)?.toDouble(),
       zipCode: json["zipCode"],
-      servicesFee: json["servicesFee"],
+      servicesFee: (json["servicesFee"] is int)
+          ? (json["servicesFee"] as double?)?.toDouble()
+          : json["servicesFee"] as double?,
       createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
       updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
       v: json["__v"],

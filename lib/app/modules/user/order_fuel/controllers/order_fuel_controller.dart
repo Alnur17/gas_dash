@@ -17,6 +17,7 @@ import '../../../../../common/widgets/custom_button.dart';
 import '../../../../../common/widgets/custom_snackbar.dart';
 import '../../../../../common/widgets/custom_textfield.dart';
 import '../../../../data/base_client.dart';
+import '../../jump_start_car_battery/views/final_confirmation_view.dart';
 import '../model/final_confirmation_model.dart';
 import '../model/vechicle_model.dart'; // Import BaseClient
 
@@ -26,12 +27,13 @@ class OrderFuelController extends GetxController {
   final TextEditingController modelController = TextEditingController();
   final TextEditingController yearController = TextEditingController();
   final TextEditingController fuelLevelController = TextEditingController();
+  final TextEditingController customAmountController = TextEditingController();
 
   // Observables for selected values
   var currentLocation = 'Fetching location...'.obs;
-  var latitude = RxnDouble(); // Add latitude observable
-  var longitude = RxnDouble(); // Add longitude observable
-  var zipCode = RxnString(); // Add zip code observable
+  var latitude = RxnDouble();
+  var longitude = RxnDouble();
+  var zipCode = RxnString();
 
   var selectedMake = RxnString();
   var selectedModel = RxnString();
@@ -41,11 +43,10 @@ class OrderFuelController extends GetxController {
 
   var vehiclesList = <Datum>[].obs;
   var selectedVehicle = Rxn<Datum>();
-
   var presetEnabled = false.obs;
   var customEnabled = false.obs;
   var selectedPresetAmount = '5 gallons'.obs;
-  final TextEditingController customAmountController = TextEditingController();
+
   final presetAmounts = [
     '5 gallons',
     '10 gallons',
@@ -216,6 +217,67 @@ class OrderFuelController extends GetxController {
         // Navigate to FinalConfirmationView with the order ID
         Get.to(() => FuelTypeFinalConfirmationView(orderId: orderId));
         //await fuelTypeFinalConfirmation(orderId);
+      }
+    } catch (e) {
+      Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+    }
+  }
+
+  Future<void> createOrderForServices({
+    required String vehicleId,
+    required String orderType,
+  })
+  async {
+    try {
+      // Get the access token from local storage
+      final String token = LocalStorage.getData(key: AppConstant.accessToken);
+
+      // Prepare the request body
+      final Map<String, dynamic> orderData = {
+        'location': {
+          'coordinates': [
+            longitude.value ?? 90.4125,
+           latitude.value ?? 23.8103,
+          ],
+        },
+        'vehicleId': vehicleId,
+        'orderType': orderType,
+        'zipCode': zipCode.value ?? '90001',
+        'cancelReason': '',
+      };
+
+      // Convert the body to JSON
+      String body = jsonEncode(orderData);
+
+      // Headers for the request
+      var headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+
+      // Make the POST request
+      http.Response response = await BaseClient.postRequest(
+        api: Api.createOrder,
+        body: body,
+        headers: headers,
+      );
+
+      // Handle the response
+      var responseData = await BaseClient.handleResponse(response);
+      if (responseData != null) {
+        String? orderId = responseData['data']?['_id'];
+        if (orderId == null) {
+          Get.snackbar('Error', 'Failed to retrieve order ID',
+              snackPosition: SnackPosition.BOTTOM);
+          return;
+        }
+
+        kSnackBar(
+          message: 'Order created successfully!',
+          bgColor: AppColors.green,
+        );
+        // Navigate to FinalConfirmationView with the order ID
+        Get.to(() => FinalConfirmationView(orderId: orderId));
       }
     } catch (e) {
       Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
