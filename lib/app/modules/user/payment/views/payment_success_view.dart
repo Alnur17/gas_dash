@@ -33,8 +33,9 @@ class PaymentSuccessView extends GetView {
             Text(
               ' Your Payment Successfully Done',
               style: h2,
+              textAlign: TextAlign.center,
             ),
-            sh5,
+            sh8,
             Text(
               'We will notify you about the schedule. Stay tuned for updates',
               style: h3.copyWith(

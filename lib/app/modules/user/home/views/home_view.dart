@@ -297,10 +297,10 @@ class HomeView extends GetView<HomeController> {
               gradientColors: AppColors.gradientColorGreen,
               onTap: () {
                 final price =
-                    homeController.fuelPricesPerGallon['DIESEL'] ?? 0.0;
+                    homeController.fuelPricesPerGallon['Diesel'] ?? 0.0;
                 print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
                 Get.to(() => OrderFuelView(
-                      fuelName: 'DIESEL',
+                      fuelName: 'Diesel',
                       number: '71',
                       fuelPrice: price,
                     ));

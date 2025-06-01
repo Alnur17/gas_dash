@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/driver/driver_home/model/single_order_by_Id_model.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
-
 import 'package:get/get.dart';
-
-import '../../../../../common/app_text_style/styles.dart';
+import 'package:gas_dash/common/app_text_style/styles.dart';
+import 'package:intl/intl.dart';
 
 class DriverOrderDetailsView extends GetView {
-  const DriverOrderDetailsView({super.key});
+  final SingleOrderData? orderData;
+
+  const DriverOrderDetailsView({super.key, this.orderData});
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +41,7 @@ class DriverOrderDetailsView extends GetView {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Common Customer Section
               Text(
                 'Customer',
                 style: h5.copyWith(fontWeight: FontWeight.w600),
@@ -48,36 +51,43 @@ class DriverOrderDetailsView extends GetView {
                 children: [
                   CircleAvatar(
                     radius: 20,
-                    backgroundImage: NetworkImage(AppImages.profileImageTwo),
+                    backgroundImage: NetworkImage(
+                      orderData?.userId?.image ?? AppImages.profileImageTwo,
+                    ),
                   ),
                   sw8,
                   Text(
-                    'Sarah J.',
+                    orderData?.userId?.fullname ?? 'Unknown',
                     style: h6,
                   ),
                 ],
               ),
               sh12,
+              // Common Order ID Section
               Text(
                 'Order ID',
                 style: h5.copyWith(fontWeight: FontWeight.w600),
               ),
               sh5,
               Text(
-                '555-987-6543',
+                orderData?.id ?? 'N/A',
                 style: h6,
               ),
               sh12,
+              // Common Delivery Date & Time Section
               Text(
                 'Delivery Date & time',
                 style: h5.copyWith(fontWeight: FontWeight.w600),
               ),
               sh5,
               Text(
-                '06 Feb,2025',
+                orderData?.createdAt != null
+                    ? DateFormat('dd MMM, yyyy').format(orderData!.createdAt!)
+                    : 'N/A',
                 style: h6,
               ),
               sh12,
+              // Common Location Section
               Text(
                 'Location',
                 style: h5.copyWith(fontWeight: FontWeight.w600),
@@ -91,42 +101,68 @@ class DriverOrderDetailsView extends GetView {
                   ),
                   sw8,
                   Text(
-                    '19456 Oak St, Denver, CO 80202 ',
+                    orderData?.zipCode ?? 'Unknown Location',
                     style: h6,
                   ),
                 ],
               ),
               sh12,
+              // Common Vehicle Section
               Text(
                 'Vehicle',
                 style: h5.copyWith(fontWeight: FontWeight.w600),
               ),
               sh5,
               Text(
-                'Ford F-150, 2020, ~20% fuel',
+                orderData?.vehicleId ?? 'Unknown Vehicle',
                 style: h6,
               ),
               sh12,
-              Text(
-                'Fuel Type',
-                style: h5.copyWith(fontWeight: FontWeight.w600),
-              ),
-              sh5,
-              Text(
-                'Premium',
-                style: h6,
-              ),
-              sh12,
-              Text(
-                'Amount',
-                style: h5.copyWith(fontWeight: FontWeight.w600),
-              ),
-              sh5,
-              Text(
-                '15 gallons ',
-                style: h6,
-              ),
+              // Conditional Section based on orderStatus
+              if (orderData?.orderStatus?.toLowerCase() == 'fuel')
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Fuel Type',
+                      style: h5.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    sh5,
+                    Text(
+                      orderData?.orderType ?? 'Unknown',
+                      style: h6,
+                    ),
+                    sh12,
+                    Text(
+                      'Amount',
+                      style: h5.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    sh5,
+                    Text(
+                      orderData?.price != null
+                          ? '${orderData?.price!.toStringAsFixed(2)} gallons'
+                          : 'N/A',
+                      style: h6,
+                    ),
+                  ],
+                )
+              else
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Service',
+                      style: h5.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    sh5,
+                    Text(
+                      orderData?.orderType ?? 'Unknown Service',
+                      style: h6,
+                    ),
+                  ],
+                ),
               sh20,
+              // Common Start Delivery Button
               CustomButton(
                 text: 'Start Delivery',
                 onPressed: () {},

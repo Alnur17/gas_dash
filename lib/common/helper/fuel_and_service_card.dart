@@ -46,7 +46,8 @@ class FuelAndServiceCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '$fuelAmount, $fuelType',
+                   // '$fuelAmount, $fuelType',
+                    fuelType,
                     style: h5.copyWith(fontWeight: FontWeight.bold),
                   ),
                   sh5,

@@ -52,7 +52,7 @@ class EarningsCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   value: dropDown,
                   onChanged: (String? newValue) {},
-                  items: <String>['Last Month', 'This Month', 'Today']
+                  items: <String>['Last Month', 'This Month']
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
