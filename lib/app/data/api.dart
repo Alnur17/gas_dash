@@ -26,6 +26,9 @@ class Api {
 
   ///Order
   static const createOrder = "$baseUrl/orders/create-orderFuel"; //done
+
+  static const orderHistory = "$baseUrl/orders"; //
+
   static singleOrderById(String orderId) => "$baseUrl/orders/$orderId"; //done
 
   static String orderDataConfirmation(String id) => "$baseUrl/orders/$id"; //
@@ -44,7 +47,6 @@ class Api {
   /// payment
   static const String createPayment = "$baseUrl/payments/checkout"; //done
 
-
   static String singleDriverEarning(String id) => "$baseUrl/driverearnings/summary/$id"; //done
 
   static String paymentDetails(String id) => "$baseUrl/payments/$id"; //
@@ -52,4 +54,10 @@ class Api {
   static const String createSubscription = "$baseUrl/subscriptions"; //
 
   static const String notifications = "$baseUrl/notification/my-notification";
+
+  ///Reviews
+
+  static  String createReview(String driverId) => "$baseUrl/reviews/create";
+
+  static  String getReviews(String driverId) => "$baseUrl/reviews/driver/$driverId";
 }

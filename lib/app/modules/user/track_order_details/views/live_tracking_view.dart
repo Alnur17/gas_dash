@@ -8,7 +8,6 @@ import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
-import '../../../../../common/widgets/custom_button.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
 
 class LiveTrackingView extends StatefulWidget {
@@ -111,7 +110,7 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   onTap: (){
-                    Get.to(()=> AboutDriverInformationView());
+                    Get.to(()=> AboutDriverInformationView(driverId: '683be4879bcebfdcbde1e5aa'));
                   },
                   leading: CircleAvatar(
                     radius: 25,

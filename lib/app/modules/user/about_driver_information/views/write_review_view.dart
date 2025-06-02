@@ -2,24 +2,69 @@ import 'package:flutter/material.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
 import 'package:gas_dash/common/widgets/custom_textfield.dart';
-
 import 'package:get/get.dart';
-
-import '../../../../../common/app_images/app_images.dart';
-import '../../../../../common/app_text_style/styles.dart';
-import '../../../../../common/size_box/custom_sizebox.dart';
+import 'package:gas_dash/common/app_images/app_images.dart';
+import 'package:gas_dash/common/app_text_style/styles.dart';
+import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import '../controllers/about_driver_information_controller.dart';
 
 class WriteReviewView extends StatefulWidget {
-  const WriteReviewView({super.key});
+  final String? driverId;
+
+  const WriteReviewView( this.driverId,{super.key,});
 
   @override
   State<WriteReviewView> createState() => _WriteReviewViewState();
 }
 
 class _WriteReviewViewState extends State<WriteReviewView> {
-  final AboutDriverInformationController aboutDriverInformationController =
-      Get.put(AboutDriverInformationController());
+  final AboutDriverInformationController controller =
+  Get.find<AboutDriverInformationController>();
+  final TextEditingController textController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Sync text field with controller's reviewText
+    textController.text = controller.reviewText.value;
+    textController.addListener(() {
+      controller.setReviewText(textController.text);
+    });
+  }
+
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
+  }
+
+  // Check if submission is allowed
+  bool get canSubmit => controller.canSubmit && widget.driverId != null;
+
+  // Handle review submission
+  Future<void> _handleSubmitReview() async {
+    if (widget.driverId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Driver ID is required'),
+          backgroundColor: AppColors.orange,
+        ),
+      );
+      return;
+    }
+
+    final success = await controller.submitReview(widget.driverId);
+    if (success) {
+      _showSubmissionCompletedModal(context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(controller.errorMessage.value),
+          backgroundColor: AppColors.orange,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,63 +88,62 @@ class _WriteReviewViewState extends State<WriteReviewView> {
           style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+      body: Obx(() {
+        return Stack(
           children: [
-            const Text(
-              'Leave a Review',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 18,
-                color: Colors.black87,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Leave a Review',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // Stars
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(5, (index) {
+                      final starIndex = index + 1;
+                      return GestureDetector(
+                        onTap: () => controller.setRating(starIndex),
+                        child: Icon(
+                          controller.rating.value >= starIndex
+                              ? Icons.star
+                              : Icons.star_border,
+                          color: const Color(0xFFFFB800),
+                          size: 40,
+                        ),
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 24),
+                  // Review input
+                  CustomTextField(
+                    controller: textController,
+                    height: 150,
+                    hintText: 'Write here...',
+                  ),
+                  const SizedBox(height: 24),
+                  // Submit button
+                  CustomButton(
+                    text: 'Submit Review',
+                    onPressed: canSubmit ? () => _handleSubmitReview() : () {},
+                    gradientColors: AppColors.gradientColorGreen,
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
-
-            // Stars
-            Obx(() {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(5, (index) {
-                  final starIndex = index + 1;
-                  return GestureDetector(
-                    onTap: () =>
-                        aboutDriverInformationController.setRating(starIndex),
-                    child: Icon(
-                      aboutDriverInformationController.rating.value >= starIndex
-                          ? Icons.star
-                          : Icons.star_border,
-                      color: const Color(0xFFFFB800),
-                      size: 40,
-                    ),
-                  );
-                }),
-              );
-            }),
-
-            const SizedBox(height: 24),
-
-            // Review input
-            CustomTextField(
-              height: 150,
-              hintText: 'write here..',
-            ),
-
-            const SizedBox(height: 24),
-
-            // Submit button
-            CustomButton(
-              text: 'Submit Review',
-              onPressed: () {
-                _showSubmissionCompletedModal(context);
-              },
-              gradientColors: AppColors.gradientColorGreen,
-            ),
+            if (controller.isLoading.value)
+              const Center(child: CircularProgressIndicator()),
           ],
-        ),
-      ),
+        );
+      }),
     );
   }
 
@@ -107,7 +151,7 @@ class _WriteReviewViewState extends State<WriteReviewView> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent, // for rounded corners effect
+      backgroundColor: Colors.transparent,
       builder: (context) {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
@@ -125,7 +169,6 @@ class _WriteReviewViewState extends State<WriteReviewView> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Circle Icon with green check
               Container(
                 width: 70,
                 height: 70,
@@ -154,8 +197,11 @@ class _WriteReviewViewState extends State<WriteReviewView> {
               ),
               const SizedBox(height: 24),
               CustomButton(
-                text: 'Return to Home',
-                onPressed: () {},
+                text: 'Return to Reviews',
+                onPressed: () {
+                  Get.back(); // Close modal
+                  Get.back(); // Return to RatingsView or AboutDriverInformationView
+                },
                 gradientColors: AppColors.gradientColorGreen,
               ),
             ],

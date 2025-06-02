@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:gas_dash/app/modules/user/order_history/views/cancel_order_view.dart';
 import 'package:get/get.dart';
 import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/helper/order_history_card.dart';
+import '../controllers/order_history_controller.dart';
 import 'order_details_view.dart';
 
 class OrderHistoryView extends StatefulWidget {
@@ -15,6 +15,12 @@ class OrderHistoryView extends StatefulWidget {
 
 class _OrderHistoryViewState extends State<OrderHistoryView> {
   @override
+  void initState() {
+    super.initState();
+    Get.put(OrderHistoryController()); // Initialize the controller
+  }
+
+  @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
@@ -23,10 +29,10 @@ class _OrderHistoryViewState extends State<OrderHistoryView> {
           title: Text('Order History', style: titleStyle),
           centerTitle: true,
           bottom: TabBar(
-            tabs: [
+            tabs: const [
+              Tab(text: 'All'),
               Tab(text: 'In Process'),
               Tab(text: 'Completed'),
-              Tab(text: 'Canceled'),
             ],
             indicatorSize: TabBarIndicatorSize.tab,
             indicatorColor: AppColors.primaryColor,
@@ -36,12 +42,9 @@ class _OrderHistoryViewState extends State<OrderHistoryView> {
         ),
         body: TabBarView(
           children: [
-            // Active Orders
+            OrderStatusSection(status: 'All'),
             OrderStatusSection(status: 'In Process'),
-            // Pending Orders
             OrderStatusSection(status: 'Completed'),
-            // Completed Orders
-            OrderStatusSection(status: 'Canceled'),
           ],
         ),
       ),
@@ -56,64 +59,85 @@ class OrderStatusSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        OrderHistoryCard(
-          orderId: '5758',
-          orderDate: '10 Dec 2025 at 10:39 AM',
-          fuelQuantity: '15 Litres',
-          fuelType: 'Premium Fuel',
-          price: '65',
-          status: status,
-          buttonText1: _getButtonText1(status),
-          buttonText2: _getButtonText2(status),
-          onButton1Pressed: () {
-            _navigateButton1(status);
-          },
-          onButton2Pressed: () {
-            Get.to(() => OrderDetailsView());
-          },
-        ),
-      ],
-    );
+    final OrderHistoryController controller =
+        Get.put(OrderHistoryController());
+
+    return Obx(() {
+      if (controller.isLoading.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      if (controller.errorMessage.isNotEmpty) {
+        return Center(
+            child: Text(controller.errorMessage.value,
+                style: const TextStyle(color: Colors.red)));
+      }
+
+// Filter orders based on status
+      final filteredOrders = status == 'All'
+          ? controller.orders
+          : controller.orders.where((order) {
+// Map UI status to API status
+              final apiStatus =
+                  status == 'In Process' ? 'InProgress' : 'Delivered';
+              return order.orderStatus == apiStatus;
+            }).toList();
+
+      if (filteredOrders.isEmpty) {
+        return const Center(child: Text('No orders found'));
+      }
+
+      return ListView.builder(
+        itemCount: filteredOrders.length,
+        itemBuilder: (context, index) {
+          final order = filteredOrders[index];
+// Map API status to UI status for display
+          final displayStatus =
+              order.orderStatus == 'InProgress' ? 'In Process' : 'Completed';
+          return OrderHistoryCard(
+            orderId: order.id ?? 'N/A',
+            orderDate: order.createdAt?.toString() ?? 'Unknown',
+            fuelQuantity: '${order.amount ?? 0} Litres',
+            fuelType: order.fuelType ?? 'Unknown',
+            price: (order.finalAmountOfPayment ?? 0.0).toStringAsFixed(2),
+            status: displayStatus,
+            buttonText1: _getButtonText1(order.orderStatus ?? ''),
+            buttonText2: _getButtonText2(order.orderStatus ?? ''),
+            onButton1Pressed: () {
+              _navigateButton1(order.orderStatus ?? '');
+            },
+            onButton2Pressed: () {
+              Get.to(() => const OrderDetailsView());
+            },
+          );
+        },
+      );
+    });
   }
 
-  String? _getButtonText1(String status) {
-    switch (status) {
-      case 'In Process':
-        return 'Cancel';
-      case 'Completed':
+  String? _getButtonText1(String apiStatus) {
+    switch (apiStatus) {
+      case 'Delivered':
         return 'Re-book';
-      case 'Canceled':
-        return 'Request to Refund';
+      default:
+        return null; // No button for InProgress
+    }
+  }
+
+  String? _getButtonText2(String apiStatus) {
+    switch (apiStatus) {
+      case 'InProgress':
+      case 'Delivered':
+        return 'View Details';
       default:
         return null;
     }
   }
 
-  String? _getButtonText2(String status) {
-    switch (status) {
-      case 'In Process':
-        return 'View Details';
-      case 'Completed':
-        return 'View Details';
-      case 'Canceled':
-        return 'View Details';
-      default:
-        return null;
-    }
-  }
-
-  void _navigateButton1(String status) {
-    switch (status) {
-      case 'In Process':
-        Get.to(() => CancelOrderView());
-        break;
-      case 'Completed':
-        SizedBox();
-        break;
-      case 'Canceled':
-        SizedBox();
+  void _navigateButton1(String apiStatus) {
+    switch (apiStatus) {
+      case 'Delivered':
+// Handle Re-book action (e.g., navigate to booking screen)
         break;
     }
   }

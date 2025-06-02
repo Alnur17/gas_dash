@@ -44,8 +44,8 @@ class DriverEarningView extends GetView<DriverEarningController> {
                 Expanded(
                   child: EarningsCard(
                     gradientColor: AppColors.gradientColorBlue,
-                    title: 'Earnings', // Static for now, update with dropdown later
-                    amount: '165.00', // Static for now
+                    title: 'Earnings',
+                    amount: '165.00',
                     dropDown: 'Last Month',
                   ),
                 ),
