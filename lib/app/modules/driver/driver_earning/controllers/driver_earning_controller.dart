@@ -11,14 +11,14 @@ import '../../../../data/base_client.dart';
 
 class DriverEarningController extends GetxController {
   // Observable variables for reactive UI
-  var todayEarnings = 0.0.obs; // Store today's earnings
-  var isLoading = false.obs; // Track loading state
-  var errorMessage = ''.obs; // Store error message if any
+  var todayEarnings = 0.0.obs;
+  var isLoading = false.obs;
+  var errorMessage = ''.obs;
 
   @override
   void onInit() {
     super.onInit();
-    fetchTodayEarnings(); // Fetch earnings when controller is initialized
+    fetchTodayEarnings();
   }
 
   Future<void> fetchTodayEarnings() async {
