@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/emergency_fuel/views/emergency_fuel_view.dart';
 import 'package:gas_dash/app/modules/user/home/views/notification_view.dart';
 import 'package:gas_dash/app/modules/user/jump_start_car_battery/views/jump_start_car_battery_view.dart';
 import 'package:gas_dash/app/modules/user/order_fuel/views/order_fuel_view.dart';
@@ -238,7 +239,9 @@ class HomeView extends GetView<HomeController> {
                   CustomButton(
                     height: 40,
                     text: 'Order Now',
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.to(()=> EmergencyFuelView());
+                    },
                     gradientColors: AppColors.gradientColor,
                     width: 150,
                   ),
@@ -409,7 +412,9 @@ class HomeView extends GetView<HomeController> {
                         CustomButton(
                           height: 40,
                           text: 'Join Now',
-                          onPressed: () {},
+                          onPressed: () {
+                            Get.to(()=> SubscriptionView());
+                          },
                           gradientColors: AppColors.gradientColor,
                           width: 150,
                         ),

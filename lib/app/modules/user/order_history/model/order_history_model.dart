@@ -89,27 +89,27 @@ class OrderHistoryDatum {
   factory OrderHistoryDatum.fromJson(Map<String, dynamic> json) {
     return OrderHistoryDatum(
       location: json["location"] == null ? null : Location.fromJson(json["location"]),
-      id: json["_id"],
-      vehicleId: json["vehicleId"],
+      id: json["_id"]?.toString() ?? 'N/A',
+      vehicleId: json["vehicleId"]?.toString() ?? 'N/A',
       userId: json["userId"] == null ? null : UserId.fromJson(json["userId"]),
-      amount: (json["amount"] as num?)?.toDouble(), // Convert to double
-      deliveryFee: (json["deliveryFee"] as num?)?.toDouble(), // Ensure double
-      price: (json["price"] as num?)?.toDouble(), // Ensure double
-      presetAmount: json["presetAmount"],
-      customAmount: json["customAmount"],
-      tip: (json["tip"] as num?)?.toDouble(), // Convert to double
-      orderType: json["orderType"],
-      orderStatus: json["orderStatus"],
-      cancelReason: json["cancelReason"],
-      fuelType: json["fuelType"],
-      isPaid: json["isPaid"],
-      finalAmountOfPayment: (json["finalAmountOfPayment"] as num?)?.toDouble(), // Ensure double
-      zipCode: json["zipCode"],
-      servicesFee: (json["servicesFee"] as num?)?.toDouble(), // Ensure double
+      amount: (json["amount"] as num?)?.toDouble() ?? 0.0,
+      deliveryFee: (json["deliveryFee"] as num?)?.toDouble() ?? 0.0,
+      price: (json["price"] as num?)?.toDouble() ?? 0.0,
+      presetAmount: json["presetAmount"] ?? false,
+      customAmount: json["customAmount"] ?? false,
+      tip: (json["tip"] as num?)?.toDouble() ?? 0.0,
+      orderType: json["orderType"]?.toString() ?? 'Unknown',
+      orderStatus: json["orderStatus"]?.toString() ?? 'Unknown',
+      cancelReason: json["cancelReason"]?.toString() ?? 'Unknown',
+      fuelType: json["fuelType"]?.toString() ?? 'Unknown',
+      isPaid: json["isPaid"] ?? false,
+      finalAmountOfPayment: (json["finalAmountOfPayment"] as num?)?.toDouble() ?? 0.0,
+      zipCode: json["zipCode"]?.toString() ?? 'Unknown',
+      servicesFee: (json["servicesFee"] as num?)?.toDouble() ?? 0.0,
       createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
       updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
-      paymentId: json["paymentId"],
-      driverId: json["driverId"],
+      paymentId: json["paymentId"]?.toString() ?? 'N/A',
+      driverId: json["driverId"]?.toString() ?? 'N/A',
     );
   }
 }

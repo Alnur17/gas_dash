@@ -162,7 +162,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.EMERGENCY_FUEL,
-      page: () => const EmergencyFuelView(),
+      page: () =>  EmergencyFuelView(),
       binding: EmergencyFuelBinding(),
     ),
     GetPage(

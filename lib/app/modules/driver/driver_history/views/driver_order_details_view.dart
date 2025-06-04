@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gas_dash/app/modules/driver/driver_home/model/single_order_by_Id_model.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
@@ -7,6 +6,8 @@ import 'package:gas_dash/common/widgets/custom_button.dart';
 import 'package:get/get.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:intl/intl.dart';
+
+import '../../driver_home/model/single_order_by_Id_model.dart';
 
 class DriverOrderDetailsView extends GetView {
   final SingleOrderData? orderData;

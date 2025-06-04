@@ -4,7 +4,6 @@ import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/helper/order_history_card.dart';
 import '../controllers/order_history_controller.dart';
-import 'order_details_view.dart';
 
 class OrderHistoryView extends StatefulWidget {
   const OrderHistoryView({super.key});
@@ -58,9 +57,65 @@ class OrderStatusSection extends StatelessWidget {
   const OrderStatusSection({super.key, required this.status});
 
   @override
+//   Widget build(BuildContext context) {
+//     final OrderHistoryController controller =
+//         Get.put(OrderHistoryController());
+//
+//     return Obx(() {
+//       if (controller.isLoading.value) {
+//         return const Center(child: CircularProgressIndicator());
+//       }
+//
+//       if (controller.errorMessage.isNotEmpty) {
+//         return Center(
+//             child: Text(controller.errorMessage.value,
+//                 style: const TextStyle(color: Colors.red)));
+//       }
+//
+// // Filter orders based on status
+//       final filteredOrders = status == 'All'
+//           ? controller.orders
+//           : controller.orders.where((order) {
+// // Map UI status to API status
+//               final apiStatus =
+//                   status == 'In Process' ? 'InProgress' : 'Delivered';
+//               return order.orderStatus == apiStatus;
+//             }).toList();
+//
+//       if (filteredOrders.isEmpty) {
+//         return const Center(child: Text('No orders found'));
+//       }
+//
+//       return ListView.builder(
+//         itemCount: filteredOrders.length,
+//         itemBuilder: (context, index) {
+//           final order = filteredOrders[index];
+// // Map API status to UI status for display
+//           final displayStatus =
+//               order.orderStatus == 'InProgress' ? 'In Process' : 'Completed';
+//           return OrderHistoryCard(
+//             orderId: order.id ?? 'N/A',
+//             orderDate: order.createdAt?.toString() ?? 'Unknown',
+//             fuelQuantity: '${order.amount ?? 0} Litres',
+//             fuelType: order.fuelType ?? 'Unknown',
+//             price: (order.finalAmountOfPayment ?? 0.0).toStringAsFixed(2),
+//             status: displayStatus,
+//             buttonText1: _getButtonText1(order.orderStatus ?? ''),
+//             buttonText2: _getButtonText2(order.orderStatus ?? ''),
+//             onButton1Pressed: () {
+//               _navigateButton1(order.orderStatus ?? '');
+//             },
+//             onButton2Pressed: () {
+//               Get.to(() => const OrderDetailsView());
+//             },
+//           );
+//         },
+//       );
+//     });
+//   }
+
   Widget build(BuildContext context) {
-    final OrderHistoryController controller =
-        Get.put(OrderHistoryController());
+    final OrderHistoryController controller = Get.put(OrderHistoryController());
 
     return Obx(() {
       if (controller.isLoading.value) {
@@ -73,15 +128,14 @@ class OrderStatusSection extends StatelessWidget {
                 style: const TextStyle(color: Colors.red)));
       }
 
-// Filter orders based on status
+      // Filter orders based on status with null safety
       final filteredOrders = status == 'All'
           ? controller.orders
           : controller.orders.where((order) {
-// Map UI status to API status
-              final apiStatus =
-                  status == 'In Process' ? 'InProgress' : 'Delivered';
-              return order.orderStatus == apiStatus;
-            }).toList();
+        final apiStatus = status == 'In Process' ? 'InProgress' : 'Delivered';
+        debugPrint('Order status type: ${order.orderStatus.runtimeType}, value: ${order.orderStatus}');
+        return (order.orderStatus ?? 'Unknown') == apiStatus;
+      }).toList();
 
       if (filteredOrders.isEmpty) {
         return const Center(child: Text('No orders found'));
@@ -91,13 +145,12 @@ class OrderStatusSection extends StatelessWidget {
         itemCount: filteredOrders.length,
         itemBuilder: (context, index) {
           final order = filteredOrders[index];
-// Map API status to UI status for display
-          final displayStatus =
-              order.orderStatus == 'InProgress' ? 'In Process' : 'Completed';
+          debugPrint('Rendering order status: ${order.orderStatus}');
+          final displayStatus = order.orderStatus == 'InProgress' ? 'In Process' : 'Completed';
           return OrderHistoryCard(
             orderId: order.id ?? 'N/A',
             orderDate: order.createdAt?.toString() ?? 'Unknown',
-            fuelQuantity: '${order.amount ?? 0} Litres',
+            fuelQuantity: '${order.amount ?? 0} gallons',
             fuelType: order.fuelType ?? 'Unknown',
             price: (order.finalAmountOfPayment ?? 0.0).toStringAsFixed(2),
             status: displayStatus,
@@ -107,7 +160,7 @@ class OrderStatusSection extends StatelessWidget {
               _navigateButton1(order.orderStatus ?? '');
             },
             onButton2Pressed: () {
-              Get.to(() => const OrderDetailsView());
+              controller.getSingleOrder(order.id ?? 'N/A');
             },
           );
         },
