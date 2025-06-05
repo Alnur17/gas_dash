@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gas_dash/app/modules/user/emergency_fuel/views/schedule_delivery_view.dart';
-import 'package:gas_dash/app/modules/user/jump_start_car_battery/views/final_confirmation_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
-import 'package:gas_dash/common/helper/local_store.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/widgets/custom_textfield.dart';
 
@@ -17,13 +14,13 @@ import '../controllers/order_fuel_controller.dart';
 
 class OrderFuelView extends GetView<OrderFuelController> {
   final String? fuelName;
-  final String? number;
+  //final String? number;
   final double? fuelPrice;
 
   OrderFuelView({
     super.key,
     this.fuelName,
-    this.number,
+    //this.number,
     this.fuelPrice,
   });
 
@@ -178,11 +175,12 @@ class OrderFuelView extends GetView<OrderFuelController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            number ?? '',
+                            //number ?? '',
+                            ('\$${fuelPrice ?? 0.0}').toString(),
                             style: h1.copyWith(color: AppColors.white),
                           ),
                           Text(
-                            '$fuelName Fuel',
+                            '$fuelName / gallons',
                             style: h2.copyWith(
                               fontSize: 20,
                               color: AppColors.white,

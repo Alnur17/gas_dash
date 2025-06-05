@@ -82,38 +82,44 @@ class HomeView extends GetView<HomeController> {
                   Row(
                     children: [
                       Obx(
-                        () => CircleAvatar(
-                          radius: 25,
-                          backgroundColor: AppColors.white,
-                          backgroundImage: NetworkImage(
-                            profileController.myProfileData.value?.image ??
-                                AppImages.profileImageTwo,
-                          ),
-                        ),
+                            () =>
+                            CircleAvatar(
+                              radius: 25,
+                              backgroundColor: AppColors.white,
+                              backgroundImage: NetworkImage(
+                                profileController.myProfileData.value?.image ??
+                                    AppImages.profileImageTwo,
+                              ),
+                            ),
                       ),
                       sw8,
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            profileController.myProfileData.value?.fullname ??
-                                'Unknown',
-                            style: h3.copyWith(
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          Text(
-                            'Customer',
-                            style: h6.copyWith(
-                              color: AppColors.blueTurquoise,
-                            ),
-                          ),
-                          Text(
-                            'Subscription Type: Unsubscribed',
-                            style: h6,
-                          ),
-                        ],
-                      )
+                      Obx(
+                            () {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                profileController
+                                    .myProfileData.value?.fullname ??
+                                    'Unknown',
+                                style: h3.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              Text(
+                                'Customer',
+                                style: h6.copyWith(
+                                  color: AppColors.blueTurquoise,
+                                ),
+                              ),
+                              Text(
+                                'Subscription Type: Unsubscribed',
+                                style: h6,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
                     ],
                   ),
                   sh12,
@@ -188,12 +194,14 @@ class HomeView extends GetView<HomeController> {
                             const Spacer(),
                             CustomButton(
                               height: 40,
-                              width: 100,
+                              width: 110,
+                              padding: EdgeInsets.only(left: 10, right: 10),
                               text: (fuel.fuelPrice ?? 0.0).toStringAsFixed(2),
                               onPressed: () {},
                               borderRadius: 8,
+
                               backgroundColor:
-                                  _getFuelColor(fuel.fuelName ?? ''),
+                              _getFuelColor(fuel.fuelName ?? ''),
                             ),
                           ],
                         ),
@@ -240,7 +248,7 @@ class HomeView extends GetView<HomeController> {
                     height: 40,
                     text: 'Order Now',
                     onPressed: () {
-                      Get.to(()=> EmergencyFuelView());
+                      Get.to(() => EmergencyFuelView());
                     },
                     gradientColors: AppColors.gradientColor,
                     width: 150,
@@ -259,56 +267,80 @@ class HomeView extends GetView<HomeController> {
               ),
             ),
             sh12,
-            FuelCard(
-              title: 'UNLEADED',
-              number: '87',
-              buttonText: 'Order Now',
-              gradientColors: AppColors.gradientColorBlue,
-              onTap: () {
-                final price =
-                    homeController.fuelPricesPerGallon['Unleaded'] ?? 0.0;
-                print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
-                Get.to(() => OrderFuelView(
-                      fuelName: 'Unleaded',
-                      number: '87',
-                      fuelPrice: price,
-                    ));
-              },
-            ),
-            sh16,
-            FuelCard(
-              title: 'PREMIUM',
-              number: '91',
-              buttonText: 'Order Now',
-              gradientColors: AppColors.gradientColorGrey,
-              onTap: () {
-                final price =
-                    homeController.fuelPricesPerGallon['Premium'] ?? 0.0;
-                print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
-                Get.to(() => OrderFuelView(
-                      fuelName: 'Premium',
-                      number: '91',
-                      fuelPrice: price,
-                    ));
-              },
-            ),
-            sh16,
-            FuelCard(
-              title: 'DIESEL',
-              number: '71',
-              buttonText: 'Order Now',
-              gradientColors: AppColors.gradientColorGreen,
-              onTap: () {
-                final price =
-                    homeController.fuelPricesPerGallon['Diesel'] ?? 0.0;
-                print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
-                Get.to(() => OrderFuelView(
-                      fuelName: 'Diesel',
-                      number: '71',
-                      fuelPrice: price,
-                    ));
-              },
-            ),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: homeController.fuelInfo.value?.data.length,
+              itemBuilder: (context, index) {
+                final fuelData = homeController.fuelInfo.value?.data[index];
+                return Padding(
+                  padding: EdgeInsets.only(bottom: index == homeController.fuelInfo.value!.data.length - 1 ? 0 : 16),
+                  child: FuelCard(
+                    title: fuelData?.fuelName ?? 'Unknown',
+                    buttonText: 'Order\nNow',
+                    gradientColors: AppColors.gradientColorBlue,
+                    onTap: () {
+                      Get.to(() =>
+                          OrderFuelView(
+                            fuelName: fuelData?.fuelName,
+                            fuelPrice: fuelData?.fuelPrice,
+                          ));
+                    },
+                  ),
+                );
+              },),
+            // FuelCard(
+            //   title: 'UNLEADED',
+            //   buttonText: 'Order\nNow',
+            //   gradientColors: AppColors.gradientColorBlue,
+            //   onTap: () {
+            //     final price =
+            //         homeController.fuelPricesPerGallon['Unleaded'] ?? 0.0;
+            //     print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
+            //     Get.to(() =>
+            //         OrderFuelView(
+            //           fuelName: 'Unleaded',
+            //           //number: '87',
+            //           fuelPrice: price,
+            //         ));
+            //   },
+            // ),
+            // sh16,
+            // FuelCard(
+            //   title: 'PREMIUM',
+            //   //number: '91',
+            //   buttonText: 'Order\nNow',
+            //   gradientColors: AppColors.gradientColorGrey,
+            //   onTap: () {
+            //     final price =
+            //         homeController.fuelPricesPerGallon['Premium'] ?? 0.0;
+            //     print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
+            //     Get.to(() =>
+            //         OrderFuelView(
+            //           fuelName: 'Premium',
+            //           // number: '91',
+            //           fuelPrice: price,
+            //         ));
+            //   },
+            // ),
+            // sh16,
+            // FuelCard(
+            //   title: 'DIESEL',
+            //   //number: '71',
+            //   buttonText: 'Order\nNow',
+            //   gradientColors: AppColors.gradientColorGreen,
+            //   onTap: () {
+            //     final price =
+            //         homeController.fuelPricesPerGallon['Diesel'] ?? 0.0;
+            //     print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
+            //     Get.to(() =>
+            //         OrderFuelView(
+            //           fuelName: 'Diesel',
+            //           // number: '71',
+            //           fuelPrice: price,
+            //         ));
+            //   },
+            // ),
             sh16,
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -344,7 +376,7 @@ class HomeView extends GetView<HomeController> {
                   return Padding(
                     padding: EdgeInsets.only(
                       bottom:
-                          index == homeController.services.length - 1 ? 0 : 8,
+                      index == homeController.services.length - 1 ? 0 : 8,
                     ),
                     child: ServiceCard(
                       title: service.serviceName ?? 'Unnamed Service',
@@ -352,11 +384,12 @@ class HomeView extends GetView<HomeController> {
                       buttonText: 'Order Now',
                       onServiceTap: () {
                         Get.to(
-                          () => JumpStartCarBatteryView(
-                            title: service.serviceName ?? 'Unnamed Service',
-                            price:
-                                service.price?.toStringAsFixed(2) ?? 'N/A',
-                          ),
+                              () =>
+                              JumpStartCarBatteryView(
+                                title: service.serviceName ?? 'Unnamed Service',
+                                price: service.price?.toStringAsFixed(2) ??
+                                    'N/A',
+                              ),
                         );
                       },
                     ),
@@ -413,7 +446,7 @@ class HomeView extends GetView<HomeController> {
                           height: 40,
                           text: 'Join Now',
                           onPressed: () {
-                            Get.to(()=> SubscriptionView());
+                            Get.to(() => SubscriptionView());
                           },
                           gradientColors: AppColors.gradientColor,
                           width: 150,
@@ -450,7 +483,7 @@ class HomeView extends GetView<HomeController> {
       case 'diesel':
         return Image.asset(AppImages.diesel, scale: 4);
       default:
-        return const SizedBox.shrink();
+        return Image.asset(AppImages.premium, scale: 4);
     }
   }
 

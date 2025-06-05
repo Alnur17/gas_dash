@@ -54,7 +54,7 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
           sh16,
           FuelCard(
             title: 'UNLEADED',
-            number: '87',
+           // number: '87',
             buttonText: 'Order Now',
             gradientColors: AppColors.gradientColorBlue,
             onTap: () {
@@ -63,7 +63,7 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
               print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
               Get.to(() => OrderFuelView(
                 fuelName: 'Unleaded',
-                number: '87',
+               // number: '87',
                 fuelPrice: price,
               ));
             },
@@ -71,7 +71,7 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
           sh16,
           FuelCard(
             title: 'PREMIUM',
-            number: '91',
+            //number: '91',
             buttonText: 'Order Now',
             gradientColors: AppColors.gradientColorGrey,
             onTap: () {
@@ -80,7 +80,7 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
               print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
               Get.to(() => OrderFuelView(
                 fuelName: 'Premium',
-                number: '91',
+                //number: '91',
                 fuelPrice: price,
               ));
             },
@@ -88,7 +88,7 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
           sh16,
           FuelCard(
             title: 'DIESEL',
-            number: '71',
+            //number: '71',
             buttonText: 'Order Now',
             gradientColors: AppColors.gradientColorGreen,
             onTap: () {
@@ -97,7 +97,7 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
               print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
               Get.to(() => OrderFuelView(
                 fuelName: 'Diesel',
-                number: '71',
+                //number: '71',
                 fuelPrice: price,
               ));
             },
