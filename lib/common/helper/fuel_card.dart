@@ -6,7 +6,7 @@ import '../app_text_style/styles.dart';
 
 class FuelCard extends StatelessWidget {
   final String title;
-  final String? number;
+  //final String? number;
   final String buttonText;
   final double height;
   final double width;
@@ -18,7 +18,7 @@ class FuelCard extends StatelessWidget {
     super.key,
     required this.title,
     //required this.number,
-    this.number,
+    //this.number,
     required this.buttonText,
     this.height = 65,
     this.width = double.infinity,

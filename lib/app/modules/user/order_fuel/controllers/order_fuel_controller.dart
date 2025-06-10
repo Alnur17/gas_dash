@@ -45,6 +45,7 @@ class OrderFuelController extends GetxController {
   var selectedVehicle = Rxn<Datum>();
   var presetEnabled = false.obs;
   var customEnabled = false.obs;
+  var customAmountText = ''.obs;
   var selectedPresetAmount = '5 gallons'.obs;
 
   final presetAmounts = [
@@ -72,6 +73,9 @@ class OrderFuelController extends GetxController {
     });
     selectedYear.listen((value) {
       yearController.text = value ?? '';
+    });
+    customAmountController.addListener(() {
+      customAmountText.value = customAmountController.text;
     });
   }
 

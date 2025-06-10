@@ -55,7 +55,7 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
           FuelCard(
             title: 'UNLEADED',
            // number: '87',
-            buttonText: 'Order Now',
+            buttonText: 'Order\nNow',
             gradientColors: AppColors.gradientColorBlue,
             onTap: () {
               final price =
@@ -72,7 +72,7 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
           FuelCard(
             title: 'PREMIUM',
             //number: '91',
-            buttonText: 'Order Now',
+            buttonText: 'Order\nNow',
             gradientColors: AppColors.gradientColorGrey,
             onTap: () {
               final price =
@@ -89,7 +89,7 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
           FuelCard(
             title: 'DIESEL',
             //number: '71',
-            buttonText: 'Order Now',
+            buttonText: 'Order\nNow',
             gradientColors: AppColors.gradientColorGreen,
             onTap: () {
               final price =

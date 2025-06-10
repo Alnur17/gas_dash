@@ -398,7 +398,7 @@ class AmountToggleSection extends StatelessWidget {
         style: inputTextStyle,
         keyboardType: TextInputType.number,
         onChanged: (value) {
-          controller.update(); // Trigger UI update
+          controller.customAmountText.value = value; // Trigger UI update
         },
       );
     }

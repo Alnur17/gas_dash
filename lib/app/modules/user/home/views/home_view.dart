@@ -270,11 +270,11 @@ class HomeView extends GetView<HomeController> {
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              itemCount: homeController.fuelInfo.value?.data.length,
+              itemCount: homeController.fuelInfo.value?.data.length ?? 0,
               itemBuilder: (context, index) {
                 final fuelData = homeController.fuelInfo.value?.data[index];
                 return Padding(
-                  padding: EdgeInsets.only(bottom: index == homeController.fuelInfo.value!.data.length - 1 ? 0 : 16),
+                  padding: EdgeInsets.only(bottom: index == (homeController.fuelInfo.value?.data.length ?? 1) - 1 ? 0 : 16),
                   child: FuelCard(
                     title: fuelData?.fuelName ?? 'Unknown',
                     buttonText: 'Order\nNow',
