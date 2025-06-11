@@ -57,7 +57,7 @@ class OrderHistoryController extends GetxController {
     }
   }
 
-  Future<void> getSingleOrder(String orderId) async {
+  Future<void> getSingleOrder(String orderId,amount) async {
     try {
       isLoading.value = true;
       errorMessage('');
@@ -93,7 +93,7 @@ class OrderHistoryController extends GetxController {
         final singleOrderData = SingleOrderByIdModel.fromJson(jsonResponse);
         if (singleOrderData.success == true && singleOrderData.data != null) {
           singleOrder.value = singleOrderData;
-          Get.to(() => const OrderDetailsView());
+          Get.to(() =>  OrderDetailsView(amount));
         } else {
           kSnackBar(
             message: singleOrderData.message ?? 'Failed to fetch order details',

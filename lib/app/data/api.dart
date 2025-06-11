@@ -55,6 +55,9 @@ class Api {
 
   static const String notifications = "$baseUrl/notification/my-notification";
 
+  /// Term and conditions
+  static const String conditions = "$baseUrl/settings/";
+
   ///Reviews
 
   static  String createReview(String driverId) => "$baseUrl/reviews/create";

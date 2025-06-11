@@ -82,25 +82,24 @@ class HomeView extends GetView<HomeController> {
                   Row(
                     children: [
                       Obx(
-                            () =>
-                            CircleAvatar(
-                              radius: 25,
-                              backgroundColor: AppColors.white,
-                              backgroundImage: NetworkImage(
-                                profileController.myProfileData.value?.image ??
-                                    AppImages.profileImageTwo,
-                              ),
-                            ),
+                        () => CircleAvatar(
+                          radius: 25,
+                          backgroundColor: AppColors.white,
+                          backgroundImage: NetworkImage(
+                            profileController.myProfileData.value?.image ??
+                                AppImages.profileImageTwo,
+                          ),
+                        ),
                       ),
                       sw8,
                       Obx(
-                            () {
+                        () {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 profileController
-                                    .myProfileData.value?.fullname ??
+                                        .myProfileData.value?.fullname ??
                                     'Unknown',
                                 style: h3.copyWith(
                                   fontWeight: FontWeight.w700,
@@ -199,9 +198,8 @@ class HomeView extends GetView<HomeController> {
                               text: (fuel.fuelPrice ?? 0.0).toStringAsFixed(2),
                               onPressed: () {},
                               borderRadius: 8,
-
                               backgroundColor:
-                              _getFuelColor(fuel.fuelName ?? ''),
+                                  _getFuelColor(fuel.fuelName ?? ''),
                             ),
                           ],
                         ),
@@ -267,28 +265,36 @@ class HomeView extends GetView<HomeController> {
               ),
             ),
             sh12,
-            ListView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: homeController.fuelInfo.value?.data.length ?? 0,
-              itemBuilder: (context, index) {
-                final fuelData = homeController.fuelInfo.value?.data[index];
-                return Padding(
-                  padding: EdgeInsets.only(bottom: index == (homeController.fuelInfo.value?.data.length ?? 1) - 1 ? 0 : 16),
-                  child: FuelCard(
-                    title: fuelData?.fuelName ?? 'Unknown',
-                    buttonText: 'Order\nNow',
-                    gradientColors: AppColors.gradientColorBlue,
-                    onTap: () {
-                      Get.to(() =>
-                          OrderFuelView(
-                            fuelName: fuelData?.fuelName,
-                            fuelPrice: fuelData?.fuelPrice,
-                          ));
-                    },
-                  ),
-                );
-              },),
+            Obx(
+              () => ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: homeController.fuelInfo.value?.data.length ?? 0,
+                itemBuilder: (context, index) {
+                  final fuelData = homeController.fuelInfo.value?.data[index];
+                  return Padding(
+                    padding: EdgeInsets.only(
+                        bottom: index ==
+                                (homeController.fuelInfo.value?.data.length ??
+                                        1) -
+                                    1
+                            ? 0
+                            : 16),
+                    child: FuelCard(
+                      title: fuelData?.fuelName ?? 'Unknown',
+                      buttonText: 'Order\nNow',
+                      gradientColors: AppColors.gradientColorBlue,
+                      onTap: () {
+                        Get.to(() => OrderFuelView(
+                              fuelName: fuelData?.fuelName,
+                              fuelPrice: fuelData?.fuelPrice,
+                            ));
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
             // FuelCard(
             //   title: 'UNLEADED',
             //   buttonText: 'Order\nNow',
@@ -376,7 +382,7 @@ class HomeView extends GetView<HomeController> {
                   return Padding(
                     padding: EdgeInsets.only(
                       bottom:
-                      index == homeController.services.length - 1 ? 0 : 8,
+                          index == homeController.services.length - 1 ? 0 : 8,
                     ),
                     child: ServiceCard(
                       title: service.serviceName ?? 'Unnamed Service',
@@ -384,12 +390,10 @@ class HomeView extends GetView<HomeController> {
                       buttonText: 'Order Now',
                       onServiceTap: () {
                         Get.to(
-                              () =>
-                              JumpStartCarBatteryView(
-                                title: service.serviceName ?? 'Unnamed Service',
-                                price: service.price?.toStringAsFixed(2) ??
-                                    'N/A',
-                              ),
+                          () => JumpStartCarBatteryView(
+                            title: service.serviceName ?? 'Unnamed Service',
+                            price: service.price?.toStringAsFixed(2) ?? 'N/A',
+                          ),
                         );
                       },
                     ),

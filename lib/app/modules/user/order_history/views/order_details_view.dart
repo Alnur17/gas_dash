@@ -7,7 +7,8 @@ import '../../../../../common/size_box/custom_sizebox.dart';
 import '../controllers/order_history_controller.dart';
 
 class OrderDetailsView extends GetView<OrderHistoryController> {
-  const OrderDetailsView({super.key});
+  final String? amount;
+  const OrderDetailsView(this.amount, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -125,10 +126,8 @@ class OrderDetailsView extends GetView<OrderHistoryController> {
                 ),
                 sh5,
                 Text(
-                  orderData.presetAmount == true
-                      ? 'Preset Amount'
-                      : orderData.customAmount == true
-                      ? 'Custom Amount'
+                  (orderData.presetAmount == true || orderData.customAmount == true)
+                      ? '${amount ?? '0.00'} gallons'
                       : 'Unknown',
                   style: h6,
                 ),

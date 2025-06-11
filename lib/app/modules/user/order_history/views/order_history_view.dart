@@ -16,7 +16,7 @@ class _OrderHistoryViewState extends State<OrderHistoryView> {
   @override
   void initState() {
     super.initState();
-    Get.put(OrderHistoryController()); // Initialize the controller
+    Get.put(OrderHistoryController());
   }
 
   @override
@@ -130,12 +130,15 @@ class OrderStatusSection extends StatelessWidget {
 
       // Filter orders based on status with null safety
       final filteredOrders = status == 'All'
-          ? controller.orders
+          ? controller.orders.where((order) {
+        final s = order.orderStatus ?? '';
+        return s == 'InProgress' || s == 'Delivered';
+      }).toList()
           : controller.orders.where((order) {
         final apiStatus = status == 'In Process' ? 'InProgress' : 'Delivered';
-        debugPrint('Order status type: ${order.orderStatus.runtimeType}, value: ${order.orderStatus}');
-        return (order.orderStatus ?? 'Unknown') == apiStatus;
+        return (order.orderStatus ?? '') == apiStatus;
       }).toList();
+
 
       if (filteredOrders.isEmpty) {
         return const Center(child: Text('No orders found'));
@@ -160,7 +163,7 @@ class OrderStatusSection extends StatelessWidget {
               _navigateButton1(order.orderStatus ?? '');
             },
             onButton2Pressed: () {
-              controller.getSingleOrder(order.id ?? 'N/A');
+              controller.getSingleOrder(order.id ?? 'N/A',order.amount.toString());
             },
           );
         },
