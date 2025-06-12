@@ -67,40 +67,40 @@ class Data {
   final int? v;
 
   factory Data.fromJson(Map<String, dynamic> json) {
+    // Helper function to parse double values
+    double? _parseDouble(dynamic value) {
+      if (value == null) return null;
+      if (value is num) return value.toDouble(); // Handles int and double
+      if (value is String) return double.tryParse(value);
+      return null;
+    }
+
     return Data(
       location: json["location"] == null ? null : Location.fromJson(json["location"]),
-      id: json["_id"],
-      vehicleId: json["vehicleId"],
+      id: json["_id"] as String?,
+      vehicleId: json["vehicleId"] as String?,
       userId: json["userId"] == null ? null : UserId.fromJson(json["userId"]),
-      amount: (json["amount"] is double)
-          ? (json["amount"] as double?)?.toInt()
-          : json["amount"] as int?,
-      deliveryFee: json["deliveryFee"] is String
-          ? double.tryParse(json["deliveryFee"])
-          : (json["deliveryFee"] as num?)?.toDouble(),
-      price: json["price"] is String
-          ? double.tryParse(json["price"])
-          : (json["price"] as num?)?.toDouble(),
-      presetAmount: json["presetAmount"],
-      customAmount: json["customAmount"],
-      tip: (json["tip"] is double)
-          ? (json["tip"] as double?)?.toInt()
-          : json["tip"] as int?,
-      orderType: json["orderType"],
-      orderStatus: json["orderStatus"],
-      cancelReason: json["cancelReason"],
-      fuelType: json["fuelType"],
-      isPaid: json["isPaid"],
-      finalAmountOfPayment: json["finalAmountOfPayment"] is String
-          ? double.tryParse(json["finalAmountOfPayment"])
-          : (json["finalAmountOfPayment"] as num?)?.toDouble(),
-      zipCode: json["zipCode"],
-      servicesFee: (json["servicesFee"] is int)
-          ? (json["servicesFee"] as double?)?.toDouble()
-          : json["servicesFee"] as double?,
+      amount: (json["amount"] is num)
+          ? (json["amount"] as num).toInt()
+          : (json["amount"] is String ? int.tryParse(json["amount"]) : null),
+      deliveryFee: _parseDouble(json["deliveryFee"]),
+      price: _parseDouble(json["price"]),
+      presetAmount: json["presetAmount"] as bool?,
+      customAmount: json["customAmount"] as bool?,
+      tip: (json["tip"] is num)
+          ? (json["tip"] as num).toInt()
+          : (json["tip"] is String ? int.tryParse(json["tip"]) : null),
+      orderType: json["orderType"] as String?,
+      orderStatus: json["orderStatus"] as String?,
+      cancelReason: json["cancelReason"] as String?,
+      fuelType: json["fuelType"] as String?,
+      isPaid: json["isPaid"] as bool?,
+      finalAmountOfPayment: _parseDouble(json["finalAmountOfPayment"]),
+      zipCode: json["zipCode"] as String?,
+      servicesFee: _parseDouble(json["servicesFee"]),
       createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
       updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
-      v: json["__v"],
+      v: json["__v"] as int?,
     );
   }
 }

@@ -173,8 +173,8 @@ class OrderFuelController extends GetxController {
       final Map<String, dynamic> orderData = {
         'location': {
           'coordinates': [
-            longitude.value ?? 90.4125, // Use stored longitude or fallback
-            latitude.value ?? 23.8103, // Use stored latitude or fallback
+            latitude.value ?? 23.8103,
+            longitude.value ?? 90.4125,
           ],
         },
         'vehicleId': vehicleId,
@@ -240,8 +240,8 @@ class OrderFuelController extends GetxController {
       final Map<String, dynamic> orderData = {
         'location': {
           'coordinates': [
-            longitude.value ?? 90.4125,
-           latitude.value ?? 23.8103,
+            latitude.value ?? 23.8103,
+           longitude.value ?? 90.4125,
           ],
         },
         'vehicleId': vehicleId,
