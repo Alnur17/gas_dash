@@ -50,9 +50,9 @@ class Api {
   ///Driver Earning
   static String singleDriverEarning(String id) => "$baseUrl/driverearnings/driver-erning/$id"; //done
 
-  static String paymentDetails(String id) => "$baseUrl/payments/$id"; //
+  //static String paymentDetails(String id) => "$baseUrl/payments/$id"; //
 
-  static const String createSubscription = "$baseUrl/subscriptions"; //
+  static const String withdrawRequest = "$baseUrl/withdrawal/create-withdraw"; //
 
   static const String notifications = "$baseUrl/notification/my-notification";
 

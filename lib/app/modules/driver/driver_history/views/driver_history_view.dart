@@ -22,7 +22,10 @@ class _DriverHistoryViewState extends State<DriverHistoryView> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Order History',style: titleStyle,),
+          title: Text(
+            'Order History',
+            style: titleStyle,
+          ),
           centerTitle: true,
           bottom: TabBar(
             tabs: [
@@ -59,27 +62,27 @@ class OrderStatusSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        OrderHistoryCard(
-          orderId: '5758',
-          orderDate: '10 Dec 2025 at 10:39 AM',
-          fuelQuantity: '15 Litres',
-          fuelType: 'Premium Fuel',
-          price: '65',
-          status: status,
-          buttonText1: _getButtonText1(status),
-          buttonText2: _getButtonText2(status),
-          onButton1Pressed: () {
-            Get.to(()=> DriverStartDeliveryView());
-          },
-          onButton2Pressed: () {
-            Get.to(()=> DriverOrderDetailsView());
-          },
-        ),
-      ],
+    return ListView.builder(
+      itemCount: 5,
+      itemBuilder: (context, index) => OrderHistoryCard(
+        orderId: '5758',
+        orderDate: '10 Dec 2025 at 10:39 AM',
+        fuelQuantity: '15 Litres',
+        fuelType: 'Premium Fuel',
+        price: '65',
+        status: status,
+        buttonText1: _getButtonText1(status),
+        buttonText2: _getButtonText2(status),
+        onButton1Pressed: () {
+          Get.to(() => DriverStartDeliveryView());
+        },
+        onButton2Pressed: () {
+          Get.to(() => DriverOrderDetailsView());
+        },
+      ),
     );
   }
+
   String? _getButtonText1(String status) {
     switch (status) {
       case 'Active':
