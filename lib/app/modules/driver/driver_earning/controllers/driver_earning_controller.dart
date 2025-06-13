@@ -12,6 +12,7 @@ import '../../../../data/base_client.dart';
 class DriverEarningController extends GetxController {
   // Observable variables for reactive UI
   var todayEarnings = 0.0.obs;
+  var totalEarnings = 0.0.obs;
   var isLoading = false.obs;
   var errorMessage = ''.obs;
 
@@ -48,6 +49,7 @@ class DriverEarningController extends GetxController {
 
       if (earningModel.success == true && earningModel.data != null) {
         todayEarnings(earningModel.data!.todayEarnings ?? 0.0);
+        totalEarnings(earningModel.data!.totalEarnings ?? 0.0);
       } else {
         errorMessage(earningModel.message ?? 'Failed to load earnings');
         kSnackBar(message: errorMessage.value, bgColor: AppColors.orange);

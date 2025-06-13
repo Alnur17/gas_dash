@@ -44,9 +44,10 @@ class DriverEarningView extends GetView<DriverEarningController> {
                 Expanded(
                   child: EarningsCard(
                     gradientColor: AppColors.gradientColorBlue,
-                    title: 'Earnings',
-                    amount: '165.00',
-                    dropDown: 'Last Month',
+                    title: 'Total Earnings',
+                    amount: controller.totalEarnings.value
+                        .toStringAsFixed(2),
+                    //dropDown: 'Last Month',
                   ),
                 ),
                 sw8,

@@ -58,7 +58,7 @@ class ActiveOrder extends StatelessWidget {
                   children: [
                     Text('Fuel Amount',
                         style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text('$fuelAmount Litres'),
+                    Text('$fuelAmount Gallons'),
                   ],
                 ),
                 Column(
@@ -77,7 +77,7 @@ class ActiveOrder extends StatelessWidget {
                 Expanded(
                   child: CustomButton(
                     height: 40,
-                    text: 'Accept',
+                    text: 'Start Order',
                     onPressed: onAcceptPressed,
                     borderColor: AppColors.primaryColor,
                     textColor: AppColors.primaryColor,

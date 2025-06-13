@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
+import '../../driver_earning/controllers/driver_earning_controller.dart';
 import '../controllers/driver_home_controller.dart';
 
 class DriverHomeView extends GetView<DriverHomeController> {
@@ -17,6 +18,7 @@ class DriverHomeView extends GetView<DriverHomeController> {
   @override
   Widget build(BuildContext context) {
     final DriverHomeController controller = Get.put(DriverHomeController());
+    final DriverEarningController driverEarningController = Get.put(DriverEarningController());
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -60,88 +62,95 @@ class DriverHomeView extends GetView<DriverHomeController> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Obx(() => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            sh20,
-            Text(
-              'Earning Overview',
-              style: h3,
-            ),
-            sh12,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                sh20,
+                Text(
+                  'Earning Overview',
+                  style: h3,
+                ),
+                sh12,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: EarningsCard(
+                        gradientColor: AppColors.gradientColorBlue,
+                        title: 'Total Earnings',
+                        amount: driverEarningController.totalEarnings.value
+                            .toStringAsFixed(2),
+                        //dropDown: 'Last Month',
+                      ),
+                    ),
+                    sw8,
+                    EarningsCard(
+                      backgroundColor: AppColors.primaryColor,
+                      title: 'Today',
+                      amount: driverEarningController.todayEarnings.value
+                          .toStringAsFixed(2),
+                    ),
+                  ],
+                ),
+                sh20,
+                Text(
+                  'Recent Request',
+                  style: h3,
+                ),
+                sh12,
+                controller.isLoading.value
+                    ? Center(child: CircularProgressIndicator())
+                    : Expanded(
+                        child: controller.assignedOrders.isEmpty
+                            ? Center(
+                                child: Text('No orders available', style: h5))
+                            : ListView.builder(
+                                itemCount: controller.assignedOrders.length,
+                                itemBuilder: (context, index) {
+                                  final order =
+                                      controller.assignedOrders[index];
+                                  // final locationString = order.location?.coordinates != null
+                                  //     ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
+                                  //     : 'Unknown Location';
+                                  return FuelAndServiceCard(
+                                    fuelAmount:
+                                        '${order.finalAmountOfPayment?.toStringAsFixed(2) ?? '0.00'} gallons',
+                                    fuelType: order.orderType ?? 'Unknown',
+                                    location: order.zipCode ?? 'Unknown',
+                                    onAcceptPressed: () =>
+                                        controller.acceptOrder(order.id ?? ''),
+                                    onViewDetailsPressed: () => controller
+                                        .viewOrderDetails(order.id ?? ''),
+                                    // onAcceptPressed: () => controller.acceptOrder(order.id ?? ''),
+                                    // onViewDetailsPressed: () => controller.viewOrderDetails(order.id ?? ''),
+                                    fuelIconPath: AppImages.fuelFiller,
+                                    locationIconPath: AppImages.locationRed,
+                                  );
+                                },
+                              ),
+                      ),
+                sh20,
+                CustomRowHeader(
+                  title: 'Active Order',
+                  onTap: () {},
+                ),
+                sh8,
                 Expanded(
-                  child: EarningsCard(
-                    gradientColor: AppColors.gradientColorBlue,
-                    title: 'Earnings',
-                    amount: '165.00',
-                    dropDown: 'Last Month',
+                  child: ListView.builder(
+                    itemCount: 4, // Replace with active orders API if available
+                    itemBuilder: (context, index) {
+                      return ActiveOrder(
+                        orderId: '5758',
+                        location: '1901 Thorn ridge Cir, Shiloh, Hawaii',
+                        fuelAmount: 15,
+                        fuelType: 'Premium Fuel',
+                        onAcceptPressed: () {},
+                        onViewDetailsPressed: () {},
+                      );
+                    },
                   ),
                 ),
-                sw8,
-                EarningsCard(
-                  backgroundColor: AppColors.primaryColor,
-                  title: 'Today',
-                  amount: '65.00',
-                ),
               ],
-            ),
-            sh20,
-            Text(
-              'Recent Request',
-              style: h3,
-            ),
-            sh12,
-            controller.isLoading.value
-                ? Center(child: CircularProgressIndicator())
-                : Expanded(
-              child: controller.assignedOrders.isEmpty
-                  ? Center(child: Text('No orders available', style: h5))
-                  : ListView.builder(
-                itemCount: controller.assignedOrders.length,
-                itemBuilder: (context, index) {
-                  final order = controller.assignedOrders[index];
-                  // final locationString = order.location?.coordinates != null
-                  //     ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
-                  //     : 'Unknown Location';
-                  return FuelAndServiceCard(
-                    fuelAmount: '${order.finalAmountOfPayment?.toStringAsFixed(2) ?? '0.00'} gallons',
-                    fuelType: order.orderType ?? 'Unknown',
-                    location: order.zipCode ?? 'Unknown',
-                    onAcceptPressed: (){},
-                    onViewDetailsPressed: () => controller.viewOrderDetails(order.id ?? ''),
-                    // onAcceptPressed: () => controller.acceptOrder(order.id ?? ''),
-                    // onViewDetailsPressed: () => controller.viewOrderDetails(order.id ?? ''),
-                    fuelIconPath: AppImages.fuelFiller,
-                    locationIconPath: AppImages.locationRed,
-                  );
-                },
-              ),
-            ),
-            sh20,
-            CustomRowHeader(
-              title: 'Active Order',
-              onTap: () {},
-            ),
-            sh8,
-            Expanded(
-              child: ListView.builder(
-                itemCount: 4, // Replace with active orders API if available
-                itemBuilder: (context, index) {
-                  return ActiveOrder(
-                    orderId: '5758',
-                    location: '1901 Thornridge Cir, Shiloh, Hawaii',
-                    fuelAmount: 15,
-                    fuelType: 'Premium Fuel',
-                    onAcceptPressed: () {},
-                    onViewDetailsPressed: () {},
-                  );
-                },
-              ),
-            ),
-          ],
-        )),
+            )),
       ),
     );
   }

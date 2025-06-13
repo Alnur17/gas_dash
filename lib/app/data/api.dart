@@ -47,7 +47,8 @@ class Api {
   /// payment
   static const String createPayment = "$baseUrl/payments/checkout"; //done
 
-  static String singleDriverEarning(String id) => "$baseUrl/driverearnings/summary/$id"; //done
+  ///Driver Earning
+  static String singleDriverEarning(String id) => "$baseUrl/driverearnings/driver-erning/$id"; //done
 
   static String paymentDetails(String id) => "$baseUrl/payments/$id"; //
 
@@ -57,6 +58,11 @@ class Api {
 
   /// Term and conditions
   static const String conditions = "$baseUrl/settings/";
+
+  ///Create Delivery/accept order
+  static const String acceptOrder = "$baseUrl/delivery/create-delivery/";
+
+
 
   ///Reviews
 

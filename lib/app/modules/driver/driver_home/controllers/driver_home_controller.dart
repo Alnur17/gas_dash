@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 
 import '../../../../../common/app_constant/app_constant.dart';
@@ -59,7 +61,7 @@ class DriverHomeController extends GetxController {
     }
   }
 
-  // Fetch single order by ID and navigate to details view
+  //Fetch single order by ID and navigate to details view
   Future<void> fetchSingleOrder(String orderId) async {
     try {
       isLoading.value = true;
@@ -99,13 +101,58 @@ class DriverHomeController extends GetxController {
     }
   }
 
-  // Placeholder for accept order action
-  void acceptOrder(String orderId) {
-    kSnackBar(
-      message: 'Accept order $orderId pressed',
-      bgColor: AppColors.primaryColor,
-    );
+  Future<void> acceptOrder(String orderId) async {
+    try {
+      isLoading.value = true;
+
+      final String token = LocalStorage.getData(key: AppConstant.accessToken);
+
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      };
+
+      final body = {
+        "orderId": orderId,
+      };
+
+      final response = await BaseClient.postRequest(
+        api: Api.acceptOrder,
+        body: jsonEncode(body),
+        headers: headers,
+      );
+
+      final result = await BaseClient.handleResponse(response);
+
+      if (result['success'] == true) {
+        kSnackBar(
+          message: result['message'] ?? 'Order accepted successfully',
+          bgColor: AppColors.primaryColor,
+        );
+        fetchAssignedOrders(); // Refresh orders after acceptance
+      } else {
+        kSnackBar(
+          message: result['message'] ?? 'Failed to accept order',
+          bgColor: AppColors.orange,
+        );
+      }
+    } catch (e) {
+      kSnackBar(
+        message: e.toString(),
+        bgColor: AppColors.orange,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
+
+  // // Placeholder for accept order action
+  // void acceptOrder(String orderId) {
+  //   kSnackBar(
+  //     message: 'Accept order $orderId pressed',
+  //     bgColor: AppColors.primaryColor,
+  //   );
+  // }
 
   // Placeholder for view details action
   void viewOrderDetails(String orderId) {
