@@ -9,7 +9,7 @@ import '../widgets/custom_button.dart';
 class ActiveOrder extends StatelessWidget {
   final String orderId;
   final String location;
-  final int fuelAmount;
+  final double fuelAmount;
   final String fuelType;
   final VoidCallback onAcceptPressed;
   final VoidCallback onViewDetailsPressed;

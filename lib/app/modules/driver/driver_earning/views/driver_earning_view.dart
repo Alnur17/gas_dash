@@ -6,6 +6,7 @@ import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
 import 'package:gas_dash/app/modules/driver/driver_earning/views/driver_withdraw_view.dart';
 import 'package:get/get.dart';
+import '../../driver_profile/controllers/driver_profile_controller.dart';
 import '../controllers/driver_earning_controller.dart';
 
 class DriverEarningView extends GetView<DriverEarningController> {
@@ -13,6 +14,7 @@ class DriverEarningView extends GetView<DriverEarningController> {
 
   @override
   Widget build(BuildContext context) {
+    final DriverProfileController driverProfileController = Get.put(DriverProfileController());
     final DriverEarningController controller = Get.put(DriverEarningController());
     return Scaffold(
       backgroundColor: AppColors.mainColor,
@@ -79,14 +81,14 @@ class DriverEarningView extends GetView<DriverEarningController> {
                   ),
                   sh5,
                   Text(
-                    '\$1000', // Update dynamically if needed
+                    driverProfileController.myBalance.toString(), // Update dynamically if needed
                     style: h1.copyWith(color: AppColors.white),
                   ),
                   sh24,
                   CustomButton(
                     text: 'Request Withdraw',
                     onPressed: () {
-                      Get.to(() => DriverWithdrawView());
+                      Get.to(() => DriverWithdrawView(driverProfileController.myBalance.toString()));
                     },
                     gradientColors: AppColors.gradientColor,
                     textStyle: h3.copyWith(

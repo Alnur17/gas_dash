@@ -23,6 +23,7 @@ class DriverProfileController extends GetxController {
   var driverProfileImage = Rxn<File>();
   var driverProfileName = ''.obs;
   var email = ''.obs;
+  var myBalance = RxnDouble();
   var selectedImage = Rxn<File>();
 
   @override
@@ -55,6 +56,7 @@ class DriverProfileController extends GetxController {
           driverProfileName.value =
               myProfileModel.data!.fullname ?? "User Name";
           email.value = myProfileModel.data!.email ?? "example@gmail.com";
+          myBalance.value = myProfileModel.data!.totalEarning;
         }
       } else {
         kSnackBar(

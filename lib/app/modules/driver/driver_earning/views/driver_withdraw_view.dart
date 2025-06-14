@@ -9,13 +9,13 @@ import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/helper/earnings_card.dart';
 
 class DriverWithdrawView extends GetView<DriverEarningController> {
-  const DriverWithdrawView({super.key});
+  final String myBalance;
+  const DriverWithdrawView(this.myBalance, {super.key});
 
   @override
   Widget build(BuildContext context) {
     // Initialize the controller
     Get.put(DriverEarningController());
-
     return Scaffold(
       backgroundColor: AppColors.mainColor,
       appBar: AppBar(
@@ -35,7 +35,7 @@ class DriverWithdrawView extends GetView<DriverEarningController> {
             EarningsCard(
               gradientColor: AppColors.gradientColorBlue,
               title: 'Total Balance',
-              amount: '1000', // This could be dynamic, e.g., from DriverEarningController
+              amount: myBalance, // This could be dynamic, e.g., from DriverEarningController
             ),
             sh12,
             Text(

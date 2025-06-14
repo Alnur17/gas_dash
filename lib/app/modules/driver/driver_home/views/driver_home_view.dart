@@ -3,12 +3,12 @@ import 'package:gas_dash/app/modules/driver/driver_home/views/notification_view.
 import 'package:gas_dash/common/helper/fuel_and_service_card.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/widgets/custom_row_header.dart';
-import 'package:gas_dash/common/helper/active_order.dart';
 import 'package:gas_dash/common/helper/earnings_card.dart';
 import 'package:get/get.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
+import '../../../../../common/helper/active_order.dart';
 import '../../driver_earning/controllers/driver_earning_controller.dart';
 import '../controllers/driver_home_controller.dart';
 
@@ -18,7 +18,8 @@ class DriverHomeView extends GetView<DriverHomeController> {
   @override
   Widget build(BuildContext context) {
     final DriverHomeController controller = Get.put(DriverHomeController());
-    final DriverEarningController driverEarningController = Get.put(DriverEarningController());
+    final DriverEarningController driverEarningController =
+        Get.put(DriverEarningController());
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -79,7 +80,6 @@ class DriverHomeView extends GetView<DriverHomeController> {
                         title: 'Total Earnings',
                         amount: driverEarningController.totalEarnings.value
                             .toStringAsFixed(2),
-                        //dropDown: 'Last Month',
                       ),
                     ),
                     sw8,
@@ -100,28 +100,25 @@ class DriverHomeView extends GetView<DriverHomeController> {
                 controller.isLoading.value
                     ? Center(child: CircularProgressIndicator())
                     : Expanded(
-                        child: controller.assignedOrders.isEmpty
+                        child: controller.pendingOrders.isEmpty
                             ? Center(
-                                child: Text('No orders available', style: h5))
+                                child: Text('No pending orders available',
+                                    style: h5))
                             : ListView.builder(
-                                itemCount: controller.assignedOrders.length,
+                                itemCount: controller.pendingOrders.length,
                                 itemBuilder: (context, index) {
-                                  final order =
-                                      controller.assignedOrders[index];
-                                  // final locationString = order.location?.coordinates != null
-                                  //     ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
-                                  //     : 'Unknown Location';
+                                  final order = controller.pendingOrders[index];
                                   return FuelAndServiceCard(
                                     fuelAmount:
-                                        '${order.finalAmountOfPayment?.toStringAsFixed(2) ?? '0.00'} gallons',
+                                        '${order.amount?.toStringAsFixed(2) ?? '0.00'} gallons',
                                     fuelType: order.orderType ?? 'Unknown',
-                                    location: order.zipCode ?? 'Unknown',
+                                    location:order.location?.coordinates != null
+                                        ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
+                                        : 'Unknown',
                                     onAcceptPressed: () =>
                                         controller.acceptOrder(order.id ?? ''),
                                     onViewDetailsPressed: () => controller
                                         .viewOrderDetails(order.id ?? ''),
-                                    // onAcceptPressed: () => controller.acceptOrder(order.id ?? ''),
-                                    // onViewDetailsPressed: () => controller.viewOrderDetails(order.id ?? ''),
                                     fuelIconPath: AppImages.fuelFiller,
                                     locationIconPath: AppImages.locationRed,
                                   );
@@ -135,19 +132,27 @@ class DriverHomeView extends GetView<DriverHomeController> {
                 ),
                 sh8,
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: 4, // Replace with active orders API if available
-                    itemBuilder: (context, index) {
-                      return ActiveOrder(
-                        orderId: '5758',
-                        location: '1901 Thorn ridge Cir, Shiloh, Hawaii',
-                        fuelAmount: 15,
-                        fuelType: 'Premium Fuel',
-                        onAcceptPressed: () {},
-                        onViewDetailsPressed: () {},
-                      );
-                    },
-                  ),
+                  child: controller.inProgressOrders.isEmpty
+                      ? Center(
+                          child: Text('No active orders available', style: h5))
+                      : ListView.builder(
+                          itemCount: controller.inProgressOrders.length,
+                          itemBuilder: (context, index) {
+                            final order = controller.inProgressOrders[index];
+                            return ActiveOrder(
+                              orderId: order.id ?? 'Unknown',
+                              location: order.location?.coordinates != null
+                                  ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
+                                  : 'Unknown',
+                              fuelAmount: order.amount ?? 0.0,
+                              fuelType: order.orderType ?? 'Unknown',
+                              onAcceptPressed: () =>
+                                  controller.acceptOrder(order.id ?? ''),
+                              onViewDetailsPressed: () =>
+                                  controller.viewOrderDetails(order.id ?? ''),
+                            );
+                          },
+                        ),
                 ),
               ],
             )),

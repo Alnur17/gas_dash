@@ -54,15 +54,13 @@ class Api {
 
   static const String withdrawRequest = "$baseUrl/withdrawal/create-withdraw"; //
 
-  static const String notifications = "$baseUrl/notification/my-notification";
+  static const String notifications = "$baseUrl/notifications";
 
   /// Term and conditions
   static const String conditions = "$baseUrl/settings/";
 
   ///Create Delivery/accept order
   static const String acceptOrder = "$baseUrl/delivery/create-delivery/";
-
-
 
   ///Reviews
 
