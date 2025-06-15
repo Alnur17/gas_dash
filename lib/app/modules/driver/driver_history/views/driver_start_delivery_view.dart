@@ -291,7 +291,7 @@ class _DriverStartDeliveryViewState extends State<DriverStartDeliveryView> {
                       height: 40,
                       text: 'Yes, I Need Fuel',
                       onPressed: () {
-                        Get.to(() => StationNearYouView());
+                        Get.to(() => StationNearYouView(deliveryId: widget.deliveryId, orderId: widget.orderId,));
                       },
                       gradientColors: AppColors.gradientColorGreen,
                       textStyle: h7.copyWith(
@@ -306,7 +306,7 @@ class _DriverStartDeliveryViewState extends State<DriverStartDeliveryView> {
                       height: 40,
                       text: 'No, I Don’t Need Fuel',
                       onPressed: () {
-                        Get.to(() => DriverLiveTrackView());
+                        Get.to(() => DriverLiveTrackView(deliveryId: widget.deliveryId, orderId: widget.orderId,));
                       },
                       backgroundColor: AppColors.silver,
                       borderColor: AppColors.primaryColor,

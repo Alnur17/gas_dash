@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../../../../../../common/app_text_style/styles.dart';
 import '../app_color/app_colors.dart';
+
 class UploadWidget extends StatelessWidget {
   final VoidCallback onTap;
-  final String imagePath;
+  final String? imagePath; // For assets
+  final File? fileImage; // For files
   final String label;
   final double height;
   final double width;
@@ -14,11 +18,12 @@ class UploadWidget extends StatelessWidget {
   const UploadWidget({
     super.key,
     required this.onTap,
-    required this.imagePath,
+    this.imagePath,
+    this.fileImage,
     required this.label,
     this.height = 140,
     this.width = double.infinity,
-    this.iconSize = 20,
+    this.iconSize = 50, // Increased default iconSize for better visibility
     this.labelStyle,
   });
 
@@ -40,18 +45,33 @@ class UploadWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(height: 8),
-            Container(
-              height: iconSize,
-              width: iconSize,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-              ),
-              child: Image.asset(
-                imagePath,
-                scale: 4,
+            if (fileImage != null)
+              Image.file(
+                fileImage!,
+                height: iconSize, // Use iconSize for consistency
+                width: iconSize,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  debugPrint('Error loading image: $error');
+                  return Icon(Icons.error, color: Colors.red); // Fallback for error
+                },
+              )
+            else if (imagePath != null)
+              Container(
+                height: iconSize,
+                width: iconSize,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                ),
+                child: Image.asset(
+                  imagePath!,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    debugPrint('Error loading asset: $error');
+                    return Icon(Icons.error, color: Colors.red); // Fallback for error
+                  },
+                ),
               ),
-            ),
             SizedBox(height: 10),
             Text(
               label,

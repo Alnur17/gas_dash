@@ -12,7 +12,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
 
 class DriverLiveTrackView extends StatefulWidget {
-  const DriverLiveTrackView({super.key});
+  final String deliveryId;
+  final String orderId;
+  const DriverLiveTrackView({super.key, required this.deliveryId, required this.orderId});
 
   @override
   State<DriverLiveTrackView> createState() => _DriverLiveTrackViewState();
@@ -105,7 +107,7 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
                 CustomButton(
                   text: 'Mark As Arrived',
                   onPressed: () {
-                    Get.to(()=> DriverCompletionChecklistView());
+                    Get.to(()=> DriverCompletionChecklistView(widget.deliveryId,widget.orderId));
                   },
                   gradientColors: AppColors.gradientColorGreen,
                 ),

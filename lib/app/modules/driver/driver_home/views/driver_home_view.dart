@@ -110,6 +110,8 @@ class DriverHomeView extends GetView<DriverHomeController> {
                                 itemBuilder: (context, index) {
                                   final order = controller.pendingOrders[index];
                                   return FuelAndServiceCard(
+                                    emergencyImage: AppImages.emergency,
+                                    emergency: order.emergency ?? false,
                                     fuelAmount:
                                         '${order.amount?.toStringAsFixed(2) ?? '0.00'} gallons',
                                     fuelType: order.orderType ?? 'Unknown',

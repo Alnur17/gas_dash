@@ -10,10 +10,11 @@ import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_button.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
-import 'driver_completion_checklist_view.dart';
 
 class StationNearYouView extends StatefulWidget {
-  const StationNearYouView({super.key});
+  final String deliveryId;
+  final String orderId;
+  const StationNearYouView({super.key, required this.deliveryId, required this.orderId});
 
   @override
   State<StationNearYouView> createState() => _StationNearYouViewState();
@@ -121,7 +122,7 @@ class _StationNearYouViewState extends State<StationNearYouView> {
                 CustomButton(
                   text: 'On the Way',
                   onPressed: () {
-                    Get.to(() => DriverLiveTrackView());
+                    Get.to(() => DriverLiveTrackView(deliveryId: widget.deliveryId,orderId: widget.orderId,));
                   },
                   gradientColors: AppColors.gradientColorGreen,
                 ),

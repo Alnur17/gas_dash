@@ -67,6 +67,13 @@ class Api {
   static const String subscriptionCreate = "$baseUrl/subscription/";
   static const String subscriptionPackage = "$baseUrl/packages/";
 
+  ///Questions
+  static const String questions = "$baseUrl/questions/";
+  static const String questionsCheckList = "$baseUrl/checklist/create-checklist";
+
+  static String updateDelivery(String deliveryId) => "$baseUrl/delivery/update/$deliveryId";
+
+
   ///Reviews
 
   static  String createReview(String driverId) => "$baseUrl/reviews/create";
