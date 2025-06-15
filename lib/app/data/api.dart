@@ -62,6 +62,11 @@ class Api {
   ///Create Delivery/accept order
   static const String acceptOrder = "$baseUrl/delivery/create-delivery/";
 
+  ///Subscriptions
+
+  static const String subscriptionCreate = "$baseUrl/subscription/";
+  static const String subscriptionPackage = "$baseUrl/packages/";
+
   ///Reviews
 
   static  String createReview(String driverId) => "$baseUrl/reviews/create";

@@ -1,5 +1,6 @@
 class AppConstant {
   static const accessToken = 'accessToken';
+  static const subscriptionId = 'subscriptionId';
   static const resetToken = 'resetToken';
   static const refreshToken = 'refreshToken';
   static const otpToken = 'otpToken';

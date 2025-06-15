@@ -77,9 +77,10 @@ class ActiveOrder extends StatelessWidget {
                 Expanded(
                   child: CustomButton(
                     height: 40,
-                    text: 'Start Order',
+                    text: 'Start Delivery',
                     onPressed: onAcceptPressed,
                     borderColor: AppColors.primaryColor,
+                    textStyle: h6.copyWith(color: AppColors.primaryColor,),
                     textColor: AppColors.primaryColor,
                   ),
                 ),
@@ -89,6 +90,7 @@ class ActiveOrder extends StatelessWidget {
                     height: 40,
                     text: 'View Details',
                     onPressed: onViewDetailsPressed,
+                    textStyle: h6.copyWith(color: AppColors.white,),
                     gradientColors: AppColors.gradientColorGreen,
                   ),
                 ),

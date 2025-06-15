@@ -10,6 +10,7 @@ import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 import '../../../../../common/helper/active_order.dart';
 import '../../driver_earning/controllers/driver_earning_controller.dart';
+import '../../driver_history/views/driver_start_delivery_view.dart';
 import '../controllers/driver_home_controller.dart';
 
 class DriverHomeView extends GetView<DriverHomeController> {
@@ -112,7 +113,8 @@ class DriverHomeView extends GetView<DriverHomeController> {
                                     fuelAmount:
                                         '${order.amount?.toStringAsFixed(2) ?? '0.00'} gallons',
                                     fuelType: order.orderType ?? 'Unknown',
-                                    location:order.location?.coordinates != null
+                                    location: order.location?.coordinates !=
+                                            null
                                         ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
                                         : 'Unknown',
                                     onAcceptPressed: () =>
@@ -146,8 +148,22 @@ class DriverHomeView extends GetView<DriverHomeController> {
                                   : 'Unknown',
                               fuelAmount: order.amount ?? 0.0,
                               fuelType: order.orderType ?? 'Unknown',
-                              onAcceptPressed: () =>
-                                  controller.acceptOrder(order.id ?? ''),
+                              onAcceptPressed: () {
+                                Get.to(() => DriverStartDeliveryView(
+                                      orderId: order.id ?? 'Unknown',
+                                      deliveryId: order.deleveryId ?? '',
+                                      customerName:
+                                          order.userId?.fullname ?? '',
+                                      customerImage: order.userId?.image,
+                                      amounts:
+                                          '${order.amount?.toStringAsFixed(2) ?? '0.00'} Gallons',
+                                      orderName: order.fuelType ?? 'Unknown',
+                                      location: order.location?.coordinates !=
+                                              null
+                                          ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
+                                          : 'Unknown',
+                                    ));
+                              },
                               onViewDetailsPressed: () =>
                                   controller.viewOrderDetails(order.id ?? ''),
                             );
