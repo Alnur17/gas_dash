@@ -65,6 +65,7 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
                 fuelName: 'Unleaded',
                // number: '87',
                 fuelPrice: price,
+                isEmergency: true,
               ));
             },
           ),
@@ -82,6 +83,7 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
                 fuelName: 'Premium',
                 //number: '91',
                 fuelPrice: price,
+                isEmergency: true,
               ));
             },
           ),
@@ -99,6 +101,7 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
                 fuelName: 'Diesel',
                 //number: '71',
                 fuelPrice: price,
+                isEmergency: true,
               ));
             },
           ),

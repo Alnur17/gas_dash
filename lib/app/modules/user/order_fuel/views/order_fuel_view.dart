@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
@@ -13,10 +14,12 @@ import '../controllers/order_fuel_controller.dart';
 class OrderFuelView extends GetView<OrderFuelController> {
   final String? fuelName;
   final double? fuelPrice;
+  final bool? isEmergency;
 
   OrderFuelView({
     super.key,
     this.fuelName,
+    this.isEmergency,
     this.fuelPrice,
   });
 
@@ -218,12 +221,16 @@ class OrderFuelView extends GetView<OrderFuelController> {
             }
 
             orderFuelController.createOrder(
+              isEmergency: isEmergency ?? false,
               vehicleId: orderFuelController.selectedVehicle.value?.id ?? '',
               presetAmount: orderFuelController.presetEnabled.value,
               customAmount: orderFuelController.customEnabled.value,
               amount: amount,
               fuelType: fuelName ?? 'Premium',
             );
+            if (kDebugMode) {
+              print(';;;;;;;;;;$isEmergency;;;;;;;;;;');
+            }
           },
           gradientColors: AppColors.gradientColorGreen,
         ),

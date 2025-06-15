@@ -9,7 +9,7 @@ class AssignedOrderModel {
   final String? message;
   final Data? data;
 
-  factory AssignedOrderModel.fromJson(Map<String, dynamic> json){
+  factory AssignedOrderModel.fromJson(Map<String, dynamic> json) {
     return AssignedOrderModel(
       success: json["success"],
       message: json["message"],
@@ -27,7 +27,7 @@ class Data {
   final List<Datum> data;
   final Meta? meta;
 
-  factory Data.fromJson(Map<String, dynamic> json){
+  factory Data.fromJson(Map<String, dynamic> json) {
     return Data(
       data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
       meta: json["meta"] == null ? null : Meta.fromJson(json["meta"]),
@@ -38,6 +38,7 @@ class Data {
 class Datum {
   Datum({
     required this.location,
+    required this.emergency,
     required this.id,
     required this.vehicleId,
     required this.userId,
@@ -64,6 +65,7 @@ class Datum {
   });
 
   final Location? location;
+  final bool? emergency;
   final String? id;
   final String? vehicleId;
   final UserId? userId;
@@ -71,7 +73,7 @@ class Datum {
   final double? price;
   final bool? presetAmount;
   final bool? customAmount;
-  final double? tip; // Changed from int? to double?
+  final double? tip;
   final String? orderType;
   final String? orderStatus;
   final String? cancelReason;
@@ -85,12 +87,13 @@ class Datum {
   final String? paymentId;
   final String? driverId;
   final String? deleveryId;
-  final double? amount; // Changed from int? to double?
+  final double? amount;
   final String? fuelType;
 
-  factory Datum.fromJson(Map<String, dynamic> json){
+  factory Datum.fromJson(Map<String, dynamic> json) {
     return Datum(
       location: json["location"] == null ? null : Location.fromJson(json["location"]),
+      emergency: json["emergency"],
       id: json["_id"],
       vehicleId: json["vehicleId"],
       userId: json["userId"] == null ? null : UserId.fromJson(json["userId"]),
@@ -139,7 +142,7 @@ class Location {
   final List<double> coordinates;
   final String? type;
 
-  factory Location.fromJson(Map<String, dynamic> json){
+  factory Location.fromJson(Map<String, dynamic> json) {
     return Location(
       coordinates: json["coordinates"] == null ? [] : List<double>.from(json["coordinates"]!.map((x) => x)),
       type: json["type"],
@@ -177,8 +180,8 @@ class UserId {
   });
 
   final Verification? verification;
-  final double? totalEarning; // Changed from int? to double?
-  final double? experience; // Changed from int? to double?
+  final double? totalEarning;
+  final double? experience;
   final String? id;
   final String? status;
   final String? fullname;
@@ -194,15 +197,15 @@ class UserId {
   final String? image;
   final String? role;
   final dynamic address;
-  final double? freeDeliverylimit; // Changed from int? to double?
-  final double? coverVehiclelimit; // Changed from int? to double?
-  final double? durationDay; // Changed from int? to double?
+  final double? freeDeliverylimit;
+  final double? coverVehiclelimit;
+  final double? durationDay;
   final bool? isDeleted;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final double? v; // Changed from int? to double?
+  final double? v;
 
-  factory UserId.fromJson(Map<String, dynamic> json){
+  factory UserId.fromJson(Map<String, dynamic> json) {
     return UserId(
       verification: json["verification"] == null ? null : Verification.fromJson(json["verification"]),
       totalEarning: (json["totalEarning"] is int)
@@ -252,11 +255,11 @@ class Verification {
     required this.status,
   });
 
-  final double? otp; // Changed from int? to double?
+  final double? otp;
   final DateTime? expiresAt;
   final bool? status;
 
-  factory Verification.fromJson(Map<String, dynamic> json){
+  factory Verification.fromJson(Map<String, dynamic> json) {
     return Verification(
       otp: (json["otp"] is int)
           ? (json["otp"] as int).toDouble()
@@ -275,12 +278,12 @@ class Meta {
     required this.totalPage,
   });
 
-  final double? page; // Changed from int? to double?
-  final double? limit; // Changed from int? to double?
-  final double? total; // Changed from int? to double?
-  final double? totalPage; // Changed from int? to double?
+  final double? page;
+  final double? limit;
+  final double? total;
+  final double? totalPage;
 
-  factory Meta.fromJson(Map<String, dynamic> json){
+  factory Meta.fromJson(Map<String, dynamic> json) {
     return Meta(
       page: (json["page"] is int)
           ? (json["page"] as int).toDouble()

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../../common/app_color/app_colors.dart';
+import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/helper/order_history_card.dart';
 import '../controllers/order_history_controller.dart';
@@ -151,6 +152,8 @@ class OrderStatusSection extends StatelessWidget {
           debugPrint('Rendering order status: ${order.orderStatus}');
           final displayStatus = order.orderStatus == 'InProgress' ? 'In Process' : 'Completed';
           return OrderHistoryCard(
+            emergency: order.emergency ?? false,
+            emergencyImage: AppImages.emergency,
             orderId: order.id ?? 'N/A',
             orderDate: order.createdAt?.toString() ?? 'Unknown',
             fuelQuantity: '${order.amount ?? 0} gallons',

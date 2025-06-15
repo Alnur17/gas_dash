@@ -142,6 +142,8 @@ class DriverHomeView extends GetView<DriverHomeController> {
                           itemBuilder: (context, index) {
                             final order = controller.inProgressOrders[index];
                             return ActiveOrder(
+                              emergencyImage: AppImages.emergency,
+                              emergency: order.emergency ?? false,
                               orderId: order.id ?? 'Unknown',
                               location: order.location?.coordinates != null
                                   ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'

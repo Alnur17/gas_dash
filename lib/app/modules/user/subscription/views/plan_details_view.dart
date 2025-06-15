@@ -88,6 +88,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/subscription/controllers/subscription_controller.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/widgets/custom_background.dart';
@@ -105,6 +106,7 @@ class PlanDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(SubscriptionController());
     final features = [
       if (package.freeDeliverylimit != null)
         'Waives delivery fees for up to ${package.freeDeliverylimit} trips per month.',
@@ -177,8 +179,7 @@ class PlanDetailsView extends StatelessWidget {
               CustomButton(
                 text: 'Buy Now',
                 onPressed: () {
-                  // Placeholder for purchase logic
-                  Get.snackbar('Purchase', 'Purchase functionality not implemented yet.');
+                  controller.createSubscription(packageId: package.id ?? '');
                 },
                 textColor: AppColors.black,
                 backgroundColor: AppColors.white,

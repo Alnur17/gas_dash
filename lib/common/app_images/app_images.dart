@@ -12,6 +12,7 @@ class AppImages {
   static const checkBoxFilled = "assets/icons/checkbox filled.png";
   static const checkBoxFilledSquare = "assets/icons/Checbox filled squar.png";
   static const eyeClose = "assets/icons/eye close.png";
+  static const emergency = "assets/icons/emergency.png";
 
   static const addFloating = "assets/icons/float add.png";
   static const message = "assets/icons/message.png";

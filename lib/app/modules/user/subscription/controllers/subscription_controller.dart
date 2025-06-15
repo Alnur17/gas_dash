@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/payment/controllers/payment_controller.dart';
 import 'package:get/get.dart';
 
 import '../../../../../common/app_constant/app_constant.dart';
@@ -13,6 +14,8 @@ class SubscriptionController extends GetxController {
   final RxBool isLoading = true.obs;
   final RxList<Datum> packages = <Datum>[].obs;
   final RxString errorMessage = ''.obs;
+  final paymentController = Get.put(PaymentController());
+
 
   @override
   void onInit() {
@@ -52,16 +55,12 @@ class SubscriptionController extends GetxController {
     try {
       isLoading.value = true;
       String accessToken = LocalStorage.getData(key: AppConstant.accessToken);
-      // var decodedToken = JwtDecoder.decode(accessToken);
-      // var userId = decodedToken['_id'].toString();
-      //final userId = profileAndSettingsController.myProfileData.value?.id ?? '';
-      //debugPrint(':::::::::::::: $userId ::::::::::::::::');
       var body = {
         'package': packageId,
         'durationType': 'monthly',
       };
       var headers = {
-        'Authorization': accessToken,
+        'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json',
       };
 
@@ -79,7 +78,7 @@ class SubscriptionController extends GetxController {
         LocalStorage.saveData(key: AppConstant.subscriptionId, data: subscriptionId);
         String? subsId = LocalStorage.getData(key: AppConstant.subscriptionId);
         if (subsId != null) {
-          //paymentController.createPaymentSession(reference: subsId);
+          paymentController.createPaymentSession(orderId: subsId);
           debugPrint(';;;;;;;;;;;;;;;;;; $subsId ;;;;;;;;;;;;;;;;;;;');
         } else {
           debugPrint('Failed to retrieve subscription ID from LocalStorage');

@@ -158,6 +158,7 @@ class OrderFuelController extends GetxController {
   }
 
   Future<void> createOrder({
+    bool? isEmergency,
     required String vehicleId,
     required bool presetAmount,
     required bool customAmount,
@@ -184,7 +185,7 @@ class OrderFuelController extends GetxController {
         'fuelType': fuelType,
         'orderType': 'Fuel',
         'zipCode': zipCode.value ?? '90001', // Use stored zip code or fallback
-        //"orderStatus": "Pending",
+        "emergency": isEmergency ?? false,
         'cancelReason': '',
       };
 

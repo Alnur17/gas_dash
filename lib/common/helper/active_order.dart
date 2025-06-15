@@ -8,6 +8,8 @@ import '../widgets/custom_button.dart';
 
 class ActiveOrder extends StatelessWidget {
   final String orderId;
+  final String emergencyImage;
+  final bool emergency;
   final String location;
   final double fuelAmount;
   final String fuelType;
@@ -22,6 +24,8 @@ class ActiveOrder extends StatelessWidget {
     required this.fuelType,
     required this.onAcceptPressed,
     required this.onViewDetailsPressed,
+    required this.emergencyImage,
+    required this.emergency,
   });
 
   @override
@@ -34,8 +38,23 @@ class ActiveOrder extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Row(
+              children: [
+                Text(
+                  'Order ID ',
+                  style: h3,
+                ),
+                if (emergency) ...[
+                  sw5,
+                  Image.asset(
+                    emergencyImage,
+                    scale: 4,
+                  ),
+                ],
+              ],
+            ),
             Text(
-              'Order ID #$orderId',
+              '#$orderId',
               style: h3,
             ),
             SizedBox(height: 8),
@@ -80,7 +99,9 @@ class ActiveOrder extends StatelessWidget {
                     text: 'Start Delivery',
                     onPressed: onAcceptPressed,
                     borderColor: AppColors.primaryColor,
-                    textStyle: h6.copyWith(color: AppColors.primaryColor,),
+                    textStyle: h6.copyWith(
+                      color: AppColors.primaryColor,
+                    ),
                     textColor: AppColors.primaryColor,
                   ),
                 ),
@@ -90,7 +111,9 @@ class ActiveOrder extends StatelessWidget {
                     height: 40,
                     text: 'View Details',
                     onPressed: onViewDetailsPressed,
-                    textStyle: h6.copyWith(color: AppColors.white,),
+                    textStyle: h6.copyWith(
+                      color: AppColors.white,
+                    ),
                     gradientColors: AppColors.gradientColorGreen,
                   ),
                 ),

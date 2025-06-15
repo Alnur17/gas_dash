@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/driver/driver_history/views/driver_start_delivery_view.dart';
+import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:gas_dash/common/helper/order_history_card.dart';
 import 'package:get/get.dart';
@@ -76,6 +77,8 @@ class OrderStatusSection extends GetView<DriverHomeController> {
             itemBuilder: (context, index) {
               final order = orders[index];
               return OrderHistoryCard(
+                emergency: order.emergency ?? false,
+                emergencyImage: AppImages.emergency,
                 orderId: order.id ?? 'Unknown',
                 orderDate: _formatDate(order.createdAt),
                 fuelQuantity:
