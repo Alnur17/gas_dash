@@ -50,6 +50,12 @@ class LoginController extends GetxController {
             data: accessToken,
           );
 
+          String userId = responseBody['data']['user']['_id'].toString();
+          LocalStorage.saveData(
+            key: AppConstant.userId,
+            data: userId,
+          );
+
           String refreshToken = responseBody['data']['refreshToken'].toString();
           LocalStorage.saveData(
             key: AppConstant.refreshToken,
