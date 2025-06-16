@@ -19,6 +19,13 @@ class Api {
   ///Services
   static const service = "$baseUrl/services/"; //done
 
+  ///message
+  static const String allFriends = "$baseUrl/chats/my-chat-list";
+  static const String createChat = "$baseUrl/chats";
+  static const String sendMessage = "$baseUrl/messages/send-messages";
+  static chatDetails(chatId) =>
+      "$baseUrl/messages/?chat=$chatId&sort=createdAt";
+
   ///Add Vehicle
 
   static const addVehicle = "$baseUrl/vehicles/create"; //done

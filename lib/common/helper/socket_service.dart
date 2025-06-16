@@ -25,7 +25,7 @@ class SocketService {
   Future<SocketService> init() async {
 
     String token = LocalStorage.getData(key: AppConstant.accessToken);
-    String userId = LocalStorage.getData(key: AppConstant.userId);
+    String userId = LocalStorage.getData(key: AppConstant.accessToken);
 
     _socket = IO.io("${Api.socketUrl}", <String, dynamic>{ //http://192.168.10.152:5001
 
@@ -71,7 +71,9 @@ class SocketService {
   void disconnect() {
     _socket.disconnect();
   }
-
+  Future<dynamic> emitWithAck(String event, dynamic data) async {
+    return socket.emitWithAck(event, data);
+  }
 
   void _handleIncomingFriends(dynamic data) {
     if (data is Map<String, dynamic> && data.containsKey('receiver')) {
