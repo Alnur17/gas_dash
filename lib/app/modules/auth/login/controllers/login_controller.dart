@@ -46,6 +46,8 @@ class LoginController extends GetxController {
         bool success = responseBody['success'];
 
         if (success) {
+          // Initialize SocketService
+          await Get.putAsync(() => SocketService().init());
           String accessToken = responseBody['data']['accessToken'].toString();
           LocalStorage.saveData(
             key: AppConstant.accessToken,

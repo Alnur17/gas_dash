@@ -19,7 +19,7 @@ import '../../../../../common/widgets/custom_textfield.dart';
 import '../../../../data/base_client.dart';
 import '../../jump_start_car_battery/views/final_confirmation_view.dart';
 import '../model/final_confirmation_model.dart';
-import '../model/vechicle_model.dart'; // Import BaseClient
+import '../model/vechicle_model.dart';
 
 class OrderFuelController extends GetxController {
   // TextEditingControllers for text fields
@@ -55,7 +55,6 @@ class OrderFuelController extends GetxController {
     '20 gallons',
     '25 gallons',
   ];
-
 
   @override
   void onInit() {
@@ -130,7 +129,6 @@ class OrderFuelController extends GetxController {
     );
   }
 
-
   double parseGallons(String amount) {
     try {
       return double.parse(amount.replaceAll(' gallons', ''));
@@ -164,19 +162,15 @@ class OrderFuelController extends GetxController {
     required bool customAmount,
     required double amount,
     required String fuelType,
-  })
-  async {
+  }) async {
     try {
-      // Get the access token from local storage
       final String token = LocalStorage.getData(key: AppConstant.accessToken);
-
-      // Prepare the request body
       final Map<String, dynamic> orderData = {
         'location': {
           'coordinates': [
-
             longitude.value ?? 90.4125,
             latitude.value ?? 23.8103,
+
           ],
         },
         'vehicleId': vehicleId,
@@ -185,28 +179,23 @@ class OrderFuelController extends GetxController {
         'amount': amount,
         'fuelType': fuelType,
         'orderType': 'Fuel',
-        'zipCode': zipCode.value ?? '90001', // Use stored zip code or fallback
-        "emergency": isEmergency ?? false,
+        'zipCode': zipCode.value ?? '90001',
+        'emergency': isEmergency ?? false,
         'cancelReason': '',
       };
 
-      // Convert the body to JSON
       String body = jsonEncode(orderData);
-
-      // Headers for the request
       var headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       };
 
-      // Make the POST request
       http.Response response = await BaseClient.postRequest(
         api: Api.createOrder,
         body: body,
         headers: headers,
       );
 
-      // Handle the response
       var responseData = await BaseClient.handleResponse(response);
       if (responseData != null) {
         String? orderId = responseData['data']?['_id'];
@@ -220,9 +209,7 @@ class OrderFuelController extends GetxController {
           message: 'Order created successfully!',
           bgColor: AppColors.green,
         );
-        // Navigate to FinalConfirmationView with the order ID
         Get.to(() => FuelTypeFinalConfirmationView(orderId: orderId));
-        //await fuelTypeFinalConfirmation(orderId);
       }
     } catch (e) {
       Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
@@ -232,19 +219,15 @@ class OrderFuelController extends GetxController {
   Future<void> createOrderForServices({
     required String vehicleId,
     required String orderType,
-  })
-  async {
+  }) async {
     try {
-      // Get the access token from local storage
       final String token = LocalStorage.getData(key: AppConstant.accessToken);
-
-      // Prepare the request body
       final Map<String, dynamic> orderData = {
         'location': {
           'coordinates': [
-
            longitude.value ?? 90.4125,
             latitude.value ?? 23.8103,
+
           ],
         },
         'vehicleId': vehicleId,
@@ -253,23 +236,18 @@ class OrderFuelController extends GetxController {
         'cancelReason': '',
       };
 
-      // Convert the body to JSON
       String body = jsonEncode(orderData);
-
-      // Headers for the request
       var headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       };
 
-      // Make the POST request
       http.Response response = await BaseClient.postRequest(
         api: Api.createOrder,
         body: body,
         headers: headers,
       );
 
-      // Handle the response
       var responseData = await BaseClient.handleResponse(response);
       if (responseData != null) {
         String? orderId = responseData['data']?['_id'];
@@ -283,7 +261,6 @@ class OrderFuelController extends GetxController {
           message: 'Order created successfully!',
           bgColor: AppColors.green,
         );
-        // Navigate to FinalConfirmationView with the order ID
         Get.to(() => FinalConfirmationView(orderId: orderId));
       }
     } catch (e) {
@@ -299,13 +276,11 @@ class OrderFuelController extends GetxController {
         'Authorization': 'Bearer $token',
       };
 
-      // Make the GET request
       http.Response response = await BaseClient.getRequest(
         api: Api.orderDataConfirmation(id),
         headers: headers,
       );
 
-      // Handle the response
       var responseData = await BaseClient.handleResponse(response);
       if (responseData != null) {
         FinalConfirmationModel orderModel = FinalConfirmationModel.fromJson(responseData);
@@ -332,20 +307,15 @@ class OrderFuelController extends GetxController {
   }
 
   Future<void> showVehicleSelectionDialog() async {
-    // Fetch the vehicles first
     await fetchMyVehicles();
-
-    // If no vehicles are available, show a snackbar
     if (vehiclesList.isEmpty) {
       Get.snackbar('No Vehicles', 'No vehicles found. Please add a vehicle.',
           snackPosition: SnackPosition.BOTTOM);
       return;
     }
 
-    // Reset the selected vehicle
     selectedVehicle.value = null;
 
-    // Show the vehicle selection dialog
     Get.dialog(
       Dialog(
         backgroundColor: AppColors.white,
@@ -365,39 +335,37 @@ class OrderFuelController extends GetxController {
                 ),
               ),
               const SizedBox(height: 16),
-              // List of vehicles with radio buttons
               Obx(() => Column(
-                    children: vehiclesList.map((vehicle) {
-                      return RadioListTile<Datum>(
-                        value: vehicle,
-                        groupValue: selectedVehicle.value,
-                        onChanged: (Datum? value) {
-                          selectedVehicle.value = value;
-                        },
-                        title: Text(
-                          '${vehicle.year} ${vehicle.make} ${vehicle.model}',
-                          style: h5,
-                        ),
-                        secondary: Image.asset(
-                          AppImages.car, // Use a generic car image
-                          scale: 4,
-                        ),
-                      );
-                    }).toList(),
-                  )),
+                children: vehiclesList.map((vehicle) {
+                  return RadioListTile<Datum>(
+                    value: vehicle,
+                    groupValue: selectedVehicle.value,
+                    onChanged: (Datum? value) {
+                      selectedVehicle.value = value;
+                    },
+                    title: Text(
+                      '${vehicle.year} ${vehicle.make} ${vehicle.model}',
+                      style: h5,
+                    ),
+                    secondary: Image.asset(
+                      AppImages.car,
+                      scale: 4,
+                    ),
+                  );
+                }).toList(),
+              )),
               const SizedBox(height: 20),
               CustomButton(
                 text: 'Confirm',
                 onPressed: () {
                   if (selectedVehicle.value != null) {
-                    // Set the confirmed vehicle
                     confirmedVehicle.value = {
                       'make': selectedVehicle.value!.make!,
                       'model': selectedVehicle.value!.model!,
                       'year': selectedVehicle.value!.year.toString(),
                       'fuelLevel': selectedVehicle.value!.fuelLevel.toString(),
                     };
-                    Get.back(); // Close the dialog
+                    Get.back();
                     kSnackBar(
                         message: 'Vehicle selected successfully!',
                         bgColor: AppColors.green);
@@ -412,7 +380,7 @@ class OrderFuelController extends GetxController {
               Center(
                 child: TextButton(
                   onPressed: () {
-                    Get.back(); // Close the dialog
+                    Get.back();
                   },
                   child: Text(
                     'Cancel',
@@ -515,7 +483,6 @@ class OrderFuelController extends GetxController {
 
   @override
   void onClose() {
-    // Dispose controllers to prevent memory leaks
     customAmountController.dispose();
     makeController.dispose();
     modelController.dispose();
@@ -544,7 +511,6 @@ class OrderFuelController extends GetxController {
       return;
     }
 
-    // Validate year format (4-digit number)
     if (!RegExp(r'^\d{4}$').hasMatch(yearController.text)) {
       Get.snackbar('Error', 'Please enter a valid 4-digit year',
           snackPosition: SnackPosition.BOTTOM);
@@ -556,8 +522,6 @@ class OrderFuelController extends GetxController {
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
     String? id = decodedToken['userId']?.toString();
 
-    print(';;;;;;;;;;;;;;;;; $id ;;;;;;;;;;;;;;;;;;;');
-    // Prepare the request body
     Map<String, String> vehicleData = {
       'make': makeController.text,
       'model': modelController.text,
@@ -567,31 +531,27 @@ class OrderFuelController extends GetxController {
     };
     String body = jsonEncode(vehicleData);
 
-    // Headers for the request
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
     };
 
     try {
-      // Make the POST request
-      http.Response response = await BaseClient.postRequest(
-        api: Api.addVehicle,
-        body: body,
-        headers: headers,
-      );
+    http.Response response = await BaseClient.postRequest(
+      api: Api.addVehicle,
+      body: body,
+      headers: headers,
+    );
 
-      // Handle the response
-      var responseData = await BaseClient.handleResponse(response);
-      if (responseData != null) {
-        // On success, update confirmedVehicle with the response data if needed
-        confirmedVehicle.value = vehicleData;
-        Get.back(); // Close dialog
-        kSnackBar(
-            message: 'Vehicle added successfully!', bgColor: AppColors.green);
-      }
-    } catch (e) {
-      Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+    var responseData = await BaseClient.handleResponse(response);
+    if (responseData != null) {
+      await fetchMyVehicles();
+      Get.back();
+      kSnackBar(
+          message: 'Vehicle added successfully!', bgColor: AppColors.green);
     }
+  } catch (e) {
+  Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
   }
+}
 }

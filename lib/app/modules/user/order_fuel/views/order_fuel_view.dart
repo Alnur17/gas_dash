@@ -267,8 +267,7 @@ class AmountToggleSection extends StatelessWidget {
         color: Color(0xFFD1D5DB),
         fontSize: 14,
       ),
-      contentPadding:
-      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(24),
         borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
@@ -315,8 +314,7 @@ class AmountToggleSection extends StatelessWidget {
           child: DropdownButton<String>(
             value: controller.selectedPresetAmount.value,
             isExpanded: true,
-            icon: const Icon(Icons.keyboard_arrow_down,
-                color: Color(0xFF9CA3AF)),
+            icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF9CA3AF)),
             style: inputTextStyle,
             items: controller.presetAmounts.map((String value) {
               return DropdownMenuItem<String>(
@@ -342,8 +340,7 @@ class AmountToggleSection extends StatelessWidget {
           fillColor: Colors.white,
           hintText: price,
           hintStyle: const TextStyle(color: Color(0xFFD1D5DB), fontSize: 14),
-          contentPadding:
-          const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(24),
             borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
@@ -365,7 +362,7 @@ class AmountToggleSection extends StatelessWidget {
         style: inputTextStyle,
         keyboardType: TextInputType.number,
         onChanged: (value) {
-          controller.customAmountText.value = value;
+          controller.customAmountText.value = value; // Update observable
         },
       );
     }
@@ -407,12 +404,13 @@ class AmountToggleSection extends StatelessWidget {
           const SizedBox(height: 12),
           Text('Price', style: labelStyle),
           const SizedBox(height: 6),
+          // Ensure price updates reactively by referencing customAmountText
           buildReadOnlyPrice(
             controller.calculatePrice(
               controller.parseGallons(
-                controller.customAmountController.text.isEmpty
+                controller.customAmountText.value.isEmpty
                     ? '0 gallons'
-                    : '${controller.customAmountController.text} gallons',
+                    : '${controller.customAmountText.value} gallons',
               ),
               fuelPrice,
             ),

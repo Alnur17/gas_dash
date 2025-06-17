@@ -126,7 +126,6 @@
 //   }
 // }
 
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -144,13 +143,16 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../../common/helper/local_store.dart';
+import '../../../../../common/widgets/custom_loader.dart';
 import '../../../../data/api.dart';
 import '../../../../data/base_client.dart';
 import '../controllers/driver_completion_checklist_controller.dart';
 
-class DriverProofOfDeliveryView extends GetView<DriverCompletionChecklistController> {
+class DriverProofOfDeliveryView
+    extends GetView<DriverCompletionChecklistController> {
   final String? deliveryId;
   final String? orderId;
+
   const DriverProofOfDeliveryView(this.deliveryId, this.orderId, {super.key});
 
   @override
@@ -167,9 +169,11 @@ class DriverProofOfDeliveryView extends GetView<DriverCompletionChecklistControl
         final pickedFile = await picker.pickImage(source: ImageSource.gallery);
         if (pickedFile != null) {
           selectedImage.value = File(pickedFile.path);
-          debugPrint('Selected image path: ${pickedFile.path}'); // Debug the path
+          debugPrint(
+              'Selected image path: ${pickedFile.path}'); // Debug the path
           Get.snackbar('Success', 'Image selected',
-              backgroundColor: AppColors.gradientColorGreen[0], colorText: Colors.white);
+              backgroundColor: AppColors.gradientColorGreen[0],
+              colorText: Colors.white);
         } else {
           debugPrint('No image selected');
         }
@@ -203,62 +207,75 @@ class DriverProofOfDeliveryView extends GetView<DriverCompletionChecklistControl
         centerTitle: true,
       ),
       body: Obx(() => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Upload Photo',
                   style: h5,
                 ),
-                Image.asset(
-                  AppImages.close,
-                  scale: 4,
+                sh8,
+                UploadWidget(
+                  onTap: pickImage,
+                  imagePath: selectedImage.value == null ? AppImages.add : null,
+                  fileImage: selectedImage.value,
+                  label: 'Choose File',
+                ),
+                sh20,
+                Obx(
+                  () => controller.isLoading.value == true
+                      ? CustomLoader(
+                          color: AppColors.white,
+                        )
+                      : CustomButton(
+                          text: 'Submit',
+                          onPressed: () async {
+                            if (selectedImage.value != null &&
+                                deliveryId != null &&
+                                orderId != null) {
+                              final accessToken = LocalStorage.getData(
+                                  key:
+                                      'accessToken'); // Adjust key as per your app
+                              final headers = {
+                                'Content-Type': 'multipart/form-data',
+                                'Authorization': 'Bearer $accessToken',
+                              };
+
+                              var request = http.MultipartRequest('PATCH',
+                                  Uri.parse(Api.updateDelivery(deliveryId!)))
+                                ..fields['data'] =
+                                    jsonEncode({'status': 'delivered'})
+                                ..files.add(await http.MultipartFile.fromPath(
+                                    'proofImage', selectedImage.value!.path))
+                                ..headers.addAll(headers);
+
+                              final response = await http.Response.fromStream(
+                                  await request.send());
+                              final result =
+                                  await BaseClient.handleResponse(response);
+
+                              if (result != null &&
+                                  (result['success'] == true ||
+                                      result['message'] ==
+                                          'Delivery updated successfully')) {
+                                await controller.submitAnswers(
+                                    deliveryId!, orderId!);
+                                _showSubmissionCompletedModal(context);
+                              }
+                            } else {
+                              Get.snackbar('Error',
+                                  'Please select an image and ensure delivery ID and order ID are valid',
+                                  backgroundColor: AppColors.orange,
+                                  colorText: Colors.white);
+                            }
+                          },
+                          gradientColors: AppColors.gradientColorGreen,
+                        ),
                 ),
               ],
             ),
-            sh8,
-            UploadWidget(
-              onTap: pickImage,
-              imagePath: selectedImage.value == null ? AppImages.add : null,
-              fileImage: selectedImage.value,
-              label: 'Choose File',
-            ),
-            sh20,
-            CustomButton(
-              text: 'Submit',
-              onPressed: () async {
-                if (selectedImage.value != null && deliveryId != null && orderId != null) {
-                  final accessToken = LocalStorage.getData(key: 'accessToken'); // Adjust key as per your app
-                  final headers = {
-                    'Content-Type': 'multipart/form-data',
-                    'Authorization': 'Bearer $accessToken',
-                  };
-
-                  var request = http.MultipartRequest('PATCH', Uri.parse(Api.updateDelivery(deliveryId!)))
-                    ..fields['data'] = jsonEncode({'status': 'delivered'})
-                    ..files.add(await http.MultipartFile.fromPath('proofImage', selectedImage.value!.path))
-                    ..headers.addAll(headers);
-
-                  final response = await http.Response.fromStream(await request.send());
-                  final result = await BaseClient.handleResponse(response);
-
-                  if (result != null && (result['success'] == true || result['message'] == 'Delivery updated successfully')) {
-                    await controller.submitAnswers(deliveryId!, orderId!);
-                    _showSubmissionCompletedModal(context);
-                  }
-                } else {
-                  Get.snackbar('Error', 'Please select an image and ensure delivery ID and order ID are valid',
-                      backgroundColor: AppColors.orange, colorText: Colors.white);
-                }
-              },
-              gradientColors: AppColors.gradientColorGreen,
-            ),
-          ],
-        ),
-      )),
+          )),
     );
   }
 
@@ -305,7 +322,7 @@ class DriverProofOfDeliveryView extends GetView<DriverCompletionChecklistControl
               CustomButton(
                 text: 'Return to Home',
                 onPressed: () {
-                  Get.offAll(()=> DriverDashboardView());
+                  Get.offAll(() => DriverDashboardView());
                 },
                 gradientColors: AppColors.gradientColorGreen,
               ),

@@ -35,7 +35,7 @@ class Api {
   ///Order
   static const createOrder = "$baseUrl/orders/create-orderFuel"; //done
 
-  static const orderHistory = "$baseUrl/orders"; //
+  static const orderHistory = "$baseUrl/orders/my-order"; //
 
   static singleOrderById(String orderId) => "$baseUrl/orders/$orderId"; //done
 
@@ -73,6 +73,7 @@ class Api {
   ///Subscriptions
 
   static const String subscriptionCreate = "$baseUrl/subscription/";
+  static const String subscriptionPayment = "$baseUrl/payments/subscription/checkout";
   static const String subscriptionPackage = "$baseUrl/packages/";
 
   ///Questions

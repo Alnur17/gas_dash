@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/driver/driver_home/views/notification_view.dart';
 import 'package:gas_dash/common/helper/fuel_and_service_card.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
-import 'package:gas_dash/common/widgets/custom_row_header.dart';
 import 'package:gas_dash/common/helper/earnings_card.dart';
 import 'package:get/get.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
@@ -13,14 +12,22 @@ import '../../driver_earning/controllers/driver_earning_controller.dart';
 import '../../driver_history/views/driver_start_delivery_view.dart';
 import '../controllers/driver_home_controller.dart';
 
-class DriverHomeView extends GetView<DriverHomeController> {
+class DriverHomeView extends StatefulWidget {
   const DriverHomeView({super.key});
 
   @override
+  State<DriverHomeView> createState() => _DriverHomeViewState();
+}
+
+class _DriverHomeViewState extends State<DriverHomeView> {
+  final DriverHomeController controller = Get.put(DriverHomeController());
+  final DriverEarningController driverEarningController =
+  Get.put(DriverEarningController());
+
+
+  @override
   Widget build(BuildContext context) {
-    final DriverHomeController controller = Get.put(DriverHomeController());
-    final DriverEarningController driverEarningController =
-        Get.put(DriverEarningController());
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -63,49 +70,56 @@ class DriverHomeView extends GetView<DriverHomeController> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Obx(() => Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                sh20,
-                Text(
-                  'Earning Overview',
-                  style: h3,
-                ),
-                sh12,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Obx(() => RefreshIndicator(
+              onRefresh: () {
+                return controller.fetchAssignedOrders();
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: EarningsCard(
-                        gradientColor: AppColors.gradientColorBlue,
-                        title: 'Total Earnings',
-                        amount: driverEarningController.totalEarnings.value
-                            .toStringAsFixed(2),
-                      ),
+                    sh20,
+                    Text(
+                      'Earning Overview',
+                      style: h3,
                     ),
-                    sw8,
-                    EarningsCard(
-                      backgroundColor: AppColors.primaryColor,
-                      title: 'Today',
-                      amount: driverEarningController.todayEarnings.value
-                          .toStringAsFixed(2),
+                    sh12,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: EarningsCard(
+                            gradientColor: AppColors.gradientColorBlue,
+                            title: 'Total Earnings',
+                            amount: driverEarningController.totalEarnings.value
+                                .toStringAsFixed(2),
+                          ),
+                        ),
+                        sw8,
+                        EarningsCard(
+                          backgroundColor: AppColors.primaryColor,
+                          title: 'Today',
+                          amount: driverEarningController.todayEarnings.value
+                              .toStringAsFixed(2),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                sh20,
-                Text(
-                  'Recent Request',
-                  style: h3,
-                ),
-                sh12,
-                controller.isLoading.value
-                    ? Center(child: CircularProgressIndicator())
-                    : Expanded(
-                        child: controller.pendingOrders.isEmpty
+                    sh20,
+                    Text(
+                      'Recent Request',
+                      style: h3,
+                    ),
+                    sh12,
+                    controller.isLoading.value
+                        ? Center(child: CircularProgressIndicator())
+                        : controller.pendingOrders.isEmpty
                             ? Center(
                                 child: Text('No pending orders available',
                                     style: h5))
                             : ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
                                 itemCount: controller.pendingOrders.length,
                                 itemBuilder: (context, index) {
                                   final order = controller.pendingOrders[index];
@@ -128,53 +142,59 @@ class DriverHomeView extends GetView<DriverHomeController> {
                                   );
                                 },
                               ),
-                      ),
-                sh20,
-                CustomRowHeader(
-                  title: 'Active Order',
-                  onTap: () {},
+                    sh20,
+                    Text(
+                      'Active Order',
+                      style: h3,
+                    ),
+                    // CustomRowHeader(
+                    //   title: 'Active Order',
+                    //   onTap: () {},
+                    // ),
+                    sh8,
+                    controller.inProgressOrders.isEmpty
+                        ? Center(
+                            child:
+                                Text('No active orders available', style: h5))
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: controller.inProgressOrders.length,
+                            itemBuilder: (context, index) {
+                              final order = controller.inProgressOrders[index];
+                              return ActiveOrder(
+                                emergencyImage: AppImages.emergency,
+                                emergency: order.emergency ?? false,
+                                orderId: order.id ?? 'Unknown',
+                                location: order.location?.coordinates != null
+                                    ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
+                                    : 'Unknown',
+                                fuelAmount: order.amount ?? 0.0,
+                                fuelType: order.orderType ?? 'Unknown',
+                                onAcceptPressed: () {
+                                  Get.to(() => DriverStartDeliveryView(
+                                        orderId: order.id ?? 'Unknown',
+                                        deliveryId: order.deleveryId ?? '',
+                                        customerName:
+                                            order.userId?.fullname ?? '',
+                                        customerImage: order.userId?.image,
+                                        amounts:
+                                            '${order.amount?.toStringAsFixed(2) ?? '0.00'} Gallons',
+                                        orderName: order.fuelType ?? 'Unknown',
+                                        location: order.location?.coordinates !=
+                                                null
+                                            ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
+                                            : 'Unknown',
+                                      ));
+                                },
+                                onViewDetailsPressed: () =>
+                                    controller.viewOrderDetails(order.id ?? ''),
+                              );
+                            },
+                          ),
+                  ],
                 ),
-                sh8,
-                Expanded(
-                  child: controller.inProgressOrders.isEmpty
-                      ? Center(
-                          child: Text('No active orders available', style: h5))
-                      : ListView.builder(
-                          itemCount: controller.inProgressOrders.length,
-                          itemBuilder: (context, index) {
-                            final order = controller.inProgressOrders[index];
-                            return ActiveOrder(
-                              emergencyImage: AppImages.emergency,
-                              emergency: order.emergency ?? false,
-                              orderId: order.id ?? 'Unknown',
-                              location: order.location?.coordinates != null
-                                  ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
-                                  : 'Unknown',
-                              fuelAmount: order.amount ?? 0.0,
-                              fuelType: order.orderType ?? 'Unknown',
-                              onAcceptPressed: () {
-                                Get.to(() => DriverStartDeliveryView(
-                                      orderId: order.id ?? 'Unknown',
-                                      deliveryId: order.deleveryId ?? '',
-                                      customerName:
-                                          order.userId?.fullname ?? '',
-                                      customerImage: order.userId?.image,
-                                      amounts:
-                                          '${order.amount?.toStringAsFixed(2) ?? '0.00'} Gallons',
-                                      orderName: order.fuelType ?? 'Unknown',
-                                      location: order.location?.coordinates !=
-                                              null
-                                          ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
-                                          : 'Unknown',
-                                    ));
-                              },
-                              onViewDetailsPressed: () =>
-                                  controller.viewOrderDetails(order.id ?? ''),
-                            );
-                          },
-                        ),
-                ),
-              ],
+              ),
             )),
       ),
     );
