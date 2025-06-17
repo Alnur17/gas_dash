@@ -74,6 +74,7 @@ class Participant {
   Participant({
     required this.id,
     required this.email,
+    required this.name,
     required this.phoneNumber,
     required this.image,
     required this.role,
@@ -81,6 +82,7 @@ class Participant {
 
   final String? id;
   final String? email;
+  final String? name;
   final dynamic phoneNumber;
   final dynamic image;
   final String? role;
@@ -89,6 +91,7 @@ class Participant {
     return Participant(
       id: json["_id"],
       email: json["email"],
+      name: json["fullname"],
       phoneNumber: json["phoneNumber"],
       image: json["image"],
       role: json["role"],

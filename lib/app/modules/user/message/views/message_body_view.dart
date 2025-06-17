@@ -233,28 +233,24 @@ class _ChattingPageState extends State<ChattingPage> {
                       ),
                     ),
                     const SizedBox(width: 20),
-                    Obx(() => messageSendController.isLoading.value
-                        ? const Icon(Icons.send, color: Colors.grey, size: 20)
-                        :
                     GestureDetector(
                       onTap: () async {
                         final text = messageSendController.messageTextController.text.trim();
                         final imagePath = messageSendController.selectedImagePath.value;
                         if (text.isNotEmpty || imagePath.isNotEmpty) {
                           final data = {
-                           // 'chatId': widget.chatId,
                             'receiver': widget.receiverId,
                             'text': messageSendController.messageTextController.text,
-                        //    'imageUrl': imagePath.isNotEmpty ? imagePath : null,
-                           // 'sendTime': DateTime.now().toIso8601String(),
                           };
                           try {
                             print('Sending message with data: $data');
                             final ack = await socketService.emitWithAck('send-message', data);
                             print('Acknowledgment received: $ack, type: ${ack.runtimeType}');
+                            print("send dddd");
+                            messageSendController.messageTextController.clear();
                             if (ack == true) {
                               messageSendController.messageTextController.clear();
-                              messageSendController.selectedImagePath.value = "";
+
                               _scrollToEnd();
                             } else {
                               print('Acknowledgment failed or invalid: $ack');
@@ -266,7 +262,6 @@ class _ChattingPageState extends State<ChattingPage> {
                       },
                       child:  Icon(Icons.send, color: AppColors.primaryColor.withOpacity(0.5), size: 20),
                     )
-                    ),
                   ],
                 ),
               ],

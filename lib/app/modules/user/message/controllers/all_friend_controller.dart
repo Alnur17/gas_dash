@@ -69,7 +69,7 @@ class FriendController extends GetxController {
               socketService.friendList.add({
                 "id": friendList[i].chat?.id,
                 "receiverId": friendList[i].chat?.participants[0].id,
-                "name": friendList[i].chat?.participants[0].role.toString(),
+                "name": friendList[i].chat?.participants[0].name.toString(),
                 "email": friendList[i].chat?.participants[0].email.toString(),
                 "image": friendList[i].chat?.participants[0].image.toString(),
                 "phoneNumber": friendList[i].chat?.participants[0].phoneNumber,
