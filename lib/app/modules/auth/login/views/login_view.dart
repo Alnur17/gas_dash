@@ -160,18 +160,14 @@ class _LoginViewState extends State<LoginView> {
                 ],
               ),
               sh10,
-              GoogleButton(
-                assetPath: AppImages.google,
-                label: 'Continue with Google',
-                onTap: () async {
-                  await authController.signInWithGoogle();
-                  if (authController.user.value != null) {
-                    Get.offAll(()=> DashboardView());
-                  } else {
-                    Get.snackbar('Error', 'Google Sign-In failed');
-                  }
-                },
-              ),
+
+            Obx(() =>   GoogleButton(
+              assetPath: AppImages.google,
+              label: authController.isLoading.value ? 'Loading...' :'Continue with Google',
+              onTap: ()  {
+                authController.loginWithGoogle();
+              },
+            ),),
               sh12,
               GoogleButton(
                 assetPath: AppImages.apple,

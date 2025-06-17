@@ -1,41 +1,73 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import '../../../../common/app_color/app_colors.dart';
+import '../../../../common/app_constant/app_constant.dart';
+import '../../../../common/helper/local_store.dart';
+import '../../../../common/widgets/custom_snackbar.dart';
+import '../../driver/driver_dashboard/views/driver_dashboard_view.dart';
+import '../../user/dashboard/views/dashboard_view.dart';
+import 'google_sign_in_service.dart';
+import 'api_service.dart';
 
 class AuthController extends GetxController {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignInService _googleSignInService = GoogleSignInService();
+  final ApiService _apiService = ApiService();
 
-  var user = Rxn<User>();
+  var isLoading = false.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    user.value = _auth.currentUser;
-    _auth.authStateChanges().listen((User? u) {
-      user.value = u;
-    });
-  }
-
-  Future<void> signInWithGoogle() async {
+  Future<void> loginWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return; // user cancelled
+      isLoading.value = true;
 
-      final GoogleSignInAuthentication googleAuth =
-      await googleUser.authentication;
+      final userData = await _googleSignInService.signInWithGoogle();
+      if (userData == null) {
+        Get.snackbar('Error', 'Google Sign-In canceled');
+        return;
+      }
 
-      final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
+      final response = await _apiService.loginWithGoogle(
+        email: userData['email']!,
+        fullname: userData['fullname']!,
+      );
 
-      await _auth.signInWithCredential(credential);
-    } catch (e) {
-      Get.snackbar('Error', e.toString());
+
+
+      // Handle response data (e.g., save token, navigate to home)
+      print('Login response: $response');
+
+      String accessToken = response['data']['accessToken'].toString();
+      LocalStorage.saveData(
+        key: AppConstant.accessToken,
+        data: accessToken,
+      );
+
+      String userId = response['data']['user']['_id'].toString();
+      LocalStorage.saveData(
+        key: AppConstant.userId,
+        data: userId,
+      );
+
+      String refreshToken = response['data']['refreshToken'].toString();
+      LocalStorage.saveData(
+        key: AppConstant.refreshToken,
+        data: refreshToken,
+      );
+
+      String role =
+      response['data']['user']['role'].toString().toLowerCase();
+      LocalStorage.saveData(key: AppConstant.role, data: role);
+      kSnackBar(message: "Logged in successfully", bgColor: AppColors.green);
+
+      if (role == 'user') {
+        Get.offAll(() => DashboardView());
+      } else if (role == 'driver') {
+        Get.offAll(() => DriverDashboardView());
+      } else {
+        kSnackBar(message: 'Unknown role', bgColor: AppColors.red);
+      }
+    } catch (error) {
+      Get.snackbar('Error', 'Failed to login: $error');
+    } finally {
+      isLoading.value = false;
     }
-  }
-
-  Future<void> signOut() async {
-    await _googleSignIn.signOut();
-    await _auth.signOut();
   }
 }

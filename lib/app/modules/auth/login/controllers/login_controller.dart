@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_constant/app_constant.dart';
 import '../../../../../common/helper/local_store.dart';
+import '../../../../../common/helper/socket_service.dart';
 import '../../../../../common/widgets/custom_snackbar.dart';
 import '../../../../data/api.dart';
 import '../../../../data/base_client.dart';
@@ -40,6 +41,7 @@ class LoginController extends GetxController {
       );
 
       if (responseBody != null) {
+        await Get.putAsync(() => SocketService().init());
         String message = responseBody['message'].toString();
         bool success = responseBody['success'];
 
