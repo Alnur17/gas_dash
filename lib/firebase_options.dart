@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -50,19 +41,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAy8SQU2fht5nfreqjOA0DDx8Omw87XGTk',
-    appId: '1:694698990045:android:f3208bfbe9f3d1586afe34',
-    messagingSenderId: '694698990045',
-    projectId: 'notes-app-7acc8',
-    storageBucket: 'notes-app-7acc8.firebasestorage.app',
+    apiKey: 'AIzaSyC0oBLAhA398OofECsBFycP_EfchQYQkgQ',
+    appId: '1:947815682537:android:23d021479dfbc06d6abb78',
+    messagingSenderId: '947815682537',
+    projectId: 'gasdash-54378',
+    storageBucket: 'gasdash-54378.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDpShbxCopfz2lxYSoY6eCUyIG_TIqwy38',
-    appId: '1:694698990045:ios:b04982b2a83db3936afe34',
-    messagingSenderId: '694698990045',
-    projectId: 'notes-app-7acc8',
-    storageBucket: 'notes-app-7acc8.firebasestorage.app',
+    apiKey: 'AIzaSyD2fij6ANJEXOrT9IGzMEO997t5rIY-Eo0',
+    appId: '1:947815682537:ios:e956b6397f00ba186abb78',
+    messagingSenderId: '947815682537',
+    projectId: 'gasdash-54378',
+    storageBucket: 'gasdash-54378.firebasestorage.app',
     iosBundleId: 'com.dominiquemorris.gasDash',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBFGWd3EjhfFXbaVBN9PqD2xSREKcJuTSQ',
+    appId: '1:947815682537:web:acbcbb865c4d0f496abb78',
+    messagingSenderId: '947815682537',
+    projectId: 'gasdash-54378',
+    authDomain: 'gasdash-54378.firebaseapp.com',
+    storageBucket: 'gasdash-54378.firebasestorage.app',
+    measurementId: 'G-YKQ8X4CE9B',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyD2fij6ANJEXOrT9IGzMEO997t5rIY-Eo0',
+    appId: '1:947815682537:ios:e956b6397f00ba186abb78',
+    messagingSenderId: '947815682537',
+    projectId: 'gasdash-54378',
+    storageBucket: 'gasdash-54378.firebasestorage.app',
+    iosBundleId: 'com.dominiquemorris.gasDash',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyBFGWd3EjhfFXbaVBN9PqD2xSREKcJuTSQ',
+    appId: '1:947815682537:web:5b38c8a7409bf2a96abb78',
+    messagingSenderId: '947815682537',
+    projectId: 'gasdash-54378',
+    authDomain: 'gasdash-54378.firebaseapp.com',
+    storageBucket: 'gasdash-54378.firebasestorage.app',
+    measurementId: 'G-8H14SRNJB3',
+  );
+
 }

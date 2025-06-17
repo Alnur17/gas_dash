@@ -45,5 +45,37 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.947815682537-ajlft9q7gc2il0pvp7vrgtbjvpq8vob2</string>
+			</array>
+		</dict>
+	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>com.apple.developer.applesignin</key>
+	<array>
+		<string>Default</string>
+	</array>
+	<!-- Location Permissions -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Gas Dash requires your location to find nearby gas stations and provide navigation.</string>
+	<!-- Optional: For background location updates -->
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Gas Dash needs your location to provide real-time navigation and updates even when the app is in the background.</string>
+	<!-- Optional: For temporary precise location -->
+	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
+	<dict>
+		<key>PurposeStringKey</key>
+		<string>Gas Dash needs your precise location temporarily to provide accurate navigation to nearby gas stations.</string>
+	</dict>
 </dict>
 </plist>

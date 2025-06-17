@@ -1,45 +1,43 @@
 {
   "project_info": {
-    "project_number": "694698990045",
-    "project_id": "notes-app-7acc8",
-    "storage_bucket": "notes-app-7acc8.firebasestorage.app"
+    "project_number": "947815682537",
+    "project_id": "gasdash-54378",
+    "storage_bucket": "gasdash-54378.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:694698990045:android:f3208bfbe9f3d1586afe34",
+        "mobilesdk_app_id": "1:947815682537:android:23d021479dfbc06d6abb78",
         "android_client_info": {
           "package_name": "com.dominiquemorris.gas_dash"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "947815682537-nup3isbb0ee35m3c8s8u1j0v9pe2n8sd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyAy8SQU2fht5nfreqjOA0DDx8Omw87XGTk"
+          "current_key": "AIzaSyC0oBLAhA398OofECsBFycP_EfchQYQkgQ"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:694698990045:android:752e219e8f0f5aed6afe34",
-        "android_client_info": {
-          "package_name": "com.example.notes_app"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAy8SQU2fht5nfreqjOA0DDx8Omw87XGTk"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "947815682537-nup3isbb0ee35m3c8s8u1j0v9pe2n8sd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "947815682537-ajlft9q7gc2il0pvp7vrgtbjvpq8vob2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.dominiquemorris.gasDash"
+              }
+            }
+          ]
         }
       }
     }

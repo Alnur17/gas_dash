@@ -41,6 +41,7 @@ class LoginController extends GetxController {
       );
 
       if (responseBody != null) {
+        await Get.putAsync(() => SocketService().init());
         String message = responseBody['message'].toString();
         bool success = responseBody['success'];
 

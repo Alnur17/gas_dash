@@ -168,8 +168,9 @@ class OrderFuelController extends GetxController {
       final Map<String, dynamic> orderData = {
         'location': {
           'coordinates': [
-            longitude.value ?? 23.8103,
-            latitude.value ?? 90.4125,
+            longitude.value ?? 90.4125,
+            latitude.value ?? 23.8103,
+
           ],
         },
         'vehicleId': vehicleId,
@@ -224,8 +225,9 @@ class OrderFuelController extends GetxController {
       final Map<String, dynamic> orderData = {
         'location': {
           'coordinates': [
-            longitude.value ?? 23.8103,
-            latitude.value ?? 90.4125,
+           longitude.value ?? 90.4125,
+            latitude.value ?? 23.8103,
+
           ],
         },
         'vehicleId': vehicleId,
