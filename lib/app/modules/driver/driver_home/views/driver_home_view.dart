@@ -63,83 +63,85 @@ class DriverHomeView extends GetView<DriverHomeController> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Obx(() => Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                sh20,
-                Text(
-                  'Earning Overview',
-                  style: h3,
-                ),
-                sh12,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: EarningsCard(
-                        gradientColor: AppColors.gradientColorBlue,
-                        title: 'Total Earnings',
-                        amount: driverEarningController.totalEarnings.value
+        child: Obx(() => SingleChildScrollView(
+          child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  sh20,
+                  Text(
+                    'Earning Overview',
+                    style: h3,
+                  ),
+                  sh12,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: EarningsCard(
+                          gradientColor: AppColors.gradientColorBlue,
+                          title: 'Total Earnings',
+                          amount: driverEarningController.totalEarnings.value
+                              .toStringAsFixed(2),
+                        ),
+                      ),
+                      sw8,
+                      EarningsCard(
+                        backgroundColor: AppColors.primaryColor,
+                        title: 'Today',
+                        amount: driverEarningController.todayEarnings.value
                             .toStringAsFixed(2),
                       ),
-                    ),
-                    sw8,
-                    EarningsCard(
-                      backgroundColor: AppColors.primaryColor,
-                      title: 'Today',
-                      amount: driverEarningController.todayEarnings.value
-                          .toStringAsFixed(2),
-                    ),
-                  ],
-                ),
-                sh20,
-                Text(
-                  'Recent Request',
-                  style: h3,
-                ),
-                sh12,
-                controller.isLoading.value
-                    ? Center(child: CircularProgressIndicator())
-                    : Expanded(
-                        child: controller.pendingOrders.isEmpty
-                            ? Center(
-                                child: Text('No pending orders available',
-                                    style: h5))
-                            : ListView.builder(
-                                itemCount: controller.pendingOrders.length,
-                                itemBuilder: (context, index) {
-                                  final order = controller.pendingOrders[index];
-                                  return FuelAndServiceCard(
-                                    emergencyImage: AppImages.emergency,
-                                    emergency: order.emergency ?? false,
-                                    fuelAmount:
-                                        '${order.amount?.toStringAsFixed(2) ?? '0.00'} gallons',
-                                    fuelType: order.orderType ?? 'Unknown',
-                                    location: order.location?.coordinates !=
-                                            null
-                                        ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
-                                        : 'Unknown',
-                                    onAcceptPressed: () =>
-                                        controller.acceptOrder(order.id ?? ''),
-                                    onViewDetailsPressed: () => controller
-                                        .viewOrderDetails(order.id ?? ''),
-                                    fuelIconPath: AppImages.fuelFiller,
-                                    locationIconPath: AppImages.locationRed,
-                                  );
-                                },
-                              ),
-                      ),
-                sh20,
-                CustomRowHeader(
-                  title: 'Active Order',
-                  onTap: () {},
-                ),
-                sh8,
-                Expanded(
-                  child: controller.inProgressOrders.isEmpty
+                    ],
+                  ),
+                  sh20,
+                  Text(
+                    'Recent Request',
+                    style: h3,
+                  ),
+                  sh12,
+                  controller.isLoading.value
+                      ? Center(child: CircularProgressIndicator())
+                      : controller.pendingOrders.isEmpty
+                          ? Center(
+                              child: Text('No pending orders available',
+                                  style: h5))
+                          : ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                              itemCount: controller.pendingOrders.length,
+                              itemBuilder: (context, index) {
+                                final order = controller.pendingOrders[index];
+                                return FuelAndServiceCard(
+                                  emergencyImage: AppImages.emergency,
+                                  emergency: order.emergency ?? false,
+                                  fuelAmount:
+                                      '${order.amount?.toStringAsFixed(2) ?? '0.00'} gallons',
+                                  fuelType: order.orderType ?? 'Unknown',
+                                  location: order.location?.coordinates !=
+                                          null
+                                      ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
+                                      : 'Unknown',
+                                  onAcceptPressed: () =>
+                                      controller.acceptOrder(order.id ?? ''),
+                                  onViewDetailsPressed: () => controller
+                                      .viewOrderDetails(order.id ?? ''),
+                                  fuelIconPath: AppImages.fuelFiller,
+                                  locationIconPath: AppImages.locationRed,
+                                );
+                              },
+                            ),
+                  sh20,
+                  CustomRowHeader(
+                    title: 'Active Order',
+                    onTap: () {},
+                  ),
+                  sh8,
+                  controller.inProgressOrders.isEmpty
                       ? Center(
                           child: Text('No active orders available', style: h5))
                       : ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
                           itemCount: controller.inProgressOrders.length,
                           itemBuilder: (context, index) {
                             final order = controller.inProgressOrders[index];
@@ -173,9 +175,9 @@ class DriverHomeView extends GetView<DriverHomeController> {
                             );
                           },
                         ),
-                ),
-              ],
-            )),
+                ],
+              ),
+        )),
       ),
     );
   }

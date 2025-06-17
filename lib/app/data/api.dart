@@ -73,6 +73,7 @@ class Api {
   ///Subscriptions
 
   static const String subscriptionCreate = "$baseUrl/subscription/";
+  static const String subscriptionPayment = "$baseUrl/payments/subscription/checkout";
   static const String subscriptionPackage = "$baseUrl/packages/";
 
   ///Questions

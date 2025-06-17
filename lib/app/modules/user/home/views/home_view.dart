@@ -3,6 +3,7 @@ import 'package:gas_dash/app/modules/user/emergency_fuel/views/emergency_fuel_vi
 import 'package:gas_dash/app/modules/user/home/views/notification_view.dart';
 import 'package:gas_dash/app/modules/user/jump_start_car_battery/views/jump_start_car_battery_view.dart';
 import 'package:gas_dash/app/modules/user/order_fuel/views/order_fuel_view.dart';
+import 'package:gas_dash/app/modules/user/order_history/controllers/order_history_controller.dart';
 import 'package:gas_dash/app/modules/user/profile/controllers/profile_controller.dart';
 import 'package:gas_dash/app/modules/user/subscription/views/subscription_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
@@ -15,6 +16,7 @@ import 'package:get/get.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/helper/fuel_card.dart';
 import '../../../../../common/helper/fuel_order_card.dart';
+import '../../../../../common/helper/order_history_card.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -22,6 +24,7 @@ class HomeView extends GetView<HomeController> {
 
   final profileController = Get.put(ProfileController());
   final homeController = Get.put(HomeController());
+  final oHController = Get.put(OrderHistoryController());
 
   @override
   Widget build(BuildContext context) {
@@ -463,13 +466,52 @@ class HomeView extends GetView<HomeController> {
             ),
             sh12,
             CustomRowHeader(title: 'Order History', onTap: () {}),
-            FuelOrderCard(
-              orderId: '5758',
-              orderDate: '10 Dec 2025 at 10:39 AM',
-              fuelQuantity: '15 Litres',
-              fuelType: 'Premium Fuel',
-              price: '65',
-              status: 'Fuel Delivered',
+            Obx(
+              () {
+                if (oHController.isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (oHController.errorMessage.isNotEmpty) {
+                  return Center(
+                      child: Text(oHController.errorMessage.value,
+                          style: const TextStyle(color: Colors.red)));
+                }
+
+                // Show both InProgress and Delivered orders
+                final orders = oHController.orders.where((order) {
+                  final status = order.orderStatus ?? '';
+                  return status == 'InProgress' || status == 'Delivered';
+                }).toList();
+
+                if (orders.isEmpty) {
+                  return const Center(child: Text('No orders found'));
+                }
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: orders.length,
+                  itemBuilder: (context, index) {
+                    final order = orders[index];
+                    debugPrint('Rendering order status: ${order.orderStatus}');
+                    final displayStatus = order.orderStatus == 'InProgress'
+                        ? 'In Process'
+                        : 'Completed';
+                    return OrderHistoryCard(
+                      emergency: order.emergency ?? false,
+                      emergencyImage: AppImages.emergency,
+                      orderId: order.id ?? 'N/A',
+                      orderDate: order.createdAt?.toString() ?? 'Unknown',
+                      fuelQuantity: '${order.amount ?? 0} gallons',
+                      fuelType: order.fuelType ?? 'Unknown',
+                      price: (order.finalAmountOfPayment ?? 0.0)
+                          .toStringAsFixed(2),
+                      status: displayStatus,
+                    );
+                  },
+                );
+              },
             ),
             sh40,
           ],

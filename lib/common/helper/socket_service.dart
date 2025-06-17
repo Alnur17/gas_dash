@@ -24,15 +24,15 @@ class SocketService {
 
   Future<SocketService> init() async {
 
-    String token = LocalStorage.getData(key: AppConstant.accessToken);
-    String userId = LocalStorage.getData(key: AppConstant.accessToken);
+    String? token = LocalStorage.getData(key: AppConstant.accessToken);
+    String? userId = LocalStorage.getData(key: AppConstant.accessToken);
 
     _socket = IO.io("${Api.socketUrl}", <String, dynamic>{ //http://192.168.10.152:5001
 
       'transports': ['websocket'],
       'autoConnect': true, // Auto connect to the server
       'extraHeaders': {
-        'token': token
+        'token': token != null ? token : ""
       },
     });
 
