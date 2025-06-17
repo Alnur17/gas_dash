@@ -163,17 +163,19 @@ class _LoginViewState extends State<LoginView> {
 
             Obx(() =>   GoogleButton(
               assetPath: AppImages.google,
-              label: authController.isLoading.value ? 'Loading...' :'Continue with Google',
+              label: authController.isLoadingGoogle.value ? 'Loading...' :'Continue with Google',
               onTap: ()  {
                 authController.loginWithGoogle();
               },
             ),),
               sh12,
-              GoogleButton(
-                assetPath: AppImages.apple,
-                label: 'Continue with Apple',
-                onTap: () {},
-              ),
+             Obx(() =>  GoogleButton(
+               assetPath: AppImages.apple,
+               label: authController.isLoadingApple.value ? 'Loading...' :'Continue with Apple',
+               onTap: () {
+                 authController.loginWithApple();
+               },
+             ),),
               sh10,
               GestureDetector(
                 onTap: () {

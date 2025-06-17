@@ -4,9 +4,11 @@ import 'package:http/http.dart' as http;
 class ApiService {
   static const String baseUrl = 'http://172.252.13.83:8000/api/v1';
 
-  Future<Map<String, dynamic>> loginWithGoogle({
+  Future<Map<String, dynamic>> login({
     required String email,
     required String fullname,
+    required bool isGoogleLogin,
+    bool isAppleLogin = false,
   }) async {
     try {
       final response = await http.post(
@@ -15,7 +17,7 @@ class ApiService {
         body: jsonEncode({
           'email': email,
           'password': '',
-          'isGoogleLogin': true,
+          'isGoogleLogin': isGoogleLogin,
           'fullname': fullname,
         }),
       );

@@ -59,6 +59,7 @@ dependencies:
   socket_io_client: ^2.0.3+1
   cached_network_image: ^3.4.1
   date_picker_timeline: ^1.2.7
+  sign_in_with_apple: ^7.0.1
 
 
 dev_dependencies:
