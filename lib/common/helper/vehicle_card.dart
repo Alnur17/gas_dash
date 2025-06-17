@@ -7,7 +7,7 @@ import '../app_text_style/styles.dart';
 import '../size_box/custom_sizebox.dart';
 import '../widgets/custom_button.dart';
 
-class VehicleCard extends StatefulWidget {
+class VehicleCard extends StatelessWidget {
   final VoidCallback onAddCarTap;
   final VoidCallback onSelectCarTap;
   final String imageAssetPath;
@@ -15,19 +15,14 @@ class VehicleCard extends StatefulWidget {
   const VehicleCard({
     super.key,
     required this.onAddCarTap,
-    required this.imageAssetPath,
     required this.onSelectCarTap,
+    required this.imageAssetPath,
   });
 
   @override
-  State<VehicleCard> createState() => _VehicleCardState();
-}
-
-class _VehicleCardState extends State<VehicleCard> {
-  final OrderFuelController controller = Get.find<OrderFuelController>();
-
-  @override
   Widget build(BuildContext context) {
+    final OrderFuelController controller = Get.find<OrderFuelController>();
+
     return Obx(() => Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -41,7 +36,7 @@ class _VehicleCardState extends State<VehicleCard> {
             Row(
               children: [
                 Image.asset(
-                  widget.imageAssetPath,
+                  imageAssetPath,
                   scale: 4,
                 ),
                 sw12,
@@ -56,7 +51,7 @@ class _VehicleCardState extends State<VehicleCard> {
               children: [
                 CustomButton(
                   text: 'Add',
-                  onPressed: widget.onAddCarTap,
+                  onPressed: onAddCarTap,
                   height: 40,
                   width: 100,
                   borderRadius: 8,
@@ -68,7 +63,7 @@ class _VehicleCardState extends State<VehicleCard> {
                 sw5,
                 CustomButton(
                   text: 'Select Car',
-                  onPressed: widget.onSelectCarTap, // Updated to call the new method
+                  onPressed: onSelectCarTap,
                   height: 40,
                   width: 130,
                   borderRadius: 8,
@@ -88,7 +83,7 @@ class _VehicleCardState extends State<VehicleCard> {
                 ),
                 sw12,
                 Text(
-                  '${controller.confirmedVehicle.value!['make']} ${controller.confirmedVehicle.value!['model']}, ${controller.confirmedVehicle.value!['year']}',
+                  '${controller.confirmedVehicle.value!['year']} ${controller.confirmedVehicle.value!['make']} ${controller.confirmedVehicle.value!['model']}',
                   style: h5.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
@@ -101,8 +96,7 @@ class _VehicleCardState extends State<VehicleCard> {
                   text: 'Change',
                   onPressed: () {
                     controller.resetForm();
-                    controller.confirmedVehicle.value = null;
-                    widget.onAddCarTap();
+                    onAddCarTap();
                   },
                   height: 40,
                   width: 100,

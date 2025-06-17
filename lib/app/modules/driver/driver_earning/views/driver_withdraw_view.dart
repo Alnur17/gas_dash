@@ -6,7 +6,9 @@ import 'package:gas_dash/common/widgets/custom_button.dart';
 import 'package:gas_dash/common/widgets/custom_textfield.dart';
 import 'package:get/get.dart';
 import '../../../../../common/app_color/app_colors.dart';
+import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/helper/earnings_card.dart';
+import '../../../../../common/widgets/custom_circular_container.dart';
 
 class DriverWithdrawView extends GetView<DriverEarningController> {
   final String myBalance;
@@ -14,8 +16,7 @@ class DriverWithdrawView extends GetView<DriverEarningController> {
 
   @override
   Widget build(BuildContext context) {
-    // Initialize the controller
-    Get.put(DriverEarningController());
+    // Do NOT call Get.put here; assume controller is already initialized
     return Scaffold(
       backgroundColor: AppColors.mainColor,
       appBar: AppBar(
@@ -25,59 +26,70 @@ class DriverWithdrawView extends GetView<DriverEarningController> {
           'Withdraw',
           style: titleStyle,
         ),
-        centerTitle: true,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12),
+          child: CustomCircularContainer(
+            imagePath: AppImages.back,
+            onTap: () {
+              Get.back();
+            },
+            padding: 2,
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            EarningsCard(
-              gradientColor: AppColors.gradientColorBlue,
-              title: 'Total Balance',
-              amount: myBalance, // This could be dynamic, e.g., from DriverEarningController
-            ),
-            sh12,
-            Text(
-              'Withdraw Amount',
-              style: h5,
-            ),
-            sh8,
-            CustomTextField(
-              hintText: '\$1000',
-              controller: controller.amountController,
-              //keyboardType: TextInputType.number,
-            ),
-            sh12,
-            Text(
-              'Card Holder Name',
-              style: h5,
-            ),
-            sh8,
-            CustomTextField(
-              hintText: 'TANZIDA',
-              controller: controller.cardHolderNameController,
-            ),
-            sh12,
-            Text(
-              'Card Number',
-              style: h5,
-            ),
-            sh8,
-            CustomTextField(
-              hintText: '3536 3532 1235 0987',
-              controller: controller.cardNumberController,
-              //keyboardType: TextInputType.number,
-            ),
-            sh20,
-            Obx(() => CustomButton(
-              text: controller.isLoading.value ? 'Processing...' : 'Withdraw',
-              onPressed: controller.isLoading.value
-                  ? (){}
-                  : controller.submitWithdrawRequest,
-              gradientColors: AppColors.gradientColorGreen,
-            )),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              EarningsCard(
+                gradientColor: AppColors.gradientColorBlue,
+                title: 'Total Balance',
+                amount: myBalance,
+              ),
+              sh12,
+              Text(
+                'Withdraw Amount',
+                style: h5,
+              ),
+              sh8,
+              CustomTextField(
+                hintText: '\$1000',
+                controller: controller.amountController,
+               // keyboardType: TextInputType.number, // Enable number input
+              ),
+              sh12,
+              Text(
+                'Card Holder Name',
+                style: h5,
+              ),
+              sh8,
+              CustomTextField(
+                hintText: 'TANZIDA',
+                controller: controller.cardHolderNameController,
+              ),
+              sh12,
+              Text(
+                'Card Number',
+                style: h5,
+              ),
+              sh8,
+              CustomTextField(
+                hintText: '3536 3532 1235 0987',
+                controller: controller.cardNumberController,
+                //keyboardType: TextInputType.number, // Enable number input
+              ),
+              sh20,
+              Obx(() => CustomButton(
+                text: controller.isLoading.value ? 'Processing...' : 'Withdraw',
+                onPressed: controller.isLoading.value
+                    ? () {}
+                    : controller.submitWithdrawRequest,
+                gradientColors: AppColors.gradientColorGreen,
+              )),
+            ],
+          ),
         ),
       ),
     );

@@ -61,7 +61,9 @@ class _DriverChangePasswordViewState extends State<DriverChangePasswordView> {
                 AppImages.eyeClose,
                 scale: 4,
               ),
-            ),Text('New Password',style: h5,),
+            ),
+            sh16,
+            Text('New Password',style: h5,),
             sh8,
             CustomTextField(
               controller: newPassTEController,

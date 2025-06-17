@@ -11,11 +11,9 @@ import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/helper/service_card.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
-import 'package:gas_dash/common/widgets/custom_row_header.dart';
 import 'package:get/get.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/helper/fuel_card.dart';
-import '../../../../../common/helper/fuel_order_card.dart';
 import '../../../../../common/helper/order_history_card.dart';
 import '../controllers/home_controller.dart';
 
@@ -465,39 +463,49 @@ class HomeView extends GetView<HomeController> {
               ),
             ),
             sh12,
-            CustomRowHeader(title: 'Order History', onTap: () {}),
+            Padding(
+              padding: const EdgeInsets.only(left: 20),
+              child: Text(
+                'Order History',
+                style: h3,
+              ),
+            ),
+            //CustomRowHeader(title: 'Order History', onTap: () {}),
             Obx(
-              () {
+                  () {
+                // Show loading indicator if data is being fetched
                 if (oHController.isLoading.value) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
+                // Show error message if there's an error
                 if (oHController.errorMessage.isNotEmpty) {
                   return Center(
-                      child: Text(oHController.errorMessage.value,
-                          style: const TextStyle(color: Colors.red)));
+                    child: Text(
+                      oHController.errorMessage.value,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  );
                 }
 
-                // Show both InProgress and Delivered orders
-                final orders = oHController.orders.where((order) {
-                  final status = order.orderStatus ?? '';
-                  return status == 'InProgress' || status == 'Delivered';
-                }).toList();
+                // Filter only Pending orders
+                final orders = oHController.orders
+                    .where((order) => order.orderStatus == 'Unassigned')
+                    .toList();
 
+                // Show message if no Pending orders are found
                 if (orders.isEmpty) {
-                  return const Center(child: Text('No orders found'));
+                  return const Center(child: Text('No Pending orders found'));
                 }
 
+                // Build list of Pending orders
                 return ListView.builder(
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: orders.length,
                   itemBuilder: (context, index) {
                     final order = orders[index];
                     debugPrint('Rendering order status: ${order.orderStatus}');
-                    final displayStatus = order.orderStatus == 'InProgress'
-                        ? 'In Process'
-                        : 'Completed';
                     return OrderHistoryCard(
                       emergency: order.emergency ?? false,
                       emergencyImage: AppImages.emergency,
@@ -505,9 +513,8 @@ class HomeView extends GetView<HomeController> {
                       orderDate: order.createdAt?.toString() ?? 'Unknown',
                       fuelQuantity: '${order.amount ?? 0} gallons',
                       fuelType: order.fuelType ?? 'Unknown',
-                      price: (order.finalAmountOfPayment ?? 0.0)
-                          .toStringAsFixed(2),
-                      status: displayStatus,
+                      price: (order.finalAmountOfPayment ?? 0.0).toStringAsFixed(2),
+                      status: order.orderStatus.toString(), // Since all orders here are Pending
                     );
                   },
                 );

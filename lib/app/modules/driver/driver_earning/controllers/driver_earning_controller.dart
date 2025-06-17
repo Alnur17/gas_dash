@@ -1,6 +1,4 @@
-
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/driver/driver_earning/model/single_driver_earning_model.dart';
 import 'package:gas_dash/common/app_constant/app_constant.dart';
@@ -13,12 +11,10 @@ import '../../../../data/api.dart';
 import '../../../../data/base_client.dart';
 
 class DriverEarningController extends GetxController {
-
   final amountController = TextEditingController();
   final cardHolderNameController = TextEditingController();
   final cardNumberController = TextEditingController();
 
-  // Observable variables for reactive UI
   var todayEarnings = 0.0.obs;
   var totalEarnings = 0.0.obs;
   var isLoading = false.obs;
@@ -27,7 +23,7 @@ class DriverEarningController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchTodayEarnings();
+    fetchEarnings();
   }
 
   @override
@@ -39,18 +35,14 @@ class DriverEarningController extends GetxController {
     super.onClose();
   }
 
-  Future<void> fetchTodayEarnings() async {
+  Future<void> fetchEarnings() async {
     try {
       isLoading.value = true;
       errorMessage.value = '';
 
       String token = LocalStorage.getData(key: AppConstant.accessToken);
-
       var decodedToken = JwtDecoder.decode(token);
-
       var userId = decodedToken['userId']?.toString() ?? '';
-
-      print(';;;;;;;;;;;;;;;; $userId ::::::::::');
 
       final headers = {
         'Content-Type': 'application/json',
@@ -61,7 +53,6 @@ class DriverEarningController extends GetxController {
       );
 
       final jsonResponse = await BaseClient.handleResponse(response);
-
       final earningModel = SingleDriverEarningModel.fromJson(jsonResponse);
 
       if (earningModel.success == true && earningModel.data != null) {
@@ -79,50 +70,38 @@ class DriverEarningController extends GetxController {
     }
   }
 
-
-  // Function to handle withdraw request
   Future<void> submitWithdrawRequest() async {
     try {
       isLoading.value = true;
 
-      // Get token from local storage
       String token = LocalStorage.getData(key: AppConstant.accessToken);
-
-      // Prepare headers
       final headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       };
 
-      // Prepare body
       final body = {
         'withdrawAmount': amountController.text.replaceAll('\$', '').trim(),
-        // 'card_holder_name': cardHolderNameController.text.trim(),
-        // 'card_number': cardNumberController.text.trim(),
+        'cardHolderName': cardHolderNameController.text.trim(), // Uncomment if needed
+        'cardNumber': cardNumberController.text.trim(), // Uncomment if needed
       };
 
-      // Make API call
       final response = await BaseClient.postRequest(
         api: Api.withdrawRequest,
         body: jsonEncode(body),
         headers: headers,
       );
 
-      // Handle response
       final jsonResponse = await BaseClient.handleResponse(response);
-
-      // Show success message
       kSnackBar(
         message: jsonResponse['message'] ?? 'Withdrawal request submitted successfully',
         bgColor: AppColors.green,
       );
 
-      // Clear input fields
       amountController.clear();
       cardHolderNameController.clear();
       cardNumberController.clear();
     } catch (e) {
-      // Show error message
       kSnackBar(
         message: e.toString(),
         bgColor: AppColors.orange,
