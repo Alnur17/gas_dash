@@ -28,6 +28,7 @@ class LocationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final OrderFuelController controller = Get.find<OrderFuelController>();
+    print("location>>>>>> $locationText");
 
     return Container(
       padding: const EdgeInsets.symmetric(
