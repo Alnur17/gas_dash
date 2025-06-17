@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_constant/app_constant.dart';
 import '../../../../../common/helper/local_store.dart';
+import '../../../../../common/helper/socket_service.dart';
 import '../../../../../common/widgets/custom_snackbar.dart';
 import '../../../../data/api.dart';
 import '../../../../data/base_client.dart';
@@ -44,10 +45,18 @@ class LoginController extends GetxController {
         bool success = responseBody['success'];
 
         if (success) {
+          // Initialize SocketService
+          await Get.putAsync(() => SocketService().init());
           String accessToken = responseBody['data']['accessToken'].toString();
           LocalStorage.saveData(
             key: AppConstant.accessToken,
             data: accessToken,
+          );
+
+          String userId = responseBody['data']['user']['_id'].toString();
+          LocalStorage.saveData(
+            key: AppConstant.userId,
+            data: userId,
           );
 
           String refreshToken = responseBody['data']['refreshToken'].toString();

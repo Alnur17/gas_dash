@@ -26,9 +26,10 @@ class OrderHistoryController extends GetxController {
     try {
       isLoading(true);
       errorMessage('');
-
+      String accessToken = LocalStorage.getData(key: AppConstant.accessToken);
       final headers = {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       };
 
       final response = await BaseClient.getRequest(

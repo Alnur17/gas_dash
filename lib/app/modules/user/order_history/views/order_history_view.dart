@@ -4,6 +4,7 @@ import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/helper/order_history_card.dart';
+import '../../payment/controllers/payment_controller.dart';
 import '../controllers/order_history_controller.dart';
 
 class OrderHistoryView extends StatefulWidget {
@@ -163,7 +164,7 @@ class OrderStatusSection extends StatelessWidget {
             buttonText1: _getButtonText1(order.orderStatus ?? ''),
             buttonText2: _getButtonText2(order.orderStatus ?? ''),
             onButton1Pressed: () {
-              _navigateButton1(order.orderStatus ?? '');
+              _navigateButton1(order.orderStatus ?? '', order.id);
             },
             onButton2Pressed: () {
               controller.getSingleOrder(order.id ?? 'N/A',order.amount.toString());
@@ -193,10 +194,11 @@ class OrderStatusSection extends StatelessWidget {
     }
   }
 
-  void _navigateButton1(String apiStatus) {
+  void _navigateButton1(String apiStatus, orderId) {
     switch (apiStatus) {
       case 'Delivered':
-// Handle Re-book action (e.g., navigate to booking screen)
+        final PaymentController paymentController = Get.put(PaymentController());
+        paymentController.createPaymentSession(orderId: orderId);
         break;
     }
   }

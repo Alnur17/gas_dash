@@ -1,218 +1,274 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:http/http.dart' as http;
+import 'package:html/parser.dart' show parse;
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../../common/app_color/app_colors.dart';
-import '../../../../../common/app_images/app_images.dart';
-import '../../../../../common/app_text_style/styles.dart';
-import '../../../../../common/size_box/custom_sizebox.dart';
-import '../../../../../common/widgets/custom_circular_container.dart';
-import '../../../../../common/widgets/custom_textfield.dart';
+import '../../../../../common/helper/local_store.dart';
+import '../../../../../common/helper/socket_service.dart';
 import '../controllers/message_controller.dart';
+import '../controllers/message_send_controller.dart';
 
-class MessageBodyView extends GetView {
-  const MessageBodyView({super.key});
+class ChattingPage extends StatefulWidget {
+  final String chatId;
+  final String receiverId;
+  final String receiverName;
+  final String receiverImage;
+  const ChattingPage({super.key, required this.chatId, required this.receiverId, required this.receiverName, required this.receiverImage});
+
+  @override
+  State<ChattingPage> createState() => _ChattingPageState();
+}
+
+class _ChattingPageState extends State<ChattingPage> {
+  final SocketService socketService = Get.put(SocketService());
+  final MessageController messageChatController = Get.put(MessageController());
+  final MessageSendController messageSendController = Get.put(MessageSendController());
+  final ScrollController _scrollController = ScrollController();
+
+  String metaTitle = '';
+
+  @override
+  void initState() {
+    socketService.init();
+    socketService.socket.on('new-message::${widget.chatId}', (data) {
+      print("Socket new message received >>>>>>>>>>>>>>>>>>>>>>>");
+      _handleIncomingMessage(data);
+    });
+    socketService.socket.emit('seen', {'chatId': widget.chatId});
+    messageChatController.getFriendshipChat(chatId: widget.chatId).then((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToEnd();
+      });
+    });
+    super.initState();
+  }
+
+
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToEnd() {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  void _handleIncomingMessage(dynamic data) {
+    if (data != null && data is Map<String, dynamic>) {
+      socketService.messageList.add(data);
+      print("${socketService.messageList.length} this is message list demo length");
+      _scrollToEnd();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final messageController = Get.put(MessageController());
+    socketService.init().then((_) {
+      print("Socket initialized ))))))))))))))))))))))))))))))))))");
+    });
     return Scaffold(
-      backgroundColor: AppColors.mainColor,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.mainColor,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 12),
-          child: CustomCircularContainer(
-            imagePath: AppImages.back,
-            onTap: () {
-              Get.back();
-            },
-            padding: 2,
-          ),
+        title: Row(
+          children: [Text(widget.receiverName.toString())],
         ),
-        titleSpacing: 8,
-        title: Text(
-          'Floyd Miles',
-          style: TextStyle(color: Colors.black),
-        ),
-
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: CustomCircularContainer(
-              imagePath: AppImages.menu,
-              backgroundColor: AppColors.silver,
-              onTap: () {
-                Get.back();
-              },
-            ),
-          ),
-          sw12,
-          // GestureDetector(
-          //   onTap: (){},
-          //   child: Container(
-          //     padding: EdgeInsets.all(8),
-          //     decoration: ShapeDecoration(
-          //       shape: CircleBorder(),
-          //       color: AppColors.silver,
-          //     ),
-          //     child: Image.asset(
-          //       AppImages.menu,
-          //       scale: 4,
-          //     ),
-          //   ),
-          // ),
-        ],
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Obx(
-                  () => ListView.builder(
-                padding: EdgeInsets.all(16),
-                itemCount: messageController.messages.length,
-                itemBuilder: (context, index) {
-                  final message = messageController.messages[index];
-                  if (message.isSent) {
-                    return _buildSentMessage(
-                      message: message.text,
-                      time: message.time,
-                    );
-                  } else {
-                    return _buildReceivedMessage(
-                      message: message.text,
-                      time: message.time,
-                    );
-                  }
-                },
+      body: Obx(() => messageChatController.isLoading.value
+          ? const Center(child: CircularProgressIndicator())
+          : messageChatController.messageList.isEmpty
+          ? Center(child: Text("No Data Found".tr))
+          : ListView.builder(
+        controller: _scrollController,
+        itemCount: socketService.messageList.length,
+        itemBuilder: (context, index) {
+          String formattedTime = DateFormat('d MMM yyyy - hh:mma')
+              .format(socketService.messageList[index]["sendTime"] ?? DateTime.now());
+          var userId = LocalStorage.getData(key: "userId");
+          var senderId = socketService.messageList[index]["sender"] ?? '';
+
+          return Align(
+            alignment: userId == senderId ? Alignment.topRight : Alignment.topLeft,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: MediaQuery.sizeOf(context).width * 0.6,
+                    padding: const EdgeInsets.all(10),
+                    margin: const EdgeInsets.only(top: 10, bottom: 5, left: 10),
+                    decoration: BoxDecoration(
+                      color: userId == senderId ? AppColors.white : AppColors.primaryColor,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: userId == senderId ? Radius.circular(10) : Radius.circular(0),
+                        bottomRight: userId == senderId
+                            ? Radius.circular(0)
+                            : socketService.messageList[index]["showButton"] == true
+                            ? Radius.circular(0)
+                            : Radius.circular(10),
+                        topLeft: const Radius.circular(10),
+                        topRight: const Radius.circular(10),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                      border: Border.all(color: Colors.grey.withOpacity(0.5), width: 1.0),
+                    ),
+                    child: Text(
+                      socketService.messageList[index]["text"]?.toString() ?? '',
+                      style: TextStyle(color: userId == senderId ? AppColors.black : AppColors.white),
+                    ),
+                  ),
+                  Text(formattedTime, style: const TextStyle(fontSize: 10), textAlign: TextAlign.end),
+                ],
               ),
             ),
-          ),
-          _buildMessageInput(),
-        ],
-      ),
-    );
-  }
+          );
+        },
+      )),
+      bottomNavigationBar: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
+        child: AnimatedPadding(
+          padding: MediaQuery.of(context).viewInsets,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.decelerate,
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsetsDirectional.symmetric(horizontal: 20, vertical: 24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  offset: const Offset(2, 2),
+                  blurRadius: 10,
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Obx(() => messageSendController.selectedImagePath.value.isNotEmpty
+                    ? Stack(
+                  children: [
+                    Image.file(File(messageSendController.selectedImagePath.value), height: 50),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: InkWell(
+                        onTap: () => messageSendController.selectedImagePath.value = "",
+                        child: const Padding(
+                          padding: EdgeInsets.all(5.0),
+                          child: Icon(Icons.close, color: Colors.red, size: 14),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+                    : const SizedBox()),
+                const SizedBox(height: 15),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        cursorColor: Colors.black,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        textAlign: TextAlign.left,
+                        textInputAction: TextInputAction.done,
+                        minLines: 1,
+                        controller: messageSendController.messageTextController,
+                        style: GoogleFonts.raleway(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsetsDirectional.only(start: 12, end: 12, top: 12, bottom: 12),
+                          fillColor: Colors.transparent,
+                          filled: true,
+                          hintText: "Type message",
+                          hintStyle: GoogleFonts.raleway(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.5)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.5)),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: AppColors.primaryColor.withOpacity(0.5)),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    GestureDetector(
+                      onTap: () async {
+                        final text = messageSendController.messageTextController.text.trim();
+                        final imagePath = messageSendController.selectedImagePath.value;
+                        if (text.isNotEmpty || imagePath.isNotEmpty) {
+                          final data = {
+                            'receiver': widget.receiverId,
+                            'text': messageSendController.messageTextController.text,
+                          };
+                          try {
+                            print('Sending message with data: $data');
+                            final ack = await socketService.emitWithAck('send-message', data);
+                            print('Acknowledgment received: $ack, type: ${ack.runtimeType}');
+                            print("send dddd");
+                            messageSendController.messageTextController.clear();
+                            if (ack == true) {
+                              messageSendController.messageTextController.clear();
 
-  Widget _buildReceivedMessage(
-      {required String message, required String time}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left: 8),
-          child: Text(
-            time,
-            style: TextStyle(color: Colors.grey, fontSize: 12),
-          ),
-        ),
-        sh5,
-        Container(
-          padding: EdgeInsets.all(12),
-          margin: EdgeInsets.only(bottom: 8, right: 80),
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(12),
-              topRight: Radius.circular(12),
-              bottomRight: Radius.circular(12),
+                              _scrollToEnd();
+                            } else {
+                              print('Acknowledgment failed or invalid: $ack');
+                            }
+                          } catch (e) {
+                            print('Error sending message: $e');
+                          }
+                        }
+                      },
+                      child:  Icon(Icons.send, color: AppColors.primaryColor.withOpacity(0.5), size: 20),
+                    )
+                  ],
+                ),
+              ],
             ),
           ),
-          child: Text(
-            message,
-            style: h5.copyWith(color: AppColors.black),
-          ),
         ),
-        SizedBox(height: 16),
-      ],
-    );
-  }
-
-  Widget _buildSentMessage({required String message, required String time}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(right: 8),
-          child: Text(
-            time,
-            style: TextStyle(color: Colors.grey, fontSize: 12),
-          ),
-        ),
-        sh5,
-        Container(
-          padding: EdgeInsets.all(12),
-          margin: EdgeInsets.only(bottom: 8, left: 80),
-          decoration: BoxDecoration(
-            color: AppColors.green,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(12),
-              topRight: Radius.circular(12),
-              bottomLeft: Radius.circular(12),
-            ),
-          ),
-          child: Text(
-            message,
-            style: h5.copyWith(color: AppColors.white),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMessageInput() {
-    final TextEditingController textController = TextEditingController();
-    final MessageController messageController = Get.find();
-
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        // border: Border(
-        //   top: BorderSide(color: Colors.grey[300]!),
-        // ),
-      ),
-      child: Row(
-        children: [
-          Image.asset(
-            AppImages.attachFile,
-            scale: 4,
-          ),
-          sw12,
-          Expanded(
-            child: CustomTextField(
-              controller: textController,
-              hintText: 'Message',
-              borderRadius: 30,
-              containerColor: AppColors.bottomNavbar,
-            ),
-          ),
-          sw12,
-          GestureDetector(
-            onTap: () {
-              if (textController.text.trim().isNotEmpty) {
-                messageController.addMessage(textController.text.trim(), true);
-                textController.clear();
-
-                // Simulating a bot response
-                Future.delayed(
-                  Duration(seconds: 1),
-                      () {
-                    messageController.addMessage(
-                      'This is an auto-reply',
-                      false,
-                    );
-                  },
-                );
-              }
-            },
-            child: Image.asset(
-              AppImages.send,
-              scale: 4,
-            ),
-          ),
-        ],
       ),
     );
   }
 }
-

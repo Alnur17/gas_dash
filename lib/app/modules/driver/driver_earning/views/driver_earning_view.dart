@@ -15,7 +15,7 @@ class DriverEarningView extends GetView<DriverEarningController> {
   @override
   Widget build(BuildContext context) {
     final DriverProfileController driverProfileController = Get.put(DriverProfileController());
-    final DriverEarningController controller = Get.put(DriverEarningController());
+    final DriverEarningController driverEarningController = Get.put(DriverEarningController());
     return Scaffold(
       backgroundColor: AppColors.mainColor,
       appBar: AppBar(
@@ -31,12 +31,12 @@ class DriverEarningView extends GetView<DriverEarningController> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Obx(() => Column(
           children: [
-            controller.isLoading.value
+            driverEarningController.isLoading.value
                 ? const Center(child: CircularProgressIndicator())
-                : controller.errorMessage.value.isNotEmpty
+                : driverEarningController.errorMessage.value.isNotEmpty
                 ? Center(
               child: Text(
-                controller.errorMessage.value,
+                driverEarningController.errorMessage.value,
                 style: h4.copyWith(color: AppColors.red),
               ),
             )
@@ -47,7 +47,7 @@ class DriverEarningView extends GetView<DriverEarningController> {
                   child: EarningsCard(
                     gradientColor: AppColors.gradientColorBlue,
                     title: 'Total Earnings',
-                    amount: controller.totalEarnings.value
+                    amount: driverEarningController.totalEarnings.value
                         .toStringAsFixed(2),
                     //dropDown: 'Last Month',
                   ),
@@ -56,7 +56,7 @@ class DriverEarningView extends GetView<DriverEarningController> {
                 EarningsCard(
                   backgroundColor: AppColors.primaryColor,
                   title: 'Today',
-                  amount: controller.todayEarnings.value
+                  amount: driverEarningController.todayEarnings.value
                       .toStringAsFixed(2), // Display todayEarnings
                 ),
               ],
@@ -81,14 +81,15 @@ class DriverEarningView extends GetView<DriverEarningController> {
                   ),
                   sh5,
                   Text(
-                    driverProfileController.myBalance.toString(), // Update dynamically if needed
+
+                    driverProfileController.driverProfileData.value?.totalEarning.toString() == "null"? "0": "${driverProfileController.driverProfileData.value?.totalEarning.toString()}", // Update dynamically if needed
                     style: h1.copyWith(color: AppColors.white),
                   ),
                   sh24,
                   CustomButton(
                     text: 'Request Withdraw',
                     onPressed: () {
-                      Get.to(() => DriverWithdrawView(driverProfileController.myBalance.toString()));
+                      Get.to(() => DriverWithdrawView(driverProfileController.driverProfileData.value?.totalEarning?.toStringAsFixed(2) ?? '0.0'));
                     },
                     gradientColors: AppColors.gradientColor,
                     textStyle: h3.copyWith(

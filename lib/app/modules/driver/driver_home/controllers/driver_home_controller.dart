@@ -13,13 +13,10 @@ import '../model/assigned_order_model.dart';
 import '../model/single_order_by_Id_model.dart';
 
 class DriverHomeController extends GetxController {
-  // Reactive list to store all fetched orders
   var assignedOrders = <Datum>[].obs;
-  // Reactive lists for filtered orders
   var pendingOrders = <Datum>[].obs;
   var inProgressOrders = <Datum>[].obs;
   var deliveredOrders = <Datum>[].obs;
-  // Reactive list to display currently selected orders
   var displayedOrders = <Datum>[].obs;
   var isLoading = false.obs;
 
@@ -107,46 +104,6 @@ class DriverHomeController extends GetxController {
     displayedOrders.value = deliveredOrders;
   }
 
-
-  // Future<void> fetchAssignedOrders() async {
-  //   try {
-  //     isLoading.value = true;
-  //
-  //     final String token = LocalStorage.getData(key: AppConstant.accessToken);
-  //
-  //     final headers = {
-  //       'Content-Type': 'application/json',
-  //       'Authorization': 'Bearer $token'
-  //     };
-  //
-  //     final response = await BaseClient.getRequest(
-  //       api: Api.assignedOrder,
-  //       headers: headers,
-  //     );
-  //
-  //     final result = await BaseClient.handleResponse(response);
-  //
-  //     final assignedOrder = AssignedOrderModel.fromJson(result);
-  //
-  //     if (assignedOrder.success == true && assignedOrder.data != null) {
-  //       assignedOrders.value = assignedOrder.data!.data;
-  //     } else {
-  //       kSnackBar(
-  //         message: assignedOrder.message ?? 'Failed to fetch orders',
-  //         bgColor: AppColors.orange,
-  //       );
-  //     }
-  //   } catch (e) {
-  //     kSnackBar(
-  //       message: e.toString(),
-  //       bgColor: AppColors.orange,
-  //     );
-  //   } finally {
-  //     isLoading.value = false;
-  //   }
-  // }
-
-  //Fetch single order by ID and navigate to details view
   Future<void> fetchSingleOrder(String orderId) async {
     try {
       isLoading.value = true;
