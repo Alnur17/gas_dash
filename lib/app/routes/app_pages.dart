@@ -152,7 +152,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.ABOUT_DRIVER_INFORMATION,
-      page: () => const AboutDriverInformationView(),
+      page: () =>  AboutDriverInformationView(),
       binding: AboutDriverInformationBinding(),
     ),
     GetPage(

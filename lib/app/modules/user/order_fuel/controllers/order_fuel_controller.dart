@@ -29,6 +29,10 @@ class OrderFuelController extends GetxController {
   final TextEditingController fuelLevelController = TextEditingController();
   final TextEditingController customAmountController = TextEditingController();
 
+  final isLoading = false.obs;
+  // Observable for final confirmation data
+  final finalConfirmation = Rxn<FinalConfirmationModel>();
+
   // Observables for selected values
   var currentLocation = 'Fetching location...'.obs;
   var latitude = RxnDouble();
@@ -115,7 +119,8 @@ class OrderFuelController extends GetxController {
                       RegExp(r'^\d{5}$').hasMatch(zipCode.value!)) {
                     Get.back(); // Close dialog
                   } else {
-                    Get.snackbar('Error', 'Please enter a valid 5-digit zip code',
+                    Get.snackbar(
+                        'Error', 'Please enter a valid 5-digit zip code',
                         snackPosition: SnackPosition.BOTTOM);
                   }
                 },
@@ -163,6 +168,7 @@ class OrderFuelController extends GetxController {
     required double amount,
     required String fuelType,
   }) async {
+    isLoading.value = true;
     try {
       final String token = LocalStorage.getData(key: AppConstant.accessToken);
       final Map<String, dynamic> orderData = {
@@ -170,7 +176,6 @@ class OrderFuelController extends GetxController {
           'coordinates': [
             longitude.value ?? 90.4125,
             latitude.value ?? 23.8103,
-
           ],
         },
         'vehicleId': vehicleId,
@@ -213,6 +218,8 @@ class OrderFuelController extends GetxController {
       }
     } catch (e) {
       Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -221,13 +228,14 @@ class OrderFuelController extends GetxController {
     required String orderType,
   }) async {
     try {
+      isLoading.value = true;
+
       final String token = LocalStorage.getData(key: AppConstant.accessToken);
       final Map<String, dynamic> orderData = {
         'location': {
           'coordinates': [
-           longitude.value ?? 90.4125,
+            longitude.value ?? 90.4125,
             latitude.value ?? 23.8103,
-
           ],
         },
         'vehicleId': vehicleId,
@@ -265,11 +273,14 @@ class OrderFuelController extends GetxController {
       }
     } catch (e) {
       Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      isLoading.value = false;
     }
   }
 
   Future<FinalConfirmationModel?> fuelTypeFinalConfirmation(String id) async {
     try {
+      isLoading.value = true;
       final String token = LocalStorage.getData(key: AppConstant.accessToken);
       var headers = {
         'Content-Type': 'application/json',
@@ -283,26 +294,35 @@ class OrderFuelController extends GetxController {
 
       var responseData = await BaseClient.handleResponse(response);
       if (responseData != null) {
-        FinalConfirmationModel orderModel = FinalConfirmationModel.fromJson(responseData);
+        FinalConfirmationModel orderModel =
+        FinalConfirmationModel.fromJson(responseData);
         if (orderModel.success == true && orderModel.data != null) {
+          finalConfirmation.value = orderModel; // Store in observable
           kSnackBar(
-            message: orderModel.message ?? 'Order details fetched successfully!',
+            message:
+            orderModel.message ?? 'Order details fetched successfully!',
             bgColor: AppColors.green,
           );
           return orderModel;
         } else {
-          Get.snackbar('Error', orderModel.message ?? 'Failed to fetch order details',
+          finalConfirmation.value = null;
+          Get.snackbar(
+              'Error', orderModel.message ?? 'Failed to fetch order details',
               snackPosition: SnackPosition.BOTTOM);
           return null;
         }
       } else {
+        finalConfirmation.value = null;
         Get.snackbar('Error', 'Failed to fetch order details',
             snackPosition: SnackPosition.BOTTOM);
         return null;
       }
     } catch (e) {
+      finalConfirmation.value = null;
       Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
       return null;
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -398,6 +418,8 @@ class OrderFuelController extends GetxController {
 
   Future<void> fetchMyVehicles() async {
     try {
+      isLoading.value = true;
+
       final String token = LocalStorage.getData(key: AppConstant.accessToken);
       var headers = {
         'Content-Type': 'application/json',
@@ -421,11 +443,15 @@ class OrderFuelController extends GetxController {
     } catch (e) {
       vehiclesList.clear();
       Get.snackbar('Error', e.toString());
+    } finally {
+      isLoading.value = false;
     }
   }
 
   Future<void> fetchCurrentLocation() async {
     try {
+      isLoading.value = true;
+
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         currentLocation.value = 'Location services are disabled.';
@@ -478,6 +504,8 @@ class OrderFuelController extends GetxController {
       currentLocation.value = 'Failed to get location: $e';
       zipCode.value = '';
       promptForZipCode();
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -502,6 +530,8 @@ class OrderFuelController extends GetxController {
   }
 
   Future<void> confirmVehicle() async {
+    isLoading.value = true;
+
     if (makeController.text.isEmpty ||
         modelController.text.isEmpty ||
         yearController.text.isEmpty ||
@@ -537,21 +567,23 @@ class OrderFuelController extends GetxController {
     };
 
     try {
-    http.Response response = await BaseClient.postRequest(
-      api: Api.addVehicle,
-      body: body,
-      headers: headers,
-    );
+      http.Response response = await BaseClient.postRequest(
+        api: Api.addVehicle,
+        body: body,
+        headers: headers,
+      );
 
-    var responseData = await BaseClient.handleResponse(response);
-    if (responseData != null) {
-      await fetchMyVehicles();
-      Get.back();
-      kSnackBar(
-          message: 'Vehicle added successfully!', bgColor: AppColors.green);
+      var responseData = await BaseClient.handleResponse(response);
+      if (responseData != null) {
+        await fetchMyVehicles();
+        Get.back();
+        kSnackBar(
+            message: 'Vehicle added successfully!', bgColor: AppColors.green);
+      }
+    } catch (e) {
+      Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      isLoading.value = false;
     }
-  } catch (e) {
-  Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
   }
-}
 }

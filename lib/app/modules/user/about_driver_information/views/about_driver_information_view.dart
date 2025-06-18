@@ -2,22 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:gas_dash/app/modules/user/about_driver_information/views/ratings_view.dart';
 import 'package:gas_dash/app/modules/user/about_driver_information/views/write_review_view.dart';
+import 'package:gas_dash/app/modules/user/dashboard/views/dashboard_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
 import 'package:gas_dash/common/widgets/custom_row_header.dart';
 import 'package:get/get.dart';
+import '../../../../../common/helper/socket_service.dart';
+import '../../message/controllers/message_send_controller.dart';
 import '../controllers/about_driver_information_controller.dart';
 
 class AboutDriverInformationView
     extends GetView<AboutDriverInformationController> {
   final String? driverId;
 
-  const AboutDriverInformationView({super.key, this.driverId});
+   AboutDriverInformationView({super.key, this.driverId});
 
   final profileImage =
       'https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=800&q=80';
+
+  final MessageSendController messageSendController = Get.put(MessageSendController());
+  final SocketService socketService = Get.put(SocketService());
 
   @override
   Widget build(BuildContext context) {
@@ -112,10 +118,33 @@ class AboutDriverInformationView
                         const SizedBox(height: 16),
                         Row(
                           children: [
-                            _buildIconLabel(
-                              icon: AppImages.chatTwo,
-                              label: '',
-                              backgroundColor: Colors.black.withOpacity(0.4),
+                            GestureDetector(
+                              onTap: () async {
+                                  final data = {
+                                    'receiver': controller.reviews[0].driverId?.id.toString(),
+                                    'text': "Hello",
+                                  };
+                                  try {
+                                    print('Sending message with data: $data');
+                                    final ack = await socketService.emitWithAck('send-message', data);
+                                    print('Acknowledgment received: $ack, type: ${ack.runtimeType}');
+                                    print("send dddd");
+                                  Get.to(() => DashboardView());
+                                    if (ack == true) {
+                                      messageSendController.messageTextController.clear();
+                                    } else {
+                                      print('Acknowledgment failed or invalid: $ack');
+                                    }
+                                  } catch (e) {
+                                    print('Error sending message: $e');
+                                  }
+
+                              },
+                              child: _buildIconLabel(
+                                icon: AppImages.chatTwo,
+                                label: '',
+                                backgroundColor: Colors.black.withOpacity(0.4),
+                              ),
                             ),
                             const SizedBox(width: 8),
                             Obx(() => _buildIconLabel(

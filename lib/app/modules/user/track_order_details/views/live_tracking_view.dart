@@ -9,6 +9,7 @@ import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
+import '../../about_driver_information/controllers/about_driver_information_controller.dart';
 
 class LiveTrackingView extends StatefulWidget {
   const LiveTrackingView({super.key});
@@ -21,6 +22,8 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
   late GoogleMapController _mapController;
 
   final LatLng _initialPosition = LatLng(23.8103, 90.4125); // Dhaka coords
+  final AboutDriverInformationController controller =
+  Get.put(AboutDriverInformationController());
 
   final Set<Marker> _markers = {};
 
@@ -110,13 +113,13 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   onTap: (){
-                    Get.to(()=> AboutDriverInformationView(driverId: '683be4879bcebfdcbde1e5aa'));
+                    Get.to(()=> AboutDriverInformationView(driverId: '${ controller.reviews[0].driverId?.id.toString()}'));
                   },
                   leading: CircleAvatar(
                     radius: 25,
                     backgroundImage: NetworkImage(AppImages.profileImageTwo),
                   ),
-                  title: Text('John Deo',style: h3.copyWith(fontSize: 18),),
+                  title: Text('${ controller.reviews[0].driverId?.fullname.toString()}',style: h3.copyWith(fontSize: 18),),
                   subtitle: Row(
                     children: [
                       Image.asset(AppImages.star,scale: 4,),

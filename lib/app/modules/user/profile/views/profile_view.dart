@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/profile/views/add_family_member_household_vehicle_view.dart';
 import 'package:gas_dash/app/modules/user/profile/views/change_password_view.dart';
 import 'package:gas_dash/app/modules/user/profile/views/edit_profile_view.dart';
 import 'package:gas_dash/app/modules/user/profile/views/policies_view.dart';
 import 'package:gas_dash/app/modules/user/profile/views/terms_and_conditions_view.dart';
 import 'package:gas_dash/app/modules/user/profile/views/track_your_order_view.dart';
-import 'package:gas_dash/app/modules/user/subscription/views/subscription_view.dart';
 
 import 'package:get/get.dart';
 
@@ -16,6 +16,7 @@ import '../../../../../common/helper/local_store.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_list_tile.dart';
 import '../../../auth/login/views/login_view.dart';
+import '../../subscription/views/after_subscription_view.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileView extends GetView<ProfileController> {
@@ -86,10 +87,20 @@ class ProfileView extends GetView<ProfileController> {
             sh12,
             CustomListTile(
               onTap: () {
-                Get.to(() => SubscriptionView());
+                //Get.to(() => SubscriptionView());
+                Get.to(() => AfterSubscriptionView());
               },
               leadingImage: AppImages.subscription,
               title: 'Subscription',
+              trailingImage: AppImages.arrowRightSmall,
+            ),
+            sh12,
+            CustomListTile(
+              onTap: () {
+                Get.to(() => AddFamilyMemberHouseholdVehicleView());
+              },
+              leadingImage: AppImages.family,
+              title: 'Family member or\nhousehold vehicle',
               trailingImage: AppImages.arrowRightSmall,
             ),
             sh12,
@@ -102,6 +113,7 @@ class ProfileView extends GetView<ProfileController> {
               trailingImage: AppImages.arrowRightSmall,
             ),
             sh12,
+
             CustomListTile(
               onTap: () {
                 Get.to(() => PoliciesView());

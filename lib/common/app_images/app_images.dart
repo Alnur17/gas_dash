@@ -80,6 +80,8 @@ class AppImages {
   static const send = "assets/icons/send.png";
   static const attachFile = "assets/icons/attach file.png";
   static const account = "assets/icons/account.png";
+  static const family = "assets/icons/family.png";
+  static const deliveryCar = "assets/icons/delivery car.png";
   static const aboutUs = "assets/icons/about us.png";
   static const termsAndConditions = "assets/icons/terms and conditions.png";
   static const myOrder = "assets/icons/my order.png";
