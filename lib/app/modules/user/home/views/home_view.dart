@@ -5,6 +5,7 @@ import 'package:gas_dash/app/modules/user/jump_start_car_battery/views/jump_star
 import 'package:gas_dash/app/modules/user/order_fuel/views/order_fuel_view.dart';
 import 'package:gas_dash/app/modules/user/order_history/controllers/order_history_controller.dart';
 import 'package:gas_dash/app/modules/user/profile/controllers/profile_controller.dart';
+import 'package:gas_dash/app/modules/user/subscription/views/after_subscription_view.dart';
 import 'package:gas_dash/app/modules/user/subscription/views/subscription_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
@@ -115,7 +116,11 @@ class HomeView extends GetView<HomeController> {
                                   ),
                                 ),
                                 Text(
-                                  'Subscription Type: Unsubscribed',
+                                  profileController
+                                              .myProfileData.value?.title !=
+                                          ''
+                                      ? 'Subscription Type:\n${profileController.myProfileData.value?.title.toString()}'
+                                      : 'Subscription Type: Unsubscribe',
                                   style: h6,
                                 ),
                               ],
@@ -128,7 +133,10 @@ class HomeView extends GetView<HomeController> {
                     CustomButton(
                       text: 'Manage Subscription',
                       onPressed: () {
-                        Get.to(() => SubscriptionView());
+                        Get.to(() =>
+                            profileController.myProfileData.value?.title != ''
+                                ? AfterSubscriptionView()
+                                : SubscriptionView());
                       },
                       gradientColors: AppColors.gradientColor,
                     ),
@@ -198,7 +206,8 @@ class HomeView extends GetView<HomeController> {
                                 height: 40,
                                 width: 110,
                                 padding: EdgeInsets.only(left: 10, right: 10),
-                                text: (fuel.fuelPrice ?? 0.0).toStringAsFixed(2),
+                                text:
+                                    (fuel.fuelPrice ?? 0.0).toStringAsFixed(2),
                                 onPressed: () {},
                                 borderRadius: 8,
                                 backgroundColor:
@@ -249,7 +258,11 @@ class HomeView extends GetView<HomeController> {
                       height: 40,
                       text: 'Order Now',
                       onPressed: () {
-                        Get.to(() => EmergencyFuelView());
+                        profileController.myProfileData.value
+                                    ?.noExtraChargeForEmergencyFuelServiceLimit ==
+                                true
+                            ? Get.to(() => EmergencyFuelView())
+                            : Get.to(() => SubscriptionView());
                       },
                       gradientColors: AppColors.gradientColor,
                       width: 150,
@@ -389,7 +402,8 @@ class HomeView extends GetView<HomeController> {
                       ),
                       child: ServiceCard(
                         title: service.serviceName ?? 'Unnamed Service',
-                        price: '\$${service.price?.toStringAsFixed(2) ?? 'N/A'}',
+                        price:
+                            '\$${service.price?.toStringAsFixed(2) ?? 'N/A'}',
                         buttonText: 'Order Now',
                         onServiceTap: () {
                           Get.to(
@@ -474,7 +488,7 @@ class HomeView extends GetView<HomeController> {
               ),
               //CustomRowHeader(title: 'Order History', onTap: () {}),
               Obx(
-                    () {
+                () {
                   // Show loading indicator if data is being fetched
                   if (oHController.isLoading.value) {
                     return const Center(child: CircularProgressIndicator());
@@ -507,7 +521,8 @@ class HomeView extends GetView<HomeController> {
                     itemCount: orders.length,
                     itemBuilder: (context, index) {
                       final order = orders[index];
-                      debugPrint('Rendering order status: ${order.orderStatus}');
+                      debugPrint(
+                          'Rendering order status: ${order.orderStatus}');
                       return OrderHistoryCard(
                         emergency: order.emergency ?? false,
                         emergencyImage: AppImages.emergency,
@@ -515,8 +530,10 @@ class HomeView extends GetView<HomeController> {
                         orderDate: order.createdAt?.toString() ?? 'Unknown',
                         fuelQuantity: '${order.amount ?? 0} gallons',
                         fuelType: order.fuelType ?? 'Unknown',
-                        price: (order.finalAmountOfPayment ?? 0.0).toStringAsFixed(2),
-                        status: order.orderStatus.toString(), // Since all orders here are Pending
+                        price: (order.finalAmountOfPayment ?? 0.0)
+                            .toStringAsFixed(2),
+                        status: order.orderStatus
+                            .toString(), // Since all orders here are Pending
                       );
                     },
                   );

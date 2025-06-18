@@ -17,6 +17,7 @@ import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_list_tile.dart';
 import '../../../auth/login/views/login_view.dart';
 import '../../subscription/views/after_subscription_view.dart';
+import '../../subscription/views/subscription_view.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileView extends GetView<ProfileController> {
@@ -87,8 +88,9 @@ class ProfileView extends GetView<ProfileController> {
             sh12,
             CustomListTile(
               onTap: () {
-                //Get.to(() => SubscriptionView());
-                Get.to(() => AfterSubscriptionView());
+                profileController.myProfileData.value?.title != '' ?
+                Get.to(() => AfterSubscriptionView()) :
+                Get.to(() => SubscriptionView());
               },
               leadingImage: AppImages.subscription,
               title: 'Subscription',
