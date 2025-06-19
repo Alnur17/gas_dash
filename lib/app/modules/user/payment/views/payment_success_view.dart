@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/order_history/controllers/order_history_controller.dart';
+import 'package:gas_dash/app/modules/user/payment/controllers/payment_controller.dart';
+import 'package:gas_dash/app/modules/user/profile/controllers/profile_controller.dart';
 
 import 'package:get/get.dart';
 
@@ -13,6 +16,8 @@ class PaymentSuccessView extends GetView {
   const PaymentSuccessView({super.key});
   @override
   Widget build(BuildContext context) {
+    final ProfileController profileController = Get.put(ProfileController());
+    final OrderHistoryController orderHController = Get.put(OrderHistoryController());
     return Scaffold(
       backgroundColor: AppColors.mainColor,
       appBar: AppBar(
@@ -48,6 +53,8 @@ class PaymentSuccessView extends GetView {
               text: 'Back to Homepage',
               onPressed: () {
                 Get.offAll(()=> DashboardView());
+                orderHController.fetchOrderHistory();
+                profileController.getMyProfile();
               },
               gradientColors: AppColors.gradientColor,
             ),

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/data/api.dart';
+import 'package:gas_dash/app/modules/user/dashboard/views/dashboard_view.dart';
 import 'package:gas_dash/app/modules/user/order_fuel/views/fuel_type_final_confirmation_view.dart';
 import 'package:gas_dash/common/app_constant/app_constant.dart';
 import 'package:gas_dash/common/helper/local_store.dart';
@@ -167,7 +168,8 @@ class OrderFuelController extends GetxController {
     required bool customAmount,
     required double amount,
     required String fuelType,
-  }) async {
+  })
+  async {
     isLoading.value = true;
     try {
       final String token = LocalStorage.getData(key: AppConstant.accessToken);
@@ -226,7 +228,8 @@ class OrderFuelController extends GetxController {
   Future<void> createOrderForServices({
     required String vehicleId,
     required String orderType,
-  }) async {
+  })
+  async {
     try {
       isLoading.value = true;
 
@@ -270,6 +273,66 @@ class OrderFuelController extends GetxController {
           bgColor: AppColors.green,
         );
         Get.to(() => FinalConfirmationView(orderId: orderId));
+      }
+    } catch (e) {
+      Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> cancelOrder(
+
+    String orderId,
+  )
+  async {
+    isLoading.value = true;
+    try {
+      // final String token = LocalStorage.getData(key: AppConstant.accessToken);
+      // final Map<String, dynamic> orderData = {
+      //   'location': {
+      //     'coordinates': [
+      //       longitude.value ?? 90.4125,
+      //       latitude.value ?? 23.8103,
+      //     ],
+      //   },
+      //   'vehicleId': vehicleId,
+      //   'presetAmount': presetAmount,
+      //   'customAmount': customAmount,
+      //   'amount': amount,
+      //   'fuelType': fuelType,
+      //   'orderType': 'Fuel',
+      //   'zipCode': zipCode.value ?? '90001',
+      //   'emergency': isEmergency ?? false,
+      //   'cancelReason': '',
+      // };
+
+      //String body = jsonEncode(orderData);
+      var headers = {
+        'Content-Type': 'application/json',
+        //'Authorization': 'Bearer $token',
+      };
+
+      http.Response response = await BaseClient.deleteRequest(
+        api: Api.cancelOrder(orderId),
+        //body: body,
+        headers: headers,
+      );
+
+      var responseData = await BaseClient.handleResponse(response);
+      if (responseData != null) {
+        // String? orderId = responseData['data']?['_id'];
+        // if (orderId == null) {
+        //   Get.snackbar('Error', 'Failed to retrieve order ID',
+        //       snackPosition: SnackPosition.BOTTOM);
+        //   return;
+        // }
+
+        kSnackBar(
+          message: 'Order cancel successfully!',
+          bgColor: AppColors.green,
+        );
+        Get.to(() => DashboardView());
       }
     } catch (e) {
       Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);

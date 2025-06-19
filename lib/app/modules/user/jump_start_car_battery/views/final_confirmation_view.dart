@@ -7,6 +7,7 @@ import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_button.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
+import '../../../../../common/widgets/custom_loader.dart';
 import '../../order_fuel/controllers/order_fuel_controller.dart';
 import '../../order_fuel/model/final_confirmation_model.dart';
 
@@ -18,29 +19,32 @@ class FinalConfirmationView extends GetView<OrderFuelController> {
   @override
   Widget build(BuildContext context) {
     // Initialize the controller
-    final OrderFuelController controller = Get.find<OrderFuelController>();
+    final OrderFuelController controller = Get.put(OrderFuelController());
     final PaymentController paymentController = Get.put(PaymentController());
 
-    // Fetch order details if orderId is provided
-    Future<FinalConfirmationModel?> orderFuture = orderId != null
-        ? controller.fuelTypeFinalConfirmation(orderId!)
-        : Future.value(null);
+    // Use addPostFrameCallback to fetch order details after the frame is rendered
+    if (orderId != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.fuelTypeFinalConfirmation(orderId!);
+      });
+    }
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
         scrolledUnderElevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 12),
-          child: CustomCircularContainer(
-            imagePath: AppImages.back,
-            onTap: () {
-              Get.back();
-            },
-            padding: 2,
-          ),
-        ),
+        // leading: Padding(
+        //   padding: const EdgeInsets.only(left: 12),
+        //   child: CustomCircularContainer(
+        //     imagePath: AppImages.back,
+        //     onTap: () {
+        //       Get.back();
+        //     },
+        //     padding: 2,
+        //   ),
+        // ),
+        automaticallyImplyLeading: false,
         title: Text('Final Confirmation', style: titleStyle),
         centerTitle: true,
       ),
@@ -65,19 +69,19 @@ class FinalConfirmationView extends GetView<OrderFuelController> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: FutureBuilder<FinalConfirmationModel?>(
-                    future: orderFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError || snapshot.data == null || snapshot.data!.data == null) {
-                        return Text(
-                          snapshot.hasError ? 'Error: ${snapshot.error}' : 'No order details found',
-                          style: h6,
-                        );
-                      }
+                  child: Obx(() {
+                    // Check controller's state for order details
+                    if (controller.isLoading.value) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (controller.finalConfirmation.value == null ||
+                        controller.finalConfirmation.value!.data == null) {
+                      return Text(
+                        'No order details found',
+                        style: h6,
+                      );
+                    }
 
-                      final orderData = snapshot.data!.data!;
+                    final orderData = controller.finalConfirmation.value!.data!;
                       final vehicle = controller.confirmedVehicle.value;
 
                       return Column(
@@ -119,10 +123,13 @@ class FinalConfirmationView extends GetView<OrderFuelController> {
                 ),
               ),
               sh30,
-              CustomButton(
+              paymentController.isLoading.value == true
+                  ? CustomLoader(color: AppColors.white)
+                  : CustomButton(
                 text: 'Next',
                 onPressed: () {
-                  paymentController.createPaymentSession(orderId: orderId!);
+                  paymentController.createPaymentSession(
+                      orderId: orderId!);
                 },
                 gradientColors: AppColors.gradientColorGreen,
               ),

@@ -18,7 +18,7 @@ class FuelTypeFinalConfirmationView extends GetView<OrderFuelController> {
   @override
   Widget build(BuildContext context) {
     // Initialize the controller
-    final OrderFuelController controller = Get.find<OrderFuelController>();
+    final OrderFuelController controller = Get.put(OrderFuelController());
     final PaymentController paymentController = Get.put(PaymentController());
 
     // Use addPostFrameCallback to fetch order details after the frame is rendered
@@ -33,16 +33,16 @@ class FuelTypeFinalConfirmationView extends GetView<OrderFuelController> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         scrolledUnderElevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 12),
-          child: CustomCircularContainer(
-            imagePath: AppImages.back,
-            onTap: () {
-              Get.back();
-            },
-            padding: 2,
-          ),
-        ),
+        // leading: Padding(
+        //   padding: const EdgeInsets.only(left: 12),
+        //   child: CustomCircularContainer(
+        //     imagePath: AppImages.back,
+        //     onTap: () {
+        //       Get.back();
+        //     },
+        //     padding: 2,
+        //   ),
+        // ),
         automaticallyImplyLeading: false,
         title: Text('Final Confirmation', style: titleStyle),
         centerTitle: true,
@@ -122,8 +122,7 @@ class FuelTypeFinalConfirmationView extends GetView<OrderFuelController> {
                         Text('Mandatory Tip',
                             style: h5.copyWith(fontWeight: FontWeight.bold)),
                         const SizedBox(height: 8),
-                        Text(
-                            '\$${orderData.tip?.toStringAsFixed(2) ?? '0.00'}',
+                        Text('\$${orderData.tip?.toStringAsFixed(2) ?? '0.00'}',
                             style: h6),
                         const SizedBox(height: 16),
                         Text('Total Amount',
@@ -141,13 +140,41 @@ class FuelTypeFinalConfirmationView extends GetView<OrderFuelController> {
               paymentController.isLoading.value == true
                   ? CustomLoader(color: AppColors.white)
                   : CustomButton(
-                text: 'Next',
-                onPressed: () {
-                  paymentController.createPaymentSession(
-                      orderId: orderId!);
-                },
-                gradientColors: AppColors.gradientColorGreen,
-              ),
+                    text: 'Next',
+                    onPressed: () {
+                      paymentController.createPaymentSession(
+                          orderId: orderId!);
+                    },
+                    gradientColors: AppColors.gradientColorGreen,
+                  ),
+              // Row(
+              //   children: [
+              //     controller.isLoading.value == true
+              //         ? Expanded(child: CustomLoader(color: AppColors.white))
+              //         : Expanded(
+              //             child: CustomButton(
+              //               text: 'Cancel',
+              //               onPressed: () {
+              //                 controller.cancelOrder(orderId!);
+              //               },
+              //               gradientColors: AppColors.gradientColorGreen,
+              //             ),
+              //           ),
+              //     sw8,
+              //     paymentController.isLoading.value == true
+              //         ? Expanded(child: CustomLoader(color: AppColors.white))
+              //         : Expanded(
+              //             child: CustomButton(
+              //               text: 'Next',
+              //               onPressed: () {
+              //                 paymentController.createPaymentSession(
+              //                     orderId: orderId!);
+              //               },
+              //               gradientColors: AppColors.gradientColorGreen,
+              //             ),
+              //           ),
+              //   ],
+              // ),
             ],
           ),
         );

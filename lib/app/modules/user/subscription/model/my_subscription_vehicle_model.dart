@@ -1,5 +1,5 @@
-class MyProfileModel {
-  MyProfileModel({
+class MySubscriptionVehicleModel {
+  MySubscriptionVehicleModel({
     required this.success,
     required this.message,
     required this.data,
@@ -7,21 +7,63 @@ class MyProfileModel {
 
   final bool? success;
   final String? message;
-  final Data? data;
+  final List<SubscriptionVehicleDatum> data;
 
-  factory MyProfileModel.fromJson(Map<String, dynamic> json){
-    return MyProfileModel(
+  factory MySubscriptionVehicleModel.fromJson(Map<String, dynamic> json){
+    return MySubscriptionVehicleModel(
       success: json["success"],
       message: json["message"],
-      data: json["data"] == null ? null : Data.fromJson(json["data"]),
+      data: json["data"] == null ? [] : List<SubscriptionVehicleDatum>.from(json["data"]!.map((x) => SubscriptionVehicleDatum.fromJson(x))),
     );
   }
+
 }
 
-class Data {
-  Data({
+class SubscriptionVehicleDatum {
+  SubscriptionVehicleDatum({
+    required this.id,
+    required this.make,
+    required this.model,
+    required this.year,
+    required this.fuelLevel,
+    required this.userId,
+    required this.isCoveredBySubscription,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.v,
+  });
+
+  final String? id;
+  final String? make;
+  final String? model;
+  final int? year;
+  final int? fuelLevel;
+  final UserId? userId;
+  final bool? isCoveredBySubscription;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final int? v;
+
+  factory SubscriptionVehicleDatum.fromJson(Map<String, dynamic> json){
+    return SubscriptionVehicleDatum(
+      id: json["_id"],
+      make: json["make"],
+      model: json["model"],
+      year: json["year"],
+      fuelLevel: json["fuelLevel"],
+      userId: json["userId"] == null ? null : UserId.fromJson(json["userId"]),
+      isCoveredBySubscription: json["isCoveredBySubscription"],
+      createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
+      updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
+      v: json["__v"],
+    );
+  }
+
+}
+
+class UserId {
+  UserId({
     required this.verification,
-    required this.familyMember,
     required this.id,
     required this.status,
     required this.fullname,
@@ -54,12 +96,9 @@ class Data {
     required this.updatedAt,
     required this.v,
     required this.title,
-    required this.remeningDurationDay,
-    required this.passwordChangedAt,
   });
 
   final Verification? verification;
-  final FamilyMember? familyMember;
   final String? id;
   final String? status;
   final String? fullname;
@@ -74,14 +113,14 @@ class Data {
   final bool? isGoogleLogin;
   final dynamic image;
   final String? role;
-  final double? totalEarning; // Changed from int? to double?
+  final int? totalEarning;
   final int? experience;
   final dynamic address;
-  final double? freeDeliverylimit; // Changed from int? to double?
-  final double? coverVehiclelimit; // Changed from int? to double?
-  final double? durationDay; // Changed from int? to double?
+  final int? freeDeliverylimit;
+  final int? coverVehiclelimit;
+  final int? durationDay;
   final bool? isDeleted;
-  final double? popularity; // Changed from int? to double?
+  final int? popularity;
   final bool? fiftyPercentOffDeliveryFeeAfterWaivedTrips;
   final bool? scheduledDelivery;
   final bool? fuelPriceTrackingAlerts;
@@ -92,13 +131,10 @@ class Data {
   final DateTime? updatedAt;
   final int? v;
   final String? title;
-  final double? remeningDurationDay; // Changed from int? to double?
-  final DateTime? passwordChangedAt;
 
-  factory Data.fromJson(Map<String, dynamic> json){
-    return Data(
+  factory UserId.fromJson(Map<String, dynamic> json){
+    return UserId(
       verification: json["verification"] == null ? null : Verification.fromJson(json["verification"]),
-      familyMember: json["familyMember"] == null ? null : FamilyMember.fromJson(json["familyMember"]),
       id: json["_id"],
       status: json["status"],
       fullname: json["fullname"],
@@ -113,14 +149,14 @@ class Data {
       isGoogleLogin: json["isGoogleLogin"],
       image: json["image"],
       role: json["role"],
-      totalEarning: (json["totalEarning"] is int) ? (json["totalEarning"] as int).toDouble() : json["totalEarning"],
+      totalEarning: json["totalEarning"],
       experience: json["experience"],
       address: json["address"],
-      freeDeliverylimit: (json["freeDeliverylimit"] is int) ? (json["freeDeliverylimit"] as int).toDouble() : json["freeDeliverylimit"],
-      coverVehiclelimit: (json["coverVehiclelimit"] is int) ? (json["coverVehiclelimit"] as int).toDouble() : json["coverVehiclelimit"],
-      durationDay: (json["durationDay"] is int) ? (json["durationDay"] as int).toDouble() : json["durationDay"],
+      freeDeliverylimit: json["freeDeliverylimit"],
+      coverVehiclelimit: json["coverVehiclelimit"],
+      durationDay: json["durationDay"],
       isDeleted: json["isDeleted"],
-      popularity: (json["popularity"] is int) ? (json["popularity"] as int).toDouble() : json["popularity"],
+      popularity: json["popularity"],
       fiftyPercentOffDeliveryFeeAfterWaivedTrips: json["fiftyPercentOffDeliveryFeeAfterWaivedTrips"],
       scheduledDelivery: json["scheduledDelivery"],
       fuelPriceTrackingAlerts: json["fuelPriceTrackingAlerts"],
@@ -131,42 +167,28 @@ class Data {
       updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
       v: json["__v"],
       title: json["title"],
-      remeningDurationDay: (json["remeningDurationDay"] is int) ? (json["remeningDurationDay"] as int).toDouble() : json["remeningDurationDay"],
-      passwordChangedAt: DateTime.tryParse(json["passwordChangedAt"] ?? ""),
     );
   }
-}
 
-class FamilyMember {
-  FamilyMember({
-    required this.name,
-    required this.email,
-  });
-
-  final String? name;
-  final String? email;
-
-  factory FamilyMember.fromJson(Map<String, dynamic> json){
-    return FamilyMember(
-      name: json["name"],
-      email: json["email"],
-    );
-  }
 }
 
 class Verification {
   Verification({
     required this.otp,
+    required this.expiresAt,
     required this.status,
   });
 
   final int? otp;
+  final DateTime? expiresAt;
   final bool? status;
 
   factory Verification.fromJson(Map<String, dynamic> json){
     return Verification(
       otp: json["otp"],
+      expiresAt: DateTime.tryParse(json["expiresAt"] ?? ""),
       status: json["status"],
     );
   }
+
 }

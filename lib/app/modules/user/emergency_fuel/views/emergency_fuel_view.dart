@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/emergency_fuel/views/schedule_delivery_view.dart';
+import 'package:gas_dash/common/widgets/custom_button.dart';
 
 import 'package:get/get.dart';
 
@@ -12,7 +14,8 @@ import '../../order_fuel/views/order_fuel_view.dart';
 import '../controllers/emergency_fuel_controller.dart';
 
 class EmergencyFuelView extends GetView<EmergencyFuelController> {
-   EmergencyFuelView({super.key});
+
+  EmergencyFuelView( {super.key});
 
   final homeController = Get.put(HomeController());
 
@@ -54,7 +57,7 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
           sh16,
           FuelCard(
             title: 'UNLEADED',
-           // number: '87',
+            // number: '87',
             buttonText: 'Order\nNow',
             gradientColors: AppColors.gradientColorBlue,
             onTap: () {
@@ -62,11 +65,11 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
                   homeController.fuelPricesPerGallon['Unleaded'] ?? 0.0;
               print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
               Get.to(() => OrderFuelView(
-                fuelName: 'Unleaded',
-               // number: '87',
-                fuelPrice: price,
-                isEmergency: true,
-              ));
+                    fuelName: 'Unleaded',
+                    // number: '87',
+                    fuelPrice: price,
+                    isEmergency: true,
+                  ));
             },
           ),
           sh16,
@@ -80,11 +83,11 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
                   homeController.fuelPricesPerGallon['Premium'] ?? 0.0;
               print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
               Get.to(() => OrderFuelView(
-                fuelName: 'Premium',
-                //number: '91',
-                fuelPrice: price,
-                isEmergency: true,
-              ));
+                    fuelName: 'Premium',
+                    //number: '91',
+                    fuelPrice: price,
+                    isEmergency: true,
+                  ));
             },
           ),
           sh16,
@@ -94,15 +97,14 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
             buttonText: 'Order\nNow',
             gradientColors: AppColors.gradientColorGreen,
             onTap: () {
-              final price =
-                  homeController.fuelPricesPerGallon['Diesel'] ?? 0.0;
+              final price = homeController.fuelPricesPerGallon['Diesel'] ?? 0.0;
               print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
               Get.to(() => OrderFuelView(
-                fuelName: 'Diesel',
-                //number: '71',
-                fuelPrice: price,
-                isEmergency: true,
-              ));
+                    fuelName: 'Diesel',
+                    //number: '71',
+                    fuelPrice: price,
+                    isEmergency: true,
+                  ));
             },
           ),
         ],
