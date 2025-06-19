@@ -12,6 +12,7 @@ import '../views/order_details_view.dart';
 
 class OrderHistoryController extends GetxController {
   var orders = <OrderHistoryDatum>[].obs; // Observable list for orders
+  var inProcessOrders = <OrderHistoryDatum>[].obs; // Observable list for orders
   var isLoading = true.obs; // Loading state
   var errorMessage = ''.obs; // Error message for failures
   var singleOrder = Rx<SingleOrderByIdModel?>(null); // Observable for single order
@@ -45,6 +46,10 @@ class OrderHistoryController extends GetxController {
         final orderHistory = OrderHistoryModel.fromJson(jsonResponse);
         if (orderHistory.success == true && orderHistory.data?.data != null) {
           orders.assignAll(orderHistory.data!.data);
+          inProcessOrders.assignAll(
+              orderHistory.data!.data.where((e) => e.orderStatus.toString() == "InProgress").toList()
+          );
+
         } else {
           errorMessage('No orders found');
         }
