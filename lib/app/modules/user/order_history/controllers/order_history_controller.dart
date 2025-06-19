@@ -19,8 +19,9 @@ class OrderHistoryController extends GetxController {
 
   @override
   void onInit() {
-    super.onInit();
     fetchOrderHistory();
+    super.onInit();
+
   }
 
   Future<void> fetchOrderHistory() async {

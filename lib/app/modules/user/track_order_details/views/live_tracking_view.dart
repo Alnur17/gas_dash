@@ -24,54 +24,55 @@ class LiveTrackingView extends StatefulWidget {
 }
 
 class _LiveTrackingViewState extends State<LiveTrackingView> {
-  GoogleMapController? _mapController; // Nullable to avoid late initialization
-  bool _mapCreated = false; // Track if map is created
-  bool _isLoading = true; // Track loading state
+  GoogleMapController? _mapController;
+  bool _mapCreated = false;
+  bool _isLoading = true;
+  String? _errorMessage;
 
-  // User's location (fetched dynamically)
   LatLng? _userLocation;
-  // Driver's location (updated via socket)
-  LatLng _driverLocation = const LatLng(23.8203, 90.4225); // Initial driver coords
+  LatLng _driverLocation = const LatLng(23.752844, 90.420082);
 
   final OrderHistoryController orderHistoryController = Get.put(OrderHistoryController());
 
   final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
 
-  // Google Maps Directions API key
   final String _googleApiKey = 'AIzaSyB_3nOokGz9jksH5jN_f05YNEJeZqWizYM'; // Replace with your actual API key
 
-  // Socket service
   SocketService? _socketService;
-  String? _driverId; // Set this based on your driver ID
-  String? _driverName; // Driver name for ListTile
+  String? _driverId;
+  String? _driverName;
 
-  // Estimated time
   String _estimatedTime = '25 Minutes';
 
   @override
   void initState() {
     super.initState();
-    // Initialize socket service
     _initSocketService();
-    // Fetch user's location
     _getUserLocation();
-    // Set driver ID and name
     if (orderHistoryController.inProcessOrders.isNotEmpty &&
         orderHistoryController.inProcessOrders[0].driverId != null) {
       _driverId = orderHistoryController.inProcessOrders[0].driverId!.id.toString();
       _driverName = orderHistoryController.inProcessOrders[0].driverId!.fullname ?? 'Driver';
     }
+    // Timeout to prevent infinite loading
+    Future.delayed(const Duration(seconds: 10), () {
+      if (mounted && _isLoading) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = 'Failed to load map. Please try again.';
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
-    _socketService?.disconnect(); // Disconnect socket if initialized
-    _mapController?.dispose(); // Dispose map controller if it exists
+    _socketService?.disconnect();
+    _mapController?.dispose();
     super.dispose();
   }
 
-  // Create a circular dot marker
   Future<BitmapDescriptor> createCircularDotMarker({required Color color, double radius = 10.0}) async {
     final recorder = ui.PictureRecorder();
     final canvas = ui.Canvas(recorder);
@@ -89,12 +90,13 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
     return BitmapDescriptor.fromBytes(uint8List);
   }
 
-  // Initialize socket service and listen for driver location updates
   void _initSocketService() async {
     try {
       _socketService = await SocketService().init();
+      print('Socket initialized successfully');
       if (_driverId != null) {
         _socketService!.socket.on('serverToSendLocation::$_driverId', (data) {
+          print('Socket event received: $data');
           if (data is Map<String, dynamic> &&
               data.containsKey('latitude') &&
               data.containsKey('longitude')) {
@@ -116,9 +118,8 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
     }
   }
 
-  // Update driver marker with circular dot
   Future<void> _updateDriverMarker() async {
-    final driverIcon = await createCircularDotMarker(color: Colors.red, radius: 10.0);
+    final driverIcon = await createCircularDotMarker(color: Colors.red, radius: 30.0);
     _markers.removeWhere((m) => m.markerId.value == 'Driver');
     _markers.add(
       Marker(
@@ -132,6 +133,7 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
 
   void _onMapCreated(GoogleMapController controller) {
     if (mounted) {
+      print('Map created successfully');
       setState(() {
         _mapController = controller;
         _mapCreated = true;
@@ -143,25 +145,32 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
     }
   }
 
-  // Get user's current location and set user marker
   Future<void> _getUserLocation() async {
     try {
+      print('Checking location services...');
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         print('Location services are disabled.');
         if (mounted) {
-          setState(() => _isLoading = false);
+          setState(() {
+            _isLoading = false;
+            _errorMessage = 'Location services are disabled. Please enable them.';
+          });
         }
         return;
       }
 
+      print('Checking location permissions...');
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
           print('Location permissions are denied.');
           if (mounted) {
-            setState(() => _isLoading = false);
+            setState(() {
+              _isLoading = false;
+              _errorMessage = 'Location permissions are denied.';
+            });
           }
           return;
         }
@@ -170,15 +179,19 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
       if (permission == LocationPermission.deniedForever) {
         print('Location permissions are permanently denied.');
         if (mounted) {
-          setState(() => _isLoading = false);
+          setState(() {
+            _isLoading = false;
+            _errorMessage = 'Location permissions are permanently denied.';
+          });
         }
         return;
       }
 
+      print('Fetching user location...');
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
       if (mounted) {
-        final userIcon = await createCircularDotMarker(color: Colors.blue, radius: 10.0);
+        final userIcon = await createCircularDotMarker(color: Colors.blue, radius: 30.0);
         setState(() {
           _userLocation = LatLng(position.latitude, position.longitude);
           _markers.add(
@@ -189,13 +202,12 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
               icon: userIcon,
             ),
           );
+          _isLoading = false;
         });
+        print('User location set: $_userLocation');
 
-        // Initialize driver marker
         await _updateDriverMarker();
-        // Fetch initial route
         await _fetchRoute();
-        // Update camera only if map is created
         if (_mapCreated) {
           _updateCameraPosition();
         }
@@ -203,12 +215,14 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
     } catch (e) {
       print('Error getting user location: $e');
       if (mounted) {
-        setState(() => _isLoading = false);
+        setState(() {
+          _isLoading = false;
+          _errorMessage = 'Failed to get location: $e';
+        });
       }
     }
   }
 
-  // Fetch route from Google Directions API
   Future<void> _fetchRoute() async {
     if (_userLocation == null) return;
 
@@ -216,6 +230,7 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
         'https://maps.googleapis.com/maps/api/directions/json?origin=${_userLocation!.latitude},${_userLocation!.longitude}&destination=${_driverLocation.latitude},${_driverLocation.longitude}&key=$_googleApiKey';
 
     try {
+      print('Fetching route from API...');
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -224,17 +239,15 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
           final List<PointLatLng> result = polylinePoints.decodePolyline(
               data['routes'][0]['overview_polyline']['points']);
 
-          // Convert to list of LatLng for Google Maps
           final List<LatLng> polylineCoordinates = result
               .map((point) => LatLng(point.latitude, point.longitude))
               .toList();
 
-          // Extract estimated time
           final duration = data['routes'][0]['legs'][0]['duration']['text'];
 
           if (mounted) {
             setState(() {
-              _polylines.clear(); // Clear previous polylines
+              _polylines.clear();
               _polylines.add(
                 Polyline(
                   polylineId: const PolylineId('route'),
@@ -243,8 +256,9 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
                   points: polylineCoordinates,
                 ),
               );
-              _estimatedTime = duration; // Update estimated time
+              _estimatedTime = duration;
             });
+            print('Route fetched, estimated time: $_estimatedTime');
           }
         } else {
           print('Directions API error: ${data['status']}');
@@ -257,10 +271,10 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
     }
   }
 
-  // Adjust camera to show both user and driver locations
   void _updateCameraPosition() {
     if (_userLocation == null || !_mapCreated || _mapController == null) return;
 
+    print('Updating camera position...');
     final bounds = LatLngBounds(
       southwest: LatLng(
         _userLocation!.latitude < _driverLocation.latitude
@@ -281,7 +295,7 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
     );
 
     _mapController!.animateCamera(
-      CameraUpdate.newLatLngBounds(bounds, 50), // 50 is padding
+      CameraUpdate.newLatLngBounds(bounds, 50),
     );
   }
 
@@ -309,21 +323,33 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
       ),
       body: Stack(
         children: [
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : GoogleMap(
-            key: const ValueKey('live_tracking_map'), // Unique key to prevent recreation
-            onMapCreated: _onMapCreated,
-            initialCameraPosition: CameraPosition(
-              target: _userLocation ?? const LatLng(23.8103, 90.4125),
-              zoom: 14,
+          if (_isLoading)
+            const Center(child: CircularProgressIndicator())
+          else if (_errorMessage != null)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  _errorMessage!,
+                  style: const TextStyle(color: Colors.red, fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            )
+          else
+            GoogleMap(
+              key: const ValueKey('live_tracking_map'),
+              onMapCreated: _onMapCreated,
+              initialCameraPosition: CameraPosition(
+                target: _userLocation ?? const LatLng(23.8103, 90.4125),
+                zoom: 14,
+              ),
+              markers: _markers,
+              polylines: _polylines,
+              myLocationEnabled: true,
+              myLocationButtonEnabled: true,
+              zoomControlsEnabled: false,
             ),
-            markers: _markers,
-            polylines: _polylines,
-            myLocationEnabled: true, // Show user location dot
-            myLocationButtonEnabled: true,
-            zoomControlsEnabled: false,
-          ),
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -340,7 +366,7 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
                           AppImages.estimatedTime,
                           scale: 4,
                         ),
-                        const SizedBox(width: 8), // Replaced widthBox(8)
+                        const SizedBox(width: 8),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -348,7 +374,7 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
                               'Estimated Time',
                               style: h5.copyWith(fontWeight: FontWeight.w600),
                             ),
-                            const SizedBox(height: 4), // Replaced heightBox(4)
+                            const SizedBox(height: 4),
                             Text(
                               _estimatedTime,
                               style: h6.copyWith(height: 1.4),
@@ -357,12 +383,12 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10), // Replaced heightBox(height: '10')
+                    const SizedBox(height: 10),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
                       onTap: () {
                         Get.to(() => AboutDriverInformationView(
-                            driverId: _driverId ?? ''));
+                            driver: orderHistoryController.inProcessOrders[0].driverId!));
                       },
                       leading: const CircleAvatar(
                         radius: 25,
@@ -375,7 +401,7 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
                       subtitle: Row(
                         children: [
                           Image.asset(AppImages.star, scale: 4),
-                          const SizedBox(width: 5), // Replaced widthBox(width: 5)
+                          const SizedBox(width: 5),
                           Text('4.5(1.2k)', style: h3.copyWith(fontSize: 14)),
                         ],
                       ),

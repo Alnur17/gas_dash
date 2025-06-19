@@ -16,6 +16,7 @@ class OrderHistoryModel {
       data: json["data"] == null ? null : Data.fromJson(json["data"]),
     );
   }
+
 }
 
 class Data {
@@ -33,6 +34,7 @@ class Data {
       meta: json["meta"] == null ? null : Meta.fromJson(json["meta"]),
     );
   }
+
 }
 
 class OrderHistoryDatum {
@@ -57,6 +59,10 @@ class OrderHistoryDatum {
     required this.servicesFee,
     required this.proofImage,
     required this.emergency,
+    required this.schedulDate,
+    required this.schedulTime,
+    required this.emergencyTime,
+    required this.cuponCode,
     required this.createdAt,
     required this.updatedAt,
     required this.paymentId,
@@ -67,27 +73,31 @@ class OrderHistoryDatum {
   final Location? location;
   final String? id;
   final String? vehicleId;
-  final ErId? userId;
-  final double? amount; // Changed from int to double
-  final double? deliveryFee;
-  final double? price;
+  final UserId? userId;
+  final int? amount;
+  final dynamic deliveryFee;
+  final int? price;
   final bool? presetAmount;
   final bool? customAmount;
-  final double? tip; // Changed from int to double
+  final int? tip;
   final String? orderType;
   final String? orderStatus;
   final String? cancelReason;
   final String? fuelType;
   final bool? isPaid;
-  final double? finalAmountOfPayment;
+  final dynamic finalAmountOfPayment;
   final String? zipCode;
-  final double? servicesFee; // Changed from int to double
+  final int? servicesFee;
   final String? proofImage;
   final bool? emergency;
+  final String? schedulDate;
+  final String? schedulTime;
+  final String? emergencyTime;
+  final String? cuponCode;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final String? paymentId;
-  final ErId? driverId;
+  final DriverId? driverId;
   final String? deleveryId;
 
   factory OrderHistoryDatum.fromJson(Map<String, dynamic> json){
@@ -95,35 +105,44 @@ class OrderHistoryDatum {
       location: json["location"] == null ? null : Location.fromJson(json["location"]),
       id: json["_id"],
       vehicleId: json["vehicleId"],
-      userId: json["userId"] == null ? null : ErId.fromJson(json["userId"]),
-      amount: (json["amount"] is int) ? (json["amount"] as int).toDouble() : json["amount"]?.toDouble(),
-      deliveryFee: (json["deliveryFee"] is int) ? (json["deliveryFee"] as int).toDouble() : json["deliveryFee"]?.toDouble(),
-      price: (json["price"] is int) ? (json["price"] as int).toDouble() : json["price"]?.toDouble(),
+      userId: json["userId"] == null ? null : UserId.fromJson(json["userId"]),
+      amount: json["amount"],
+      deliveryFee: json["deliveryFee"],
+      price: json["price"],
       presetAmount: json["presetAmount"],
       customAmount: json["customAmount"],
-      tip: (json["tip"] is int) ? (json["tip"] as int).toDouble() : json["tip"]?.toDouble(),
+      tip: json["tip"],
       orderType: json["orderType"],
       orderStatus: json["orderStatus"],
       cancelReason: json["cancelReason"],
       fuelType: json["fuelType"],
       isPaid: json["isPaid"],
-      finalAmountOfPayment: (json["finalAmountOfPayment"] is int) ? (json["finalAmountOfPayment"] as int).toDouble() : json["finalAmountOfPayment"]?.toDouble(),
+      finalAmountOfPayment: json["finalAmountOfPayment"],
       zipCode: json["zipCode"],
-      servicesFee: (json["servicesFee"] is int) ? (json["servicesFee"] as int).toDouble() : json["servicesFee"]?.toDouble(),
+      servicesFee: json["servicesFee"],
       proofImage: json["proofImage"],
       emergency: json["emergency"],
+      schedulDate: json["schedulDate"],
+      schedulTime: json["schedulTime"],
+      emergencyTime: json["emergencyTime"],
+      cuponCode: json["cuponCode"],
       createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
       updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
       paymentId: json["paymentId"],
-      driverId: json["driverId"] == null ? null : ErId.fromJson(json["driverId"]),
+      driverId: json["driverId"] == null ? null : DriverId.fromJson(json["driverId"]),
       deleveryId: json["deleveryId"],
     );
   }
+
 }
 
-class ErId {
-  ErId({
+class DriverId {
+  DriverId({
     required this.verification,
+    required this.familyMember,
+    required this.experience,
+    required this.averageRating,
+    required this.avgRatings,
     required this.popularity,
     required this.fiftyPercentOffDeliveryFeeAfterWaivedTrips,
     required this.scheduledDelivery,
@@ -131,6 +150,220 @@ class ErId {
     required this.noExtraChargeForEmergencyFuelServiceLimit,
     required this.freeSubscriptionAdditionalFamilyMember,
     required this.exclusivePromotionsEarlyAccess,
+    required this.remeningDurationDay,
+    required this.id,
+    required this.status,
+    required this.fullname,
+    required this.location,
+    required this.country,
+    required this.zipCode,
+    required this.email,
+    required this.phoneNumber,
+    required this.password,
+    required this.gender,
+    required this.dateOfBirth,
+    required this.isGoogleLogin,
+    required this.image,
+    required this.role,
+    required this.address,
+    required this.freeDeliverylimit,
+    required this.coverVehiclelimit,
+    required this.durationDay,
+    required this.isDeleted,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.v,
+    required this.totalEarning,
+    required this.reviews,
+  });
+
+  final DriverIdVerification? verification;
+  final FamilyMember? familyMember;
+  final int? experience;
+  final int? averageRating;
+  final int? avgRatings;
+  final int? popularity;
+  final bool? fiftyPercentOffDeliveryFeeAfterWaivedTrips;
+  final bool? scheduledDelivery;
+  final bool? fuelPriceTrackingAlerts;
+  final bool? noExtraChargeForEmergencyFuelServiceLimit;
+  final bool? freeSubscriptionAdditionalFamilyMember;
+  final bool? exclusivePromotionsEarlyAccess;
+  final int? remeningDurationDay;
+  final String? id;
+  final String? status;
+  final String? fullname;
+  final String? location;
+  final String? country;
+  final String? zipCode;
+  final String? email;
+  final dynamic phoneNumber;
+  final String? password;
+  final dynamic gender;
+  final dynamic dateOfBirth;
+  final bool? isGoogleLogin;
+  final dynamic image;
+  final String? role;
+  final dynamic address;
+  final int? freeDeliverylimit;
+  final int? coverVehiclelimit;
+  final DateTime? durationDay;
+  final bool? isDeleted;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final int? v;
+  final int? totalEarning;
+  final List<Review> reviews;
+
+  factory DriverId.fromJson(Map<String, dynamic> json){
+    return DriverId(
+      verification: json["verification"] == null ? null : DriverIdVerification.fromJson(json["verification"]),
+      familyMember: json["familyMember"] == null ? null : FamilyMember.fromJson(json["familyMember"]),
+      experience: json["experience"],
+      averageRating: json["AverageRating"],
+      avgRatings: json["avgRatings"],
+      popularity: json["popularity"],
+      fiftyPercentOffDeliveryFeeAfterWaivedTrips: json["fiftyPercentOffDeliveryFeeAfterWaivedTrips"],
+      scheduledDelivery: json["scheduledDelivery"],
+      fuelPriceTrackingAlerts: json["fuelPriceTrackingAlerts"],
+      noExtraChargeForEmergencyFuelServiceLimit: json["noExtraChargeForEmergencyFuelServiceLimit"],
+      freeSubscriptionAdditionalFamilyMember: json["freeSubscriptionAdditionalFamilyMember"],
+      exclusivePromotionsEarlyAccess: json["exclusivePromotionsEarlyAccess"],
+      remeningDurationDay: json["remeningDurationDay"],
+      id: json["_id"],
+      status: json["status"],
+      fullname: json["fullname"],
+      location: json["location"],
+      country: json["country"],
+      zipCode: json["zipCode"],
+      email: json["email"],
+      phoneNumber: json["phoneNumber"],
+      password: json["password"],
+      gender: json["gender"],
+      dateOfBirth: json["dateOfBirth"],
+      isGoogleLogin: json["isGoogleLogin"],
+      image: json["image"],
+      role: json["role"],
+      address: json["address"],
+      freeDeliverylimit: json["freeDeliverylimit"],
+      coverVehiclelimit: json["coverVehiclelimit"],
+      durationDay: DateTime.tryParse(json["durationDay"] ?? ""),
+      isDeleted: json["isDeleted"],
+      createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
+      updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
+      v: json["__v"],
+      totalEarning: json["totalEarning"],
+      reviews: json["reviews"] == null ? [] : List<Review>.from(json["reviews"]!.map((x) => Review.fromJson(x))),
+    );
+  }
+
+}
+
+class FamilyMember {
+  FamilyMember({
+    required this.name,
+    required this.email,
+  });
+
+  final String? name;
+  final String? email;
+
+  factory FamilyMember.fromJson(Map<String, dynamic> json){
+    return FamilyMember(
+      name: json["name"],
+      email: json["email"],
+    );
+  }
+
+}
+
+class Review {
+  Review({
+    required this.id,
+    required this.driverId,
+    required this.userId,
+    required this.rating,
+    required this.review,
+    required this.averageRating,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.v,
+  });
+
+  final String? id;
+  final String? driverId;
+  final String? userId;
+  final dynamic rating;
+  final String? review;
+  final int? averageRating;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final int? v;
+
+  factory Review.fromJson(Map<String, dynamic> json){
+    return Review(
+      id: json["_id"],
+      driverId: json["driverId"],
+      userId: json["userId"],
+      rating: json["rating"],
+      review: json["review"],
+      averageRating: json["averageRating"],
+      createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
+      updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
+      v: json["__v"],
+    );
+  }
+
+}
+
+class DriverIdVerification {
+  DriverIdVerification({
+    required this.otp,
+    required this.expiresAt,
+    required this.status,
+  });
+
+  final int? otp;
+  final DateTime? expiresAt;
+  final bool? status;
+
+  factory DriverIdVerification.fromJson(Map<String, dynamic> json){
+    return DriverIdVerification(
+      otp: json["otp"],
+      expiresAt: DateTime.tryParse(json["expiresAt"] ?? ""),
+      status: json["status"],
+    );
+  }
+
+}
+
+class Location {
+  Location({
+    required this.coordinates,
+    required this.type,
+  });
+
+  final List<double> coordinates;
+  final String? type;
+
+  factory Location.fromJson(Map<String, dynamic> json){
+    return Location(
+      coordinates: json["coordinates"] == null ? [] : List<double>.from(json["coordinates"]!.map((x) => x)),
+      type: json["type"],
+    );
+  }
+
+}
+
+class UserId {
+  UserId({
+    required this.verification,
+    required this.familyMember,
+    required this.averageRating,
+    required this.reviews,
+    required this.avgRatings,
+    required this.popularity,
+    required this.remeningDurationDay,
     required this.id,
     required this.status,
     required this.fullname,
@@ -155,22 +388,28 @@ class ErId {
     required this.createdAt,
     required this.updatedAt,
     required this.v,
+    required this.exclusivePromotionsEarlyAccess,
+    required this.fiftyPercentOffDeliveryFeeAfterWaivedTrips,
+    required this.freeSubscriptionAdditionalFamilyMember,
+    required this.fuelPriceTrackingAlerts,
+    required this.noExtraChargeForEmergencyFuelServiceLimit,
+    required this.scheduledDelivery,
+    required this.title,
   });
 
-  final Verification? verification;
-  final double? popularity; // Changed from int to double
-  final bool? fiftyPercentOffDeliveryFeeAfterWaivedTrips;
-  final bool? scheduledDelivery;
-  final bool? fuelPriceTrackingAlerts;
-  final bool? noExtraChargeForEmergencyFuelServiceLimit;
-  final bool? freeSubscriptionAdditionalFamilyMember;
-  final bool? exclusivePromotionsEarlyAccess;
+  final UserIdVerification? verification;
+  final FamilyMember? familyMember;
+  final int? averageRating;
+  final List<dynamic> reviews;
+  final int? avgRatings;
+  final int? popularity;
+  final int? remeningDurationDay;
   final String? id;
   final String? status;
   final String? fullname;
-  final String? location;
-  final String? country;
-  final String? zipCode;
+  final dynamic location;
+  final dynamic country;
+  final dynamic zipCode;
   final String? email;
   final dynamic phoneNumber;
   final String? password;
@@ -179,27 +418,33 @@ class ErId {
   final bool? isGoogleLogin;
   final dynamic image;
   final String? role;
-  final double? totalEarning;
-  final double? experience; // Changed from int to double
+  final int? totalEarning;
+  final int? experience;
   final dynamic address;
-  final double? freeDeliverylimit; // Changed from int to double
-  final double? coverVehiclelimit; // Changed from int to double
-  final double? durationDay; // Changed from int to double
+  final int? freeDeliverylimit;
+  final int? coverVehiclelimit;
+  final DateTime? durationDay;
   final bool? isDeleted;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final double? v; // Changed from int to double
+  final int? v;
+  final bool? exclusivePromotionsEarlyAccess;
+  final bool? fiftyPercentOffDeliveryFeeAfterWaivedTrips;
+  final bool? freeSubscriptionAdditionalFamilyMember;
+  final bool? fuelPriceTrackingAlerts;
+  final bool? noExtraChargeForEmergencyFuelServiceLimit;
+  final bool? scheduledDelivery;
+  final String? title;
 
-  factory ErId.fromJson(Map<String, dynamic> json){
-    return ErId(
-      verification: json["verification"] == null ? null : Verification.fromJson(json["verification"]),
-      popularity: (json["popularity"] is int) ? (json["popularity"] as int).toDouble() : json["popularity"]?.toDouble(),
-      fiftyPercentOffDeliveryFeeAfterWaivedTrips: json["fiftyPercentOffDeliveryFeeAfterWaivedTrips"],
-      scheduledDelivery: json["scheduledDelivery"],
-      fuelPriceTrackingAlerts: json["fuelPriceTrackingAlerts"],
-      noExtraChargeForEmergencyFuelServiceLimit: json["noExtraChargeForEmergencyFuelServiceLimit"],
-      freeSubscriptionAdditionalFamilyMember: json["freeSubscriptionAdditionalFamilyMember"],
-      exclusivePromotionsEarlyAccess: json["exclusivePromotionsEarlyAccess"],
+  factory UserId.fromJson(Map<String, dynamic> json){
+    return UserId(
+      verification: json["verification"] == null ? null : UserIdVerification.fromJson(json["verification"]),
+      familyMember: json["familyMember"] == null ? null : FamilyMember.fromJson(json["familyMember"]),
+      averageRating: json["AverageRating"],
+      reviews: json["reviews"] == null ? [] : List<dynamic>.from(json["reviews"]!.map((x) => x)),
+      avgRatings: json["avgRatings"],
+      popularity: json["popularity"],
+      remeningDurationDay: json["remeningDurationDay"],
       id: json["_id"],
       status: json["status"],
       fullname: json["fullname"],
@@ -214,55 +459,44 @@ class ErId {
       isGoogleLogin: json["isGoogleLogin"],
       image: json["image"],
       role: json["role"],
-      totalEarning: (json["totalEarning"] is int) ? (json["totalEarning"] as int).toDouble() : json["totalEarning"]?.toDouble(),
-      experience: (json["experience"] is int) ? (json["experience"] as int).toDouble() : json["experience"]?.toDouble(),
+      totalEarning: json["totalEarning"],
+      experience: json["experience"],
       address: json["address"],
-      freeDeliverylimit: (json["freeDeliverylimit"] is int) ? (json["freeDeliverylimit"] as int).toDouble() : json["freeDeliverylimit"]?.toDouble(),
-      coverVehiclelimit: (json["coverVehiclelimit"] is int) ? (json["coverVehiclelimit"] as int).toDouble() : json["coverVehiclelimit"]?.toDouble(),
-      durationDay: (json["durationDay"] is int) ? (json["durationDay"] as int).toDouble() : json["durationDay"]?.toDouble(),
+      freeDeliverylimit: json["freeDeliverylimit"],
+      coverVehiclelimit: json["coverVehiclelimit"],
+      durationDay: DateTime.tryParse(json["durationDay"] ?? ""),
       isDeleted: json["isDeleted"],
       createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
       updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
-      v: (json["__v"] is int) ? (json["__v"] as int).toDouble() : json["__v"]?.toDouble(),
+      v: json["__v"],
+      exclusivePromotionsEarlyAccess: json["exclusivePromotionsEarlyAccess"],
+      fiftyPercentOffDeliveryFeeAfterWaivedTrips: json["fiftyPercentOffDeliveryFeeAfterWaivedTrips"],
+      freeSubscriptionAdditionalFamilyMember: json["freeSubscriptionAdditionalFamilyMember"],
+      fuelPriceTrackingAlerts: json["fuelPriceTrackingAlerts"],
+      noExtraChargeForEmergencyFuelServiceLimit: json["noExtraChargeForEmergencyFuelServiceLimit"],
+      scheduledDelivery: json["scheduledDelivery"],
+      title: json["title"],
     );
   }
+
 }
 
-class Verification {
-  Verification({
-    required this.otp,
-    required this.expiresAt,
+class UserIdVerification {
+  UserIdVerification({
     required this.status,
+    required this.otp,
   });
 
-  final double? otp; // Changed from int to double
-  final DateTime? expiresAt;
   final bool? status;
+  final int? otp;
 
-  factory Verification.fromJson(Map<String, dynamic> json){
-    return Verification(
-      otp: (json["otp"] is int) ? (json["otp"] as int).toDouble() : json["otp"]?.toDouble(),
-      expiresAt: DateTime.tryParse(json["expiresAt"] ?? ""),
+  factory UserIdVerification.fromJson(Map<String, dynamic> json){
+    return UserIdVerification(
       status: json["status"],
+      otp: json["otp"],
     );
   }
-}
 
-class Location {
-  Location({
-    required this.coordinates,
-    required this.type,
-  });
-
-  final List<double> coordinates;
-  final String? type;
-
-  factory Location.fromJson(Map<String, dynamic> json){
-    return Location(
-      coordinates: json["coordinates"] == null ? [] : List<double>.from(json["coordinates"]!.map((x) => x)),
-      type: json["type"],
-    );
-  }
 }
 
 class Meta {
@@ -273,17 +507,18 @@ class Meta {
     required this.totalPage,
   });
 
-  final double? page; // Changed from int to double
-  final double? limit; // Changed from int to double
-  final double? total; // Changed from int to double
-  final double? totalPage; // Changed from int to double
+  final int? page;
+  final int? limit;
+  final int? total;
+  final int? totalPage;
 
   factory Meta.fromJson(Map<String, dynamic> json){
     return Meta(
-      page: (json["page"] is int) ? (json["page"] as int).toDouble() : json["page"]?.toDouble(),
-      limit: (json["limit"] is int) ? (json["limit"] as int).toDouble() : json["limit"]?.toDouble(),
-      total: (json["total"] is int) ? (json["total"] as int).toDouble() : json["total"]?.toDouble(),
-      totalPage: (json["totalPage"] is int) ? (json["totalPage"] as int).toDouble() : json["totalPage"]?.toDouble(),
+      page: json["page"],
+      limit: json["limit"],
+      total: json["total"],
+      totalPage: json["totalPage"],
     );
   }
+
 }

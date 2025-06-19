@@ -11,13 +11,15 @@ import 'package:gas_dash/common/widgets/custom_row_header.dart';
 import 'package:get/get.dart';
 import '../../../../../common/helper/socket_service.dart';
 import '../../message/controllers/message_send_controller.dart';
+import '../../order_history/model/order_history_model.dart';
 import '../controllers/about_driver_information_controller.dart';
 
 class AboutDriverInformationView
-    extends GetView<AboutDriverInformationController> {
-  final String? driverId;
+    extends StatelessWidget {
 
-   AboutDriverInformationView({super.key, this.driverId});
+  final DriverId? driver;
+
+   AboutDriverInformationView({super.key,  this.driver});
 
   final profileImage =
       'https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=800&q=80';
@@ -28,14 +30,6 @@ class AboutDriverInformationView
   @override
   Widget build(BuildContext context) {
     // Ensure controller is initialized
-    final AboutDriverInformationController controller =
-        Get.put(AboutDriverInformationController());
-
-    // Fetch reviews when the view is initialized
-    if (driverId != null) {
-      controller.fetchReviews(driverId!);
-    }
-
     return Scaffold(
       backgroundColor: const Color(0xfff5f7f8),
       body: SafeArea(
@@ -98,30 +92,30 @@ class AboutDriverInformationView
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Obx(() => Text(
-                              controller.driverFullName.value,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 24,
-                              ),
-                            )),
+                        Text(
+                          driver!.fullname.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
+                          ),
+                        ),
                         const SizedBox(height: 4),
-                        Obx(() => Text(
-                              controller.driverRole.value,
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16,
-                              ),
-                            )),
+                        Text(
+                          driver!.role.toString(),
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                          ),
+                        ),
                         const SizedBox(height: 16),
                         Row(
                           children: [
                             GestureDetector(
                               onTap: () async {
                                   final data = {
-                                    'receiver': controller.reviews[0].driverId?.id.toString(),
+                                    'receiver': driver!.id.toString(),
                                     'text': "Hello",
                                   };
                                   try {
@@ -147,21 +141,20 @@ class AboutDriverInformationView
                               ),
                             ),
                             const SizedBox(width: 8),
-                            Obx(() => _buildIconLabel(
-                                  icon: AppImages.work,
-                                  label:
-                                      '${controller.driverExperience.value}+ Experience',
-                                  backgroundColor:
-                                      Colors.black.withOpacity(0.4),
-                                )),
+                            _buildIconLabel(
+                              icon: AppImages.work,
+                              label:
+                              '${driver!.experience}+ Experience',
+                              backgroundColor:
+                              Colors.black.withOpacity(0.4),
+                            ),
                             const SizedBox(width: 8),
-                            Obx(() => _buildIconLabel(
-                                  icon: AppImages.star,
-                                  label: controller.averageRating.value
-                                      .toStringAsFixed(1),
-                                  backgroundColor:
-                                      Colors.black.withOpacity(0.4),
-                                )),
+                            _buildIconLabel(
+                              icon: AppImages.star,
+                              label: driver!.averageRating.toString(),
+                              backgroundColor:
+                              Colors.black.withOpacity(0.4),
+                            ),
                             const SizedBox(width: 8),
                             _buildIconLabel(
                               icon: AppImages.callSmall,
@@ -177,12 +170,12 @@ class AboutDriverInformationView
               ),
             ),
             sh20,
-            CustomRowHeader(
-              title: 'Reviews',
-              onTap: () {
-                Get.to(() => RatingsView());
-              },
-            ),
+            // CustomRowHeader(
+            //   title: 'Reviews',
+            //   onTap: () {
+            //     Get.to(() => RatingsView());
+            //   },
+            // ),
             // Reviews & List
             Expanded(
               child: Padding(
@@ -192,40 +185,28 @@ class AboutDriverInformationView
                   children: [
                     // Reviews List
                     Expanded(
-                      child: Obx(() {
-                        if (controller.isLoading.value) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-                        if (controller.errorMessage.value.isNotEmpty) {
-                          return Center(
-                              child: Text(controller.errorMessage.value));
-                        }
-                        if (controller.reviews.isEmpty) {
-                          return const Center(
-                              child: Text('No reviews available'));
-                        }
-                        return ListView.separated(
-                          itemCount: controller.reviews.length,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(height: 16),
-                          itemBuilder: (context, index) {
-                            final review = controller.reviews[index];
-                            return _buildReviewItem(
-                              imageUrl: review.driverId?.image ?? profileImage,
-                              name: review.driverId?.fullname ?? 'Anonymous',
-                              rating: review.rating ?? 0.0,
-                              review: review.review ?? 'No review provided',
-                            );
-                          },
-                        );
-                      }),
+                      child:  driver!.reviews.isEmpty? Text("Empty review") :   Expanded(child: ListView.separated(
+                        itemCount: driver!.reviews.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 16),
+                        itemBuilder: (context, index) {
+                          final review = driver!.reviews[index];
+                          return _buildReviewItem(
+                            imageUrl: driver!.image ?? profileImage,
+                            name: driver!.fullname ?? 'Anonymous',
+                            rating:
+                            double.parse(driver!.averageRating.toString()) ??
+                                0.0,
+                            review: driver!.reviews[index].review.toString() ??
+                                'No review provided',
+                          );
+                        },
+                      ),),
                     ),
                     // Write Review Button
                     CustomButton(
                       text: 'Write Review',
                       onPressed: () {
-                        Get.to(() => WriteReviewView(driverId));
+                        Get.to(() => WriteReviewView(driver!.id));
                       },
                       gradientColors: AppColors.gradientColorGreen,
                     ),
