@@ -122,7 +122,8 @@ class DriverProfileController extends GetxController {
     required String contactNumber,
     required String location,
     required String zipCode,
-  }) async {
+  })
+  async {
     try {
       String accessToken = LocalStorage.getData(key: AppConstant.accessToken);
       if (accessToken.isEmpty) {

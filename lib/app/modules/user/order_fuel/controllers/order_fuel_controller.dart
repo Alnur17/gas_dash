@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/data/api.dart';
 import 'package:gas_dash/app/modules/user/dashboard/views/dashboard_view.dart';
+import 'package:gas_dash/app/modules/user/emergency_fuel/views/schedule_delivery_from_calender_view.dart';
 import 'package:gas_dash/app/modules/user/order_fuel/views/fuel_type_final_confirmation_view.dart';
 import 'package:gas_dash/common/app_constant/app_constant.dart';
 import 'package:gas_dash/common/helper/local_store.dart';
@@ -168,6 +169,8 @@ class OrderFuelController extends GetxController {
     required bool customAmount,
     required double amount,
     required String fuelType,
+     String? schedulDate,
+     String? schedulTime,
   })
   async {
     isLoading.value = true;
@@ -189,6 +192,9 @@ class OrderFuelController extends GetxController {
         'zipCode': zipCode.value ?? '90001',
         'emergency': isEmergency ?? false,
         'cancelReason': '',
+        if (isEmergency == true )
+          'schedulDate': schedulDate,
+          'schedulTime': schedulTime,
       };
 
       String body = jsonEncode(orderData);

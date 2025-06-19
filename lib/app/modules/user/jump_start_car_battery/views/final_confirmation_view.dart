@@ -11,23 +11,34 @@ import '../../../../../common/widgets/custom_loader.dart';
 import '../../order_fuel/controllers/order_fuel_controller.dart';
 import '../../order_fuel/model/final_confirmation_model.dart';
 
-class FinalConfirmationView extends GetView<OrderFuelController> {
+class FinalConfirmationView extends StatefulWidget {
   final String? orderId;
 
   const FinalConfirmationView({super.key, this.orderId});
 
   @override
-  Widget build(BuildContext context) {
-    // Initialize the controller
-    final OrderFuelController controller = Get.put(OrderFuelController());
-    final PaymentController paymentController = Get.put(PaymentController());
+  State<FinalConfirmationView> createState() => _FinalConfirmationViewState();
+}
 
-    // Use addPostFrameCallback to fetch order details after the frame is rendered
-    if (orderId != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        controller.fuelTypeFinalConfirmation(orderId!);
-      });
-    }
+class _FinalConfirmationViewState extends State<FinalConfirmationView> {
+
+  // Initialize the controller
+  final OrderFuelController controller = Get.put(OrderFuelController());
+  final PaymentController paymentController = Get.put(PaymentController());
+
+  // Use addPostFrameCallback to fetch order details after the frame is rendered
+ @override
+  void initState() {
+   if (widget.orderId != null) {
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+       controller.fuelTypeFinalConfirmation(widget.orderId!);
+     });
+   }
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
+
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -129,7 +140,7 @@ class FinalConfirmationView extends GetView<OrderFuelController> {
                 text: 'Next',
                 onPressed: () {
                   paymentController.createPaymentSession(
-                      orderId: orderId!);
+                      orderId: widget.orderId!);
                 },
                 gradientColors: AppColors.gradientColorGreen,
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/emergency_fuel/views/schedule_delivery_from_calender_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
@@ -225,18 +226,62 @@ class OrderFuelView extends GetView<OrderFuelController> {
                       return;
                     }
 
-                    orderFuelController.createOrder(
-                      isEmergency: isEmergency ?? false,
-                      vehicleId:
-                          orderFuelController.selectedVehicle.value?.id ?? '',
-                      presetAmount: orderFuelController.presetEnabled.value,
-                      customAmount: orderFuelController.customEnabled.value,
-                      amount: amount,
-                      fuelType: fuelName ?? 'Premium',
-                    );
-                    if (kDebugMode) {
-                      print(';;;;;;;;;;$isEmergency;;;;;;;;;;');
+                    if (isEmergency == true) {
+                      Get.to(
+                          () => ScheduleDeliveryFromCalenderView(
+                                isEmergency: isEmergency ?? false,
+                                vehicleId: orderFuelController
+                                        .selectedVehicle.value?.id ??
+                                    '',
+                                customAmount:
+                                    orderFuelController.customEnabled.value,
+                                presetAmount:
+                                    orderFuelController.presetEnabled.value,
+                                amount: amount,
+                                fuelType: fuelName ?? '',
+                              ),
+                          // arguments: {
+                          //   'isEmergency': isEmergency,
+                          //   'vehicleId':
+                          //       orderFuelController.selectedVehicle.value?.id ??
+                          //           '',
+                          //   'presetAmount':
+                          //       orderFuelController.presetEnabled.value,
+                          //   'customAmount':
+                          //       orderFuelController.customEnabled.value,
+                          //   'amount': amount,
+                          //   'fuelType': fuelName ?? 'Premium',
+                          //   //'fuelPrice': fuelPrice,
+                          //   'location': {
+                          //     'latitude': orderFuelController.latitude.value,
+                          //     'longitude': orderFuelController.longitude.value,
+                          //   },
+                          // }
+                          );
+                    } else {
+                      orderFuelController.createOrder(
+                        isEmergency: isEmergency ?? false,
+                        vehicleId:
+                            orderFuelController.selectedVehicle.value?.id ?? '',
+                        presetAmount: orderFuelController.presetEnabled.value,
+                        customAmount: orderFuelController.customEnabled.value,
+                        amount: amount,
+                        fuelType: fuelName ?? 'Premium',
+                      );
                     }
+
+                    // orderFuelController.createOrder(
+                    //   isEmergency: isEmergency ?? false,
+                    //   vehicleId:
+                    //       orderFuelController.selectedVehicle.value?.id ?? '',
+                    //   presetAmount: orderFuelController.presetEnabled.value,
+                    //   customAmount: orderFuelController.customEnabled.value,
+                    //   amount: amount,
+                    //   fuelType: fuelName ?? 'Premium',
+                    // ) ;
+                    // if (kDebugMode) {
+                    //   print(';;;;;;;;;;$isEmergency;;;;;;;;;;');
+                    // }
                   },
                   gradientColors: AppColors.gradientColorGreen,
                 ),

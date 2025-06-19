@@ -103,21 +103,28 @@ class AfterSubscriptionView extends GetView<SubscriptionController> {
 // ),
 
 class PlanCard extends StatelessWidget {
-  const PlanCard({
-    super.key,
-  });
+  const PlanCard({super.key});
 
   @override
   Widget build(BuildContext context) {
     final profileController = Get.put(ProfileController());
-    final remeningDuration =
-        profileController.myProfileData.value?.remeningDurationDay ?? 0.0;
-    final totalDuration = profileController.myProfileData.value?.durationDay ??
-        1.0; // Avoid division by zero
+    final remeningDuration = profileController.myProfileData.value?.remeningDurationDay ?? 0.0;
+
+    // Calculate total duration based on durationDay (DateTime?)
+    final durationDay = profileController.myProfileData.value?.durationDay;
+    final resetDate = DateTime(2020, 6, 30); // Example reset date from your UI
+    final now = DateTime.now();
+
+    // Calculate total duration in days (e.g., from durationDay to reset date)
+    final totalDuration = durationDay != null
+        ? resetDate.difference(durationDay as DateTime).inDays.toDouble()
+        : 1.0; // Avoid division by zero
+
+    // Calculate progress (remaining days / total days)
     final progress = totalDuration > 0 ? remeningDuration / totalDuration : 0.0;
 
     return Container(
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.0),
@@ -126,7 +133,7 @@ class PlanCard extends StatelessWidget {
             color: Colors.grey.withOpacity(0.2),
             spreadRadius: 2,
             blurRadius: 5,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -138,27 +145,25 @@ class PlanCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  profileController.myProfileData.value?.title ??
-                      'No Membership',
+                  profileController.myProfileData.value?.title ?? 'No Membership',
                   style: h3,
                 ),
-                SizedBox(height: 8.0),
+                const SizedBox(height: 8.0),
                 Text(
-                  '${remeningDuration.toStringAsFixed(0)} / ${totalDuration.toStringAsFixed(0)}',
+                  '${remeningDuration.toStringAsFixed(0)} / ${totalDuration.toStringAsFixed(0)} days',
                   style: h5,
                 ),
-                SizedBox(height: 8.0),
+                const SizedBox(height: 8.0),
                 LinearProgressIndicator(
                   value: progress.clamp(0.0, 1.0),
-                  // Ensure value is between 0 and 1
                   backgroundColor: Colors.grey[300],
                   color: Colors.blue,
                   minHeight: 6.0,
                 ),
-                SizedBox(height: 8.0),
+                const SizedBox(height: 8.0),
                 Text(
                   'Reset On June 30, 2020',
-                  style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                  style: const TextStyle(fontSize: 14.0, color: Colors.grey),
                 ),
               ],
             ),
@@ -171,7 +176,9 @@ class PlanCard extends StatelessWidget {
             onPressed: () {},
             gradientColors: AppColors.gradientColorGreen,
             textStyle: h5.copyWith(
-                color: AppColors.white, fontWeight: FontWeight.bold),
+              color: AppColors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),
