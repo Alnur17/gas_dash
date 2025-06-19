@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/order_fuel/controllers/order_fuel_controller.dart';
+import 'package:gas_dash/app/modules/user/profile/controllers/profile_controller.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
 import 'package:get/get.dart';
 
@@ -8,10 +10,12 @@ import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_list_tile.dart';
 import '../../../../../common/widgets/custom_textfield.dart';
+import '../controllers/vehicle_add_controller.dart';
 
 class AddFamilyMemberPopup extends StatelessWidget {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final ProfileController profileController = Get.put(ProfileController());
 
   AddFamilyMemberPopup({super.key});
 
@@ -27,15 +31,26 @@ class AddFamilyMemberPopup extends StatelessWidget {
           Text('User Name'),
           CustomTextField(
             controller: usernameController,
-
           ),
           sh16,
-          Text('Email',),
+          Text(
+            'Email',
+          ),
           CustomTextField(
             controller: emailController,
           ),
           sh24,
-          CustomButton(text: 'Confirmed', onPressed: (){}),
+          CustomButton(
+            text: 'Confirmed',
+            onPressed: () {
+              profileController.updateProfileForFamily(
+                context: context,
+                name: usernameController.text,
+                email: emailController.text,
+              );
+            },
+            gradientColors: AppColors.gradientColorGreen,
+          ),
         ],
       ),
     );
@@ -43,10 +58,8 @@ class AddFamilyMemberPopup extends StatelessWidget {
 }
 
 class AddVehicleDetailsPopup extends StatelessWidget {
-  final TextEditingController makeController = TextEditingController();
-  final TextEditingController modelController = TextEditingController();
-  final TextEditingController yearController = TextEditingController();
-  final TextEditingController fuelLevelController = TextEditingController();
+  final VehicleAddController orderFuelController =
+      Get.put(VehicleAddController());
 
   AddVehicleDetailsPopup({super.key});
 
@@ -59,30 +72,41 @@ class AddVehicleDetailsPopup extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Make',),
+          Text(
+            'Make',
+          ),
           CustomTextField(
-            controller: makeController,
-
+            controller: orderFuelController.makeController,
           ),
           sh16,
-          Text('Model',),
+          Text(
+            'Model',
+          ),
           CustomTextField(
-            controller: modelController,
-
+            controller: orderFuelController.modelController,
           ),
           sh16,
-          Text('Year',),
+          Text(
+            'Year',
+          ),
           CustomTextField(
-            controller: yearController,
+            controller: orderFuelController.yearController,
           ),
           sh16,
-          Text('Fuel Level',),
+          Text(
+            'Fuel Level',
+          ),
           CustomTextField(
-            controller: fuelLevelController,
+            controller: orderFuelController.fuelLevelController,
           ),
           sh24,
-          CustomButton(text: 'Confirmed', onPressed: (){}),
-
+          CustomButton(
+            text: 'Confirmed',
+            onPressed: () {
+              orderFuelController.confirmVehicle();
+            },
+            gradientColors: AppColors.gradientColorGreen,
+          ),
         ],
       ),
     );

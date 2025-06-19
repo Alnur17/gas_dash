@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/user/emergency_fuel/controllers/schedule_delivery_from_calender_controller.dart';
+import 'package:gas_dash/app/modules/user/order_fuel/controllers/order_fuel_controller.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
@@ -11,11 +12,28 @@ import 'package:table_calendar/table_calendar.dart';
 import '../../order_fuel/views/fuel_type_final_confirmation_view.dart';
 
 class ScheduleDeliveryFromCalenderView extends GetView {
+  final bool isEmergency;
+  final String vehicleId;
+  final bool presetAmount;
+  final bool customAmount;
+  final double amount;
+  final String fuelType;
+
   final ScheduleDeliveryFromCalenderController
       scheduleDeliveryFromCalenderController =
       Get.put(ScheduleDeliveryFromCalenderController());
+  final OrderFuelController orderFuelController =
+      Get.put(OrderFuelController());
 
-  ScheduleDeliveryFromCalenderView({super.key});
+  ScheduleDeliveryFromCalenderView({
+    super.key,
+    required this.isEmergency,
+    required this.vehicleId,
+    required this.customAmount,
+    required this.presetAmount,
+    required this.amount,
+    required this.fuelType,
+  });
 
   String getFormattedTime(TimeOfDay time) {
     final now = DateTime.now();
@@ -206,14 +224,16 @@ class ScheduleDeliveryFromCalenderView extends GetView {
                 SizedBox(height: 4),
 
                 Obx(() {
-                  final dateStr = DateFormat('MMMM d, yyyy').format(scheduleDeliveryFromCalenderController.selectedDay.value);
-                  final timeStr = getFormattedTime(scheduleDeliveryFromCalenderController.selectedTime.value);
+                  final dateStr = DateFormat('MMMM d, yyyy').format(
+                      scheduleDeliveryFromCalenderController.selectedDay.value);
+                  final timeStr = getFormattedTime(
+                      scheduleDeliveryFromCalenderController
+                          .selectedTime.value);
                   return Text(
                     'Delivery scheduled for $dateStr at $timeStr.',
                     style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
                   );
                 }),
-
 
                 SizedBox(height: 80),
               ],
@@ -224,13 +244,25 @@ class ScheduleDeliveryFromCalenderView extends GetView {
       bottomSheet: Container(
         color: AppColors.mainColor,
         width: double.infinity,
-        padding: EdgeInsets.only(left: 20,right: 20,bottom: 20),
+        padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
         child: CustomButton(
           text: 'Next',
           onPressed: () {
-            print('Date: ${scheduleDeliveryFromCalenderController.selectedDay.value}');
-            print('Time: ${scheduleDeliveryFromCalenderController.selectedTime.value.format(context)}');
-            Get.to(()=> FuelTypeFinalConfirmationView());
+            print(
+                'Date: ${scheduleDeliveryFromCalenderController.selectedDay.value}');
+            print(
+                'Time: ${scheduleDeliveryFromCalenderController.selectedTime.value.format(context)}');
+          //  Get.to(() => FuelTypeFinalConfirmationView(orderId: ));
+            orderFuelController.createOrder(
+              isEmergency: isEmergency,
+              vehicleId: orderFuelController.selectedVehicle.value?.id ?? '',
+              presetAmount: orderFuelController.presetEnabled.value,
+              customAmount: orderFuelController.customEnabled.value,
+              amount: amount,
+              fuelType: fuelType,
+              schedulDate: "${scheduleDeliveryFromCalenderController.selectedDay.value}",
+              schedulTime: scheduleDeliveryFromCalenderController.selectedTime.value.format(context),
+            );
           },
           gradientColors: AppColors.gradientColorGreen,
         ),

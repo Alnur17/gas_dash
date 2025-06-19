@@ -68,7 +68,10 @@ class HomeView extends GetView<HomeController> {
         automaticallyImplyLeading: false,
       ),
       body: RefreshIndicator(
-        onRefresh: oHController.fetchOrderHistory,
+        onRefresh: ()async{
+          await oHController.fetchOrderHistory();
+          await profileController.getMyProfile();
+        },
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

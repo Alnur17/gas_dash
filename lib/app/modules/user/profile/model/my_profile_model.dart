@@ -16,12 +16,14 @@ class MyProfileModel {
       data: json["data"] == null ? null : Data.fromJson(json["data"]),
     );
   }
+
 }
 
 class Data {
   Data({
     required this.verification,
     required this.familyMember,
+    required this.averageRating,
     required this.id,
     required this.status,
     required this.fullname,
@@ -55,33 +57,33 @@ class Data {
     required this.v,
     required this.title,
     required this.remeningDurationDay,
-    required this.passwordChangedAt,
   });
 
   final Verification? verification;
   final FamilyMember? familyMember;
+  final int? averageRating;
   final String? id;
   final String? status;
   final String? fullname;
   final String? location;
-  final String? country;
+  final dynamic country;
   final String? zipCode;
   final String? email;
-  final dynamic phoneNumber;
+  final String? phoneNumber;
   final String? password;
   final dynamic gender;
   final dynamic dateOfBirth;
   final bool? isGoogleLogin;
-  final dynamic image;
+  final String? image;
   final String? role;
-  final double? totalEarning; // Changed from int? to double?
+  final int? totalEarning;
   final int? experience;
   final dynamic address;
-  final double? freeDeliverylimit; // Changed from int? to double?
-  final double? coverVehiclelimit; // Changed from int? to double?
-  final double? durationDay; // Changed from int? to double?
+  final int? freeDeliverylimit;
+  final int? coverVehiclelimit;
+  final DateTime? durationDay;
   final bool? isDeleted;
-  final double? popularity; // Changed from int? to double?
+  final int? popularity;
   final bool? fiftyPercentOffDeliveryFeeAfterWaivedTrips;
   final bool? scheduledDelivery;
   final bool? fuelPriceTrackingAlerts;
@@ -92,13 +94,13 @@ class Data {
   final DateTime? updatedAt;
   final int? v;
   final String? title;
-  final double? remeningDurationDay; // Changed from int? to double?
-  final DateTime? passwordChangedAt;
+  final int? remeningDurationDay;
 
   factory Data.fromJson(Map<String, dynamic> json){
     return Data(
       verification: json["verification"] == null ? null : Verification.fromJson(json["verification"]),
       familyMember: json["familyMember"] == null ? null : FamilyMember.fromJson(json["familyMember"]),
+      averageRating: json["AverageRating"],
       id: json["_id"],
       status: json["status"],
       fullname: json["fullname"],
@@ -113,14 +115,14 @@ class Data {
       isGoogleLogin: json["isGoogleLogin"],
       image: json["image"],
       role: json["role"],
-      totalEarning: (json["totalEarning"] is int) ? (json["totalEarning"] as int).toDouble() : json["totalEarning"],
+      totalEarning: json["totalEarning"],
       experience: json["experience"],
       address: json["address"],
-      freeDeliverylimit: (json["freeDeliverylimit"] is int) ? (json["freeDeliverylimit"] as int).toDouble() : json["freeDeliverylimit"],
-      coverVehiclelimit: (json["coverVehiclelimit"] is int) ? (json["coverVehiclelimit"] as int).toDouble() : json["coverVehiclelimit"],
-      durationDay: (json["durationDay"] is int) ? (json["durationDay"] as int).toDouble() : json["durationDay"],
+      freeDeliverylimit: json["freeDeliverylimit"],
+      coverVehiclelimit: json["coverVehiclelimit"],
+      durationDay: DateTime.tryParse(json["durationDay"] ?? ""),
       isDeleted: json["isDeleted"],
-      popularity: (json["popularity"] is int) ? (json["popularity"] as int).toDouble() : json["popularity"],
+      popularity: json["popularity"],
       fiftyPercentOffDeliveryFeeAfterWaivedTrips: json["fiftyPercentOffDeliveryFeeAfterWaivedTrips"],
       scheduledDelivery: json["scheduledDelivery"],
       fuelPriceTrackingAlerts: json["fuelPriceTrackingAlerts"],
@@ -131,10 +133,10 @@ class Data {
       updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
       v: json["__v"],
       title: json["title"],
-      remeningDurationDay: (json["remeningDurationDay"] is int) ? (json["remeningDurationDay"] as int).toDouble() : json["remeningDurationDay"],
-      passwordChangedAt: DateTime.tryParse(json["passwordChangedAt"] ?? ""),
+      remeningDurationDay: json["remeningDurationDay"],
     );
   }
+
 }
 
 class FamilyMember {
@@ -152,21 +154,23 @@ class FamilyMember {
       email: json["email"],
     );
   }
+
 }
 
 class Verification {
   Verification({
-    required this.otp,
     required this.status,
+    required this.otp,
   });
 
-  final int? otp;
   final bool? status;
+  final int? otp;
 
   factory Verification.fromJson(Map<String, dynamic> json){
     return Verification(
-      otp: json["otp"],
       status: json["status"],
+      otp: json["otp"],
     );
   }
+
 }

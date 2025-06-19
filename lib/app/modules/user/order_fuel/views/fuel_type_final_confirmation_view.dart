@@ -10,23 +10,33 @@ import '../../../../../common/widgets/custom_circular_container.dart';
 import '../../../../../common/widgets/custom_loader.dart';
 import '../controllers/order_fuel_controller.dart';
 
-class FuelTypeFinalConfirmationView extends GetView<OrderFuelController> {
+class FuelTypeFinalConfirmationView extends StatefulWidget {
   final String? orderId;
 
   const FuelTypeFinalConfirmationView({super.key, this.orderId});
 
   @override
-  Widget build(BuildContext context) {
-    // Initialize the controller
-    final OrderFuelController controller = Get.put(OrderFuelController());
-    final PaymentController paymentController = Get.put(PaymentController());
+  State<FuelTypeFinalConfirmationView> createState() => _FuelTypeFinalConfirmationViewState();
+}
 
-    // Use addPostFrameCallback to fetch order details after the frame is rendered
-    if (orderId != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        controller.fuelTypeFinalConfirmation(orderId!);
-      });
-    }
+class _FuelTypeFinalConfirmationViewState extends State<FuelTypeFinalConfirmationView> {
+
+  final OrderFuelController controller = Get.put(OrderFuelController());
+  final PaymentController paymentController = Get.put(PaymentController());
+
+ @override
+  void initState() {
+   if (widget.orderId != null) {
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+       controller.fuelTypeFinalConfirmation(widget.orderId!);
+     });
+     print(''''''''''''''''${widget.orderId}''''''''''''''''');
+   }
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -49,9 +59,9 @@ class FuelTypeFinalConfirmationView extends GetView<OrderFuelController> {
       ),
       body: Obx(() {
         // Show loading indicator while fetching location
-        if (controller.currentLocation.value == 'Fetching location...') {
-          return const Center(child: CircularProgressIndicator());
-        }
+        // if (controller.currentLocation.value == 'Fetching location...') {
+        //   return const Center(child: CircularProgressIndicator());
+        // }
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -86,13 +96,13 @@ class FuelTypeFinalConfirmationView extends GetView<OrderFuelController> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Location',
-                            style: h5.copyWith(fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 8),
-                        Text(
-                            '${controller.currentLocation.value}, ${orderData.zipCode ?? 'N/A'}',
-                            style: h6),
-                        const SizedBox(height: 16),
+                        // Text('Location',
+                        //     style: h5.copyWith(fontWeight: FontWeight.bold)),
+                        // const SizedBox(height: 8),
+                        // Text(
+                        //     '${controller.currentLocation.value}, ${orderData.zipCode ?? 'N/A'}',
+                        //     style: h6),
+                        // const SizedBox(height: 16),
                         Text('Vehicle',
                             style: h5.copyWith(fontWeight: FontWeight.bold)),
                         const SizedBox(height: 8),
@@ -143,7 +153,7 @@ class FuelTypeFinalConfirmationView extends GetView<OrderFuelController> {
                     text: 'Next',
                     onPressed: () {
                       paymentController.createPaymentSession(
-                          orderId: orderId!);
+                          orderId: widget.orderId!);
                     },
                     gradientColors: AppColors.gradientColorGreen,
                   ),

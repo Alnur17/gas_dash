@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:mime/mime.dart';
 
 import '../../../../../common/app_color/app_colors.dart';
@@ -113,6 +114,49 @@ class ProfileController extends GetxController {
   }
 
   ///Update profile
+  Future<void> updateProfileForFamily({
+    required BuildContext context,
+    required String name,
+    required String email,
+  }) async {
+    try {
+      String accessToken = LocalStorage.getData(key: AppConstant.accessToken);
+      if (accessToken.isEmpty) {
+        kSnackBar(message: "User not authenticated", bgColor: AppColors.orange);
+        return;
+      }
+      var map = {
+        "familyMember": {
+          "name": name,
+          "email": email,
+        }
+      };
+      var headers = {
+        'Content-Type': 'application/json',
+        'Authorization':
+        'Bearer ${LocalStorage.getData(key: AppConstant.accessToken)}',
+      };
+
+      dynamic responseBody = await BaseClient.handleResponse(
+        await BaseClient.patchRequest(
+            api: Api.editMyProfile, body: jsonEncode(map), headers: headers),
+      );
+      if (responseBody != null) {
+        kSnackBar(message: responseBody["message"], bgColor: AppColors.green);
+        getMyProfile();
+       Navigator.pop(context);
+        isLoading(false);
+      } else {
+        throw 'reset pass in Failed!';
+      }
+
+    } catch (e) {
+      kSnackBar(
+          message: "Error updating profile: $e", bgColor: AppColors.orange);
+      debugPrint("Update Error: $e");
+    }
+  }
+
   Future<void> updateProfile({
     //required BuildContext context,
     required String name,
@@ -120,8 +164,7 @@ class ProfileController extends GetxController {
     required String contactNumber,
     required String location,
     required String zipCode,
-  })
-  async {
+  }) async {
     try {
       String accessToken = LocalStorage.getData(key: AppConstant.accessToken);
       if (accessToken.isEmpty) {
@@ -129,7 +172,8 @@ class ProfileController extends GetxController {
         return;
       }
 
-      var request = http.MultipartRequest('PATCH', Uri.parse(Api.editMyProfile));
+      var request =
+          http.MultipartRequest('PATCH', Uri.parse(Api.editMyProfile));
 
       request.headers.addAll({
         'Authorization': 'Bearer $accessToken',
@@ -208,4 +252,6 @@ class ProfileController extends GetxController {
       update();
     }
   }
+
+
 }
