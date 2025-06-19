@@ -16,7 +16,6 @@ class MyProfileModel {
       data: json["data"] == null ? null : Data.fromJson(json["data"]),
     );
   }
-
 }
 
 class Data {
@@ -57,6 +56,7 @@ class Data {
     required this.v,
     required this.title,
     required this.remeningDurationDay,
+    required this.passwordChangedAt,
   });
 
   final Verification? verification;
@@ -66,15 +66,15 @@ class Data {
   final String? status;
   final String? fullname;
   final String? location;
-  final dynamic country;
+  final String? country;
   final String? zipCode;
   final String? email;
-  final String? phoneNumber;
+  final dynamic phoneNumber;
   final String? password;
   final dynamic gender;
   final dynamic dateOfBirth;
   final bool? isGoogleLogin;
-  final String? image;
+  final dynamic image;
   final String? role;
   final double? totalEarning;
   final int? experience;
@@ -94,9 +94,9 @@ class Data {
   final DateTime? updatedAt;
   final int? v;
   final String? title;
-  final int? remeningDurationDay;
   final double? remeningDurationDay;
   final DateTime? passwordChangedAt;
+
   factory Data.fromJson(Map<String, dynamic> json) {
     return Data(
       verification: json["verification"] == null
@@ -187,23 +187,21 @@ class FamilyMember {
       email: json["email"],
     );
   }
-
 }
 
 class Verification {
   Verification({
-    required this.status,
     required this.otp,
+    required this.status,
   });
 
-  final bool? status;
   final int? otp;
+  final bool? status;
 
   factory Verification.fromJson(Map<String, dynamic> json) {
     return Verification(
-      status: json["status"],
       otp: json["otp"],
+      status: json["status"],
     );
   }
-
 }

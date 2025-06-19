@@ -23,7 +23,7 @@ class LoginController extends GetxController {
     try {
       isLoading(true);
       var map = {
-        "email": email.toLowerCase(),
+        "email": email.toLowerCase().trim(),
         "password": password,
       };
 

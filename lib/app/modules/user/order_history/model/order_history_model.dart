@@ -74,12 +74,12 @@ class OrderHistoryDatum {
   final String? id;
   final String? vehicleId;
   final UserId? userId;
-  final int? amount;
+  final dynamic amount;
   final dynamic deliveryFee;
-  final int? price;
+  final dynamic price;
   final bool? presetAmount;
   final bool? customAmount;
-  final int? tip;
+  final dynamic tip;
   final String? orderType;
   final String? orderStatus;
   final String? cancelReason;
@@ -87,7 +87,7 @@ class OrderHistoryDatum {
   final bool? isPaid;
   final dynamic finalAmountOfPayment;
   final String? zipCode;
-  final int? servicesFee;
+  final dynamic servicesFee;
   final String? proofImage;
   final bool? emergency;
   final String? schedulDate;
@@ -179,17 +179,17 @@ class DriverId {
 
   final DriverIdVerification? verification;
   final FamilyMember? familyMember;
-  final int? experience;
-  final int? averageRating;
-  final int? avgRatings;
-  final int? popularity;
+  final dynamic experience;
+  final dynamic averageRating;
+  final dynamic avgRatings;
+  final dynamic popularity;
   final bool? fiftyPercentOffDeliveryFeeAfterWaivedTrips;
   final bool? scheduledDelivery;
   final bool? fuelPriceTrackingAlerts;
   final bool? noExtraChargeForEmergencyFuelServiceLimit;
   final bool? freeSubscriptionAdditionalFamilyMember;
   final bool? exclusivePromotionsEarlyAccess;
-  final int? remeningDurationDay;
+  final dynamic remeningDurationDay;
   final String? id;
   final String? status;
   final String? fullname;
@@ -205,14 +205,14 @@ class DriverId {
   final dynamic image;
   final String? role;
   final dynamic address;
-  final int? freeDeliverylimit;
-  final int? coverVehiclelimit;
+  final dynamic freeDeliverylimit;
+  final dynamic coverVehiclelimit;
   final DateTime? durationDay;
   final bool? isDeleted;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final int? v;
-  final int? totalEarning;
+  final dynamic v;
+  final dynamic totalEarning;
   final List<Review> reviews;
 
   factory DriverId.fromJson(Map<String, dynamic> json){
@@ -295,10 +295,10 @@ class Review {
   final String? userId;
   final dynamic rating;
   final String? review;
-  final int? averageRating;
+  final dynamic averageRating;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final int? v;
+  final dynamic v;
 
   factory Review.fromJson(Map<String, dynamic> json){
     return Review(
@@ -323,7 +323,7 @@ class DriverIdVerification {
     required this.status,
   });
 
-  final int? otp;
+  final dynamic otp;
   final DateTime? expiresAt;
   final bool? status;
 
@@ -399,11 +399,11 @@ class UserId {
 
   final UserIdVerification? verification;
   final FamilyMember? familyMember;
-  final int? averageRating;
+  final dynamic averageRating;
   final List<dynamic> reviews;
-  final int? avgRatings;
-  final int? popularity;
-  final int? remeningDurationDay;
+  final dynamic avgRatings;
+  final dynamic popularity;
+  final dynamic remeningDurationDay;
   final String? id;
   final String? status;
   final String? fullname;
@@ -418,16 +418,16 @@ class UserId {
   final bool? isGoogleLogin;
   final dynamic image;
   final String? role;
-  final int? totalEarning;
-  final int? experience;
+  final dynamic totalEarning;
+  final dynamic experience;
   final dynamic address;
-  final int? freeDeliverylimit;
-  final int? coverVehiclelimit;
+  final dynamic freeDeliverylimit;
+  final dynamic coverVehiclelimit;
   final DateTime? durationDay;
   final bool? isDeleted;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final int? v;
+  final dynamic v;
   final bool? exclusivePromotionsEarlyAccess;
   final bool? fiftyPercentOffDeliveryFeeAfterWaivedTrips;
   final bool? freeSubscriptionAdditionalFamilyMember;
@@ -488,7 +488,7 @@ class UserIdVerification {
   });
 
   final bool? status;
-  final int? otp;
+  final dynamic otp;
 
   factory UserIdVerification.fromJson(Map<String, dynamic> json){
     return UserIdVerification(
@@ -507,10 +507,10 @@ class Meta {
     required this.totalPage,
   });
 
-  final int? page;
-  final int? limit;
-  final int? total;
-  final int? totalPage;
+  final dynamic page;
+  final dynamic limit;
+  final dynamic total;
+  final dynamic totalPage;
 
   factory Meta.fromJson(Map<String, dynamic> json){
     return Meta(
