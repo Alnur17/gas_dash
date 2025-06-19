@@ -255,11 +255,13 @@ class _SubscriptionViewState extends State<SubscriptionView> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              package.title ?? 'Unknown',
-                              style: h4.copyWith(
-                                color: isSelected ? AppColors.white : AppColors.black,
-                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
+                            Expanded(
+                              child: Text(
+                                package.title ?? 'Unknown',
+                                style: h4.copyWith(
+                                  color: isSelected ? AppColors.white : AppColors.black,
+                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
+                                ),
                               ),
                             ),
                             Text(

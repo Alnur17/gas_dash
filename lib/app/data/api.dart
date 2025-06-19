@@ -31,6 +31,7 @@ class Api {
   static const addVehicle = "$baseUrl/vehicles/create"; //done
 
   static const getMyVehicle = "$baseUrl/vehicles/my-vehicles"; //done
+  static const getMySubscriptionVehicle = "$baseUrl/vehicles/subscription-vehicles"; //done
 
   ///Order
   static const createOrder = "$baseUrl/orders/create-orderFuel"; //done

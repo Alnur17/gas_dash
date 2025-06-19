@@ -254,6 +254,7 @@ class HomeView extends GetView<HomeController> {
                       ),
                     ),
                     sh8,
+
                     CustomButton(
                       height: 40,
                       text: 'Order Now',
@@ -506,7 +507,7 @@ class HomeView extends GetView<HomeController> {
 
                   // Filter only Pending orders
                   final orders = oHController.orders
-                      .where((order) => order.orderStatus == 'Unassigned')
+                      .where((order) => order.orderStatus == 'Unassigned'&& order.isPaid == true)
                       .toList();
 
                   // Show message if no Pending orders are found
