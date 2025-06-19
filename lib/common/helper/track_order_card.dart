@@ -53,7 +53,7 @@ class TrackOrderCard extends StatelessWidget {
                           color: Colors.blueGrey.shade900),
                     ),
                     TextSpan(
-                      text: '#$orderId',
+                      text: '#\n$orderId',
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,

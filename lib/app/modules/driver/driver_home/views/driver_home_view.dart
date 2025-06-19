@@ -169,7 +169,7 @@ class _DriverHomeViewState extends State<DriverHomeView> {
                                 location: order.location?.coordinates != null
                                     ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
                                     : 'Unknown',
-                                fuelAmount: order.amount ?? 0.0,
+                                fuelAmount: double.parse(order.amount.toString()) ?? 0.0,
                                 fuelType: order.orderType ?? 'Unknown',
                                 onAcceptPressed: () {
                                   Get.to(() => DriverStartDeliveryView(

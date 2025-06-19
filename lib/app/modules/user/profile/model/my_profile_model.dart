@@ -9,7 +9,7 @@ class MyProfileModel {
   final String? message;
   final Data? data;
 
-  factory MyProfileModel.fromJson(Map<String, dynamic> json){
+  factory MyProfileModel.fromJson(Map<String, dynamic> json) {
     return MyProfileModel(
       success: json["success"],
       message: json["message"],
@@ -22,6 +22,7 @@ class Data {
   Data({
     required this.verification,
     required this.familyMember,
+    required this.averageRating, // Added AverageRating
     required this.id,
     required this.status,
     required this.fullname,
@@ -60,6 +61,7 @@ class Data {
 
   final Verification? verification;
   final FamilyMember? familyMember;
+  final double? averageRating; // Added AverageRating
   final String? id;
   final String? status;
   final String? fullname;
@@ -74,14 +76,14 @@ class Data {
   final bool? isGoogleLogin;
   final dynamic image;
   final String? role;
-  final double? totalEarning; // Changed from int? to double?
+  final double? totalEarning;
   final int? experience;
   final dynamic address;
-  final double? freeDeliverylimit; // Changed from int? to double?
-  final double? coverVehiclelimit; // Changed from int? to double?
-  final double? durationDay; // Changed from int? to double?
+  final double? freeDeliverylimit;
+  final double? coverVehiclelimit;
+  final double? durationDay;
   final bool? isDeleted;
-  final double? popularity; // Changed from int? to double?
+  final double? popularity;
   final bool? fiftyPercentOffDeliveryFeeAfterWaivedTrips;
   final bool? scheduledDelivery;
   final bool? fuelPriceTrackingAlerts;
@@ -92,13 +94,18 @@ class Data {
   final DateTime? updatedAt;
   final int? v;
   final String? title;
-  final double? remeningDurationDay; // Changed from int? to double?
+  final double? remeningDurationDay;
   final DateTime? passwordChangedAt;
 
-  factory Data.fromJson(Map<String, dynamic> json){
+  factory Data.fromJson(Map<String, dynamic> json) {
     return Data(
-      verification: json["verification"] == null ? null : Verification.fromJson(json["verification"]),
-      familyMember: json["familyMember"] == null ? null : FamilyMember.fromJson(json["familyMember"]),
+      verification: json["verification"] == null
+          ? null
+          : Verification.fromJson(json["verification"]),
+      familyMember: json["familyMember"] == null
+          ? null
+          : FamilyMember.fromJson(json["familyMember"]),
+      averageRating: _parseDouble(json["AverageRating"]), // Added AverageRating
       id: json["_id"],
       status: json["status"],
       fullname: json["fullname"],
@@ -113,27 +120,55 @@ class Data {
       isGoogleLogin: json["isGoogleLogin"],
       image: json["image"],
       role: json["role"],
-      totalEarning: (json["totalEarning"] is int) ? (json["totalEarning"] as int).toDouble() : json["totalEarning"],
+      totalEarning: _parseDouble(json["totalEarning"]),
       experience: json["experience"],
       address: json["address"],
-      freeDeliverylimit: (json["freeDeliverylimit"] is int) ? (json["freeDeliverylimit"] as int).toDouble() : json["freeDeliverylimit"],
-      coverVehiclelimit: (json["coverVehiclelimit"] is int) ? (json["coverVehiclelimit"] as int).toDouble() : json["coverVehiclelimit"],
-      durationDay: (json["durationDay"] is int) ? (json["durationDay"] as int).toDouble() : json["durationDay"],
+      freeDeliverylimit: _parseDouble(json["freeDeliverylimit"]),
+      coverVehiclelimit: _parseDouble(json["coverVehiclelimit"]),
+      durationDay: _parseDurationDay(json["durationDay"]),
       isDeleted: json["isDeleted"],
-      popularity: (json["popularity"] is int) ? (json["popularity"] as int).toDouble() : json["popularity"],
-      fiftyPercentOffDeliveryFeeAfterWaivedTrips: json["fiftyPercentOffDeliveryFeeAfterWaivedTrips"],
+      popularity: _parseDouble(json["popularity"]),
+      fiftyPercentOffDeliveryFeeAfterWaivedTrips:
+      json["fiftyPercentOffDeliveryFeeAfterWaivedTrips"],
       scheduledDelivery: json["scheduledDelivery"],
       fuelPriceTrackingAlerts: json["fuelPriceTrackingAlerts"],
-      noExtraChargeForEmergencyFuelServiceLimit: json["noExtraChargeForEmergencyFuelServiceLimit"],
-      freeSubscriptionAdditionalFamilyMember: json["freeSubscriptionAdditionalFamilyMember"],
+      noExtraChargeForEmergencyFuelServiceLimit:
+      json["noExtraChargeForEmergencyFuelServiceLimit"],
+      freeSubscriptionAdditionalFamilyMember:
+      json["freeSubscriptionAdditionalFamilyMember"],
       exclusivePromotionsEarlyAccess: json["exclusivePromotionsEarlyAccess"],
       createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
       updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
       v: json["__v"],
       title: json["title"],
-      remeningDurationDay: (json["remeningDurationDay"] is int) ? (json["remeningDurationDay"] as int).toDouble() : json["remeningDurationDay"],
+      remeningDurationDay: _parseDouble(json["remeningDurationDay"]),
       passwordChangedAt: DateTime.tryParse(json["passwordChangedAt"] ?? ""),
     );
+  }
+
+  static double? _parseDouble(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value.toDouble();
+    if (value is double) return value;
+    if (value is String) return double.tryParse(value);
+    return null;
+  }
+
+  static double? _parseDurationDay(dynamic value) {
+    if (value == null) return null;
+    if (value is String) {
+      try {
+        final dateTime = DateTime.tryParse(value);
+        if (dateTime == null) return null;
+        // Calculate days since epoch (1970-01-01) or another reference date
+        final referenceDate = DateTime(1970, 1, 1); // Epoch as reference
+        return dateTime.difference(referenceDate).inDays.toDouble();
+      } catch (e) {
+        print("Error parsing durationDay: $e");
+        return null;
+      }
+    }
+    return _parseDouble(value);
   }
 }
 
@@ -146,7 +181,7 @@ class FamilyMember {
   final String? name;
   final String? email;
 
-  factory FamilyMember.fromJson(Map<String, dynamic> json){
+  factory FamilyMember.fromJson(Map<String, dynamic> json) {
     return FamilyMember(
       name: json["name"],
       email: json["email"],
@@ -163,7 +198,7 @@ class Verification {
   final int? otp;
   final bool? status;
 
-  factory Verification.fromJson(Map<String, dynamic> json){
+  factory Verification.fromJson(Map<String, dynamic> json) {
     return Verification(
       otp: json["otp"],
       status: json["status"],
