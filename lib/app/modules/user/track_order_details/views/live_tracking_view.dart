@@ -9,11 +9,12 @@ import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/helper/socket_service.dart';
-import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
 import '../../about_driver_information/controllers/about_driver_information_controller.dart';
-
 import 'dart:convert';
+import '../../order_history/controllers/order_history_controller.dart';
+import 'dart:ui' as ui;
+import 'dart:typed_data';
 
 class LiveTrackingView extends StatefulWidget {
   const LiveTrackingView({super.key});
@@ -23,25 +24,27 @@ class LiveTrackingView extends StatefulWidget {
 }
 
 class _LiveTrackingViewState extends State<LiveTrackingView> {
-  late GoogleMapController _mapController;
+  GoogleMapController? _mapController; // Nullable to avoid late initialization
+  bool _mapCreated = false; // Track if map is created
+  bool _isLoading = true; // Track loading state
 
   // User's location (fetched dynamically)
   LatLng? _userLocation;
   // Driver's location (updated via socket)
   LatLng _driverLocation = const LatLng(23.8203, 90.4225); // Initial driver coords
 
-  final AboutDriverInformationController controller =
-  Get.put(AboutDriverInformationController());
+  final OrderHistoryController orderHistoryController = Get.put(OrderHistoryController());
 
   final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
 
   // Google Maps Directions API key
-  final String _googleApiKey = 'AIzaSyB_3nOokGz9jksH5jN_f05YNEJeZqWizYM';
+  final String _googleApiKey = 'AIzaSyB_3nOokGz9jksH5jN_f05YNEJeZqWizYM'; // Replace with your actual API key
 
   // Socket service
-  late SocketService _socketService;
+  SocketService? _socketService;
   String? _driverId; // Set this based on your driver ID
+  String? _driverName; // Driver name for ListTile
 
   // Estimated time
   String _estimatedTime = '25 Minutes';
@@ -53,92 +56,156 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
     _initSocketService();
     // Fetch user's location
     _getUserLocation();
-    // Set driver ID (example; adjust based on your data)
-    _driverId = controller.reviews[0].driverId?.id.toString();
+    // Set driver ID and name
+    if (orderHistoryController.inProcessOrders.isNotEmpty &&
+        orderHistoryController.inProcessOrders[0].driverId != null) {
+      _driverId = orderHistoryController.inProcessOrders[0].driverId!.id.toString();
+      _driverName = orderHistoryController.inProcessOrders[0].driverId!.fullname ?? 'Driver';
+    }
   }
 
   @override
   void dispose() {
-    _socketService.disconnect(); // Disconnect socket
-    _mapController.dispose();
+    _socketService?.disconnect(); // Disconnect socket if initialized
+    _mapController?.dispose(); // Dispose map controller if it exists
     super.dispose();
+  }
+
+  // Create a circular dot marker
+  Future<BitmapDescriptor> createCircularDotMarker({required Color color, double radius = 10.0}) async {
+    final recorder = ui.PictureRecorder();
+    final canvas = ui.Canvas(recorder);
+    final paint = ui.Paint()
+      ..color = color
+      ..style = ui.PaintingStyle.fill;
+
+    canvas.drawCircle(Offset(radius, radius), radius, paint);
+
+    final picture = recorder.endRecording();
+    final img = await picture.toImage((radius * 2).toInt(), (radius * 2).toInt());
+    final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+    final uint8List = byteData!.buffer.asUint8List();
+
+    return BitmapDescriptor.fromBytes(uint8List);
   }
 
   // Initialize socket service and listen for driver location updates
   void _initSocketService() async {
-    _socketService = await SocketService().init();
-    if (_driverId != null) {
-      _socketService.socket.on('serverToSendLocation::$_driverId', (data) {
-        if (data is Map<String, dynamic> &&
-            data.containsKey('latitude') &&
-            data.containsKey('longitude')) {
-          setState(() {
-            _driverLocation = LatLng(data['latitude'], data['longitude']);
-            // Update driver marker
-            _markers.removeWhere((m) => m.markerId.value == 'Driver');
-            _markers.add(
-              Marker(
-                markerId: const MarkerId('Driver'),
-                position: _driverLocation,
-                infoWindow: const InfoWindow(title: 'Driver Location'),
-                icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-              ),
-            );
-          });
-          // Redraw route
-          _fetchRoute();
-          _updateCameraPosition();
-        }
-      });
+    try {
+      _socketService = await SocketService().init();
+      if (_driverId != null) {
+        _socketService!.socket.on('serverToSendLocation::$_driverId', (data) {
+          if (data is Map<String, dynamic> &&
+              data.containsKey('latitude') &&
+              data.containsKey('longitude')) {
+            if (mounted) {
+              setState(() {
+                _driverLocation = LatLng(data['latitude'], data['longitude']);
+                _updateDriverMarker();
+              });
+              _fetchRoute();
+              if (_mapCreated) {
+                _updateCameraPosition();
+              }
+            }
+          }
+        });
+      }
+    } catch (e) {
+      print('Socket initialization error: $e');
     }
+  }
+
+  // Update driver marker with circular dot
+  Future<void> _updateDriverMarker() async {
+    final driverIcon = await createCircularDotMarker(color: Colors.red, radius: 10.0);
+    _markers.removeWhere((m) => m.markerId.value == 'Driver');
+    _markers.add(
+      Marker(
+        markerId: const MarkerId('Driver'),
+        position: _driverLocation,
+        infoWindow: const InfoWindow(title: 'Driver Location'),
+        icon: driverIcon,
+      ),
+    );
   }
 
   void _onMapCreated(GoogleMapController controller) {
-    _mapController = controller;
-    if (_userLocation != null) {
-      _updateCameraPosition();
+    if (mounted) {
+      setState(() {
+        _mapController = controller;
+        _mapCreated = true;
+        _isLoading = false;
+      });
+      if (_userLocation != null) {
+        _updateCameraPosition();
+      }
     }
   }
 
-  // Get user's current location
+  // Get user's current location and set user marker
   Future<void> _getUserLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      print('Location services are disabled.');
-      return;
-    }
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        print('Location permissions are denied.');
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        print('Location services are disabled.');
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
         return;
       }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          print('Location permissions are denied.');
+          if (mounted) {
+            setState(() => _isLoading = false);
+          }
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        print('Location permissions are permanently denied.');
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+        return;
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      if (mounted) {
+        final userIcon = await createCircularDotMarker(color: Colors.blue, radius: 10.0);
+        setState(() {
+          _userLocation = LatLng(position.latitude, position.longitude);
+          _markers.add(
+            Marker(
+              markerId: const MarkerId('Me'),
+              position: _userLocation!,
+              infoWindow: const InfoWindow(title: 'Your Location'),
+              icon: userIcon,
+            ),
+          );
+        });
+
+        // Initialize driver marker
+        await _updateDriverMarker();
+        // Fetch initial route
+        await _fetchRoute();
+        // Update camera only if map is created
+        if (_mapCreated) {
+          _updateCameraPosition();
+        }
+      }
+    } catch (e) {
+      print('Error getting user location: $e');
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
-
-    if (permission == LocationPermission.deniedForever) {
-      print('Location permissions are permanently denied.');
-      return;
-    }
-
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    setState(() {
-      _userLocation = LatLng(position.latitude, position.longitude);
-      _markers.add(
-        Marker(
-          markerId: const MarkerId('Me'),
-          position: _userLocation!,
-          infoWindow: const InfoWindow(title: 'Your Location'),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-        ),
-      );
-    });
-
-    // Fetch initial route
-    await _fetchRoute();
-    _updateCameraPosition();
   }
 
   // Fetch route from Google Directions API
@@ -165,18 +232,20 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
           // Extract estimated time
           final duration = data['routes'][0]['legs'][0]['duration']['text'];
 
-          setState(() {
-            _polylines.clear(); // Clear previous polylines
-            _polylines.add(
-              Polyline(
-                polylineId: const PolylineId('route'),
-                color: Colors.blue,
-                width: 5,
-                points: polylineCoordinates,
-              ),
-            );
-            _estimatedTime = duration; // Update estimated time
-          });
+          if (mounted) {
+            setState(() {
+              _polylines.clear(); // Clear previous polylines
+              _polylines.add(
+                Polyline(
+                  polylineId: const PolylineId('route'),
+                  color: Colors.blue,
+                  width: 5,
+                  points: polylineCoordinates,
+                ),
+              );
+              _estimatedTime = duration; // Update estimated time
+            });
+          }
         } else {
           print('Directions API error: ${data['status']}');
         }
@@ -190,7 +259,7 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
 
   // Adjust camera to show both user and driver locations
   void _updateCameraPosition() {
-    if (_userLocation == null) return;
+    if (_userLocation == null || !_mapCreated || _mapController == null) return;
 
     final bounds = LatLngBounds(
       southwest: LatLng(
@@ -211,7 +280,7 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
       ),
     );
 
-    _mapController.animateCamera(
+    _mapController!.animateCamera(
       CameraUpdate.newLatLngBounds(bounds, 50), // 50 is padding
     );
   }
@@ -238,72 +307,83 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
         ),
         centerTitle: true,
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
-            child: GoogleMap(
-              onMapCreated: _onMapCreated,
-              initialCameraPosition: CameraPosition(
-                target: _userLocation ?? const LatLng(23.8103, 90.4125),
-                zoom: 14,
-              ),
-              markers: _markers,
-              polylines: _polylines,
-              myLocationButtonEnabled: true,
-              zoomControlsEnabled: false,
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : GoogleMap(
+            key: const ValueKey('live_tracking_map'), // Unique key to prevent recreation
+            onMapCreated: _onMapCreated,
+            initialCameraPosition: CameraPosition(
+              target: _userLocation ?? const LatLng(23.8103, 90.4125),
+              zoom: 14,
             ),
+            markers: _markers,
+            polylines: _polylines,
+            myLocationEnabled: true, // Show user location dot
+            myLocationButtonEnabled: true,
+            zoomControlsEnabled: false,
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            color: AppColors.white,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              color: AppColors.white,
+              child: SafeArea(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.asset(
-                      AppImages.estimatedTime,
-                      scale: 4,
-                    ),
-                    sw8,
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
                       children: [
-                        Text(
-                          'Estimated Time',
-                          style: h5,
+                        Image.asset(
+                          AppImages.estimatedTime,
+                          scale: 4,
                         ),
-                        sh5,
-                        Text(
-                          _estimatedTime,
-                          style: h6,
+                        const SizedBox(width: 8), // Replaced widthBox(8)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Estimated Time',
+                              style: h5.copyWith(fontWeight: FontWeight.w600),
+                            ),
+                            const SizedBox(height: 4), // Replaced heightBox(4)
+                            Text(
+                              _estimatedTime,
+                              style: h6.copyWith(height: 1.4),
+                            ),
+                          ],
                         ),
                       ],
                     ),
+                    const SizedBox(height: 10), // Replaced heightBox(height: '10')
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      onTap: () {
+                        Get.to(() => AboutDriverInformationView(
+                            driverId: _driverId ?? ''));
+                      },
+                      leading: const CircleAvatar(
+                        radius: 25,
+                        backgroundImage: NetworkImage(AppImages.profileImageTwo),
+                      ),
+                      title: Text(
+                        _driverName ?? 'Unknown Driver',
+                        style: h3.copyWith(fontSize: 18),
+                      ),
+                      subtitle: Row(
+                        children: [
+                          Image.asset(AppImages.star, scale: 4),
+                          const SizedBox(width: 5), // Replaced widthBox(width: 5)
+                          Text('4.5(1.2k)', style: h3.copyWith(fontSize: 14)),
+                        ],
+                      ),
+                      trailing: Image.asset(AppImages.call, scale: 4),
+                    ),
                   ],
                 ),
-                sh12,
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  onTap: () {
-                    Get.to(() => AboutDriverInformationView(
-                        driverId: _driverId ?? ''));
-                  },
-                  leading: const CircleAvatar(
-                    radius: 25,
-                    backgroundImage: NetworkImage(AppImages.profileImageTwo),
-                  ),
-                  title: Text('', style: h3.copyWith(fontSize: 18)),
-                  subtitle: Row(
-                    children: [
-                      Image.asset(AppImages.star, scale: 4),
-                      sw5,
-                      Text('4.5(1.2k)', style: h3.copyWith(fontSize: 14)),
-                    ],
-                  ),
-                  trailing: Image.asset(AppImages.call, scale: 4),
-                ),
-              ],
+              ),
             ),
           ),
         ],
