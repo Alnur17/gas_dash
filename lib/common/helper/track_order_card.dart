@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
 
+import '../size_box/custom_sizebox.dart';
+
 class TrackOrderCard extends StatelessWidget {
+  final bool emergency;
+  final String emergencyImage;
   final String orderId;
   final String dateTime;
   final String status;
@@ -20,6 +24,8 @@ class TrackOrderCard extends StatelessWidget {
     required this.fuelType,
     required this.paidPrice,
     required this.onTrack,
+    required this.emergency,
+    required this.emergencyImage,
   });
 
   @override
@@ -28,8 +34,8 @@ class TrackOrderCard extends StatelessWidget {
     final statusColor = Colors.deepPurpleAccent.shade100;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
         border: Border.all(color: borderColor, width: 1),
         borderRadius: BorderRadius.circular(16),
@@ -42,26 +48,44 @@ class TrackOrderCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'Order ID ',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: Colors.blueGrey.shade900),
-                    ),
-                    TextSpan(
-                      text: '#\n$orderId',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: Colors.blueGrey.shade900),
-                    ),
-                  ],
+              // Text.rich(
+              //   TextSpan(
+              //     children: [
+              //       TextSpan(
+              //         text: 'Order ID ',
+              //         style: TextStyle(
+              //             fontWeight: FontWeight.bold,
+              //             fontSize: 16,
+              //             color: Colors.blueGrey.shade900),
+              //       ),
+              //       TextSpan(
+              //         text: '#\n$orderId',
+              //         style: TextStyle(
+              //             fontWeight: FontWeight.bold,
+              //             fontSize: 16,
+              //             color: Colors.blueGrey.shade900),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              if (emergency) ...[
+                sw5,
+                Image.asset(
+                  emergencyImage,
+                  scale: 4,
+                ),
+              ],
+              sw5,
+              Expanded(
+                child: Text(
+                  'Order ID #$orderId',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
+              sw8,
               Text(
                 status,
                 style: TextStyle(

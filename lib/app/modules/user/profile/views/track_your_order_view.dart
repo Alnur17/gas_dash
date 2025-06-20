@@ -44,6 +44,8 @@ final OrderHistoryController orderHistoryController = Get.put(OrderHistoryContro
         itemBuilder: (context, index) {
           final order = orderHistoryController.inProcessOrders[index];
           return TrackOrderCard(
+            emergency: order.emergency ?? false,
+            emergencyImage: AppImages.emergency,
             orderId: order.id.toString(),
             dateTime: order.createdAt.toString(),
             status: order.orderStatus.toString(),

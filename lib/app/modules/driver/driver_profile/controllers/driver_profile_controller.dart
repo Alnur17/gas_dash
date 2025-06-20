@@ -28,8 +28,9 @@ class DriverProfileController extends GetxController {
 
   @override
   void onInit() {
-    super.onInit();
     getDriverProfile();
+    super.onInit();
+
   }
 
   ///my Profile

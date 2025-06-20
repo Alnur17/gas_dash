@@ -65,6 +65,7 @@ class OrderHistoryCard extends StatelessWidget {
                   scale: 4,
                 ),
               ],
+              sw5,
               Expanded(
                 child: Text(
                   'Order ID #$orderId',

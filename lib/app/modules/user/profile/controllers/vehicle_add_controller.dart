@@ -12,13 +12,26 @@ import 'package:get/get.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:http/http.dart' as http;
 
+import '../../order_fuel/model/vechicle_model.dart';
+
 class VehicleAddController extends GetxController{
+
+
   final isLoading = false.obs;
+
+  var myVehicleList = <VehicleListData>[].obs;
   final TextEditingController makeController = TextEditingController();
   final TextEditingController modelController = TextEditingController();
   final TextEditingController yearController = TextEditingController();
   final TextEditingController fuelLevelController = TextEditingController();
-  final OrderFuelController orderFuelController = Get.put(OrderFuelController());
+  //final OrderFuelController orderFuelController = Get.put(OrderFuelController());
+
+  @override
+  void onInit() {
+    fetchMyVehicles();
+    super.onInit();
+  }
+
 
   Future<void> confirmVehicle() async {
     isLoading.value = true;
@@ -66,7 +79,7 @@ class VehicleAddController extends GetxController{
 
       var responseData = await BaseClient.handleResponse(response);
       if (responseData != null) {
-        await orderFuelController.fetchMyVehicles();
+      await fetchMyVehicles();
         Get.back();
         kSnackBar(
             message: 'Vehicle added successfully!', bgColor: AppColors.green);
@@ -76,5 +89,36 @@ class VehicleAddController extends GetxController{
     } finally {
       isLoading.value = false;
     }
+  }
+
+   fetchMyVehicles() async {
+    final String token = LocalStorage.getData(key: AppConstant.accessToken);
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
+    final response = await BaseClient.getRequest(
+      api: Api.getMyVehicle,
+      headers: headers,
+    );
+    final jsonBody = await BaseClient.handleResponse(response);
+
+    VehicleModel vehicleModel = VehicleModel.fromJson(jsonBody);
+    if (vehicleModel.success == true && vehicleModel.data != null) {
+      myVehicleList.clear();
+      myVehicleList.addAll(vehicleModel.data!.data);
+    //  return vehicleModel.data!.data;
+    } else {
+      throw Exception(vehicleModel.message ?? 'Failed to load vehicles');
+    }
+  }
+
+  @override
+  void onClose() {
+    makeController.dispose();
+    modelController.dispose();
+    yearController.dispose();
+    fuelLevelController.dispose();
+    super.onClose();
   }
 }

@@ -20,7 +20,7 @@ class DriverEditProfileView extends StatefulWidget {
 }
 
 class _DriverEditProfileViewState extends State<DriverEditProfileView> {
-  final DriverProfileController driverProfileController = Get.find<DriverProfileController>();
+  final DriverProfileController driverProfileController = Get.put(DriverProfileController());
 
   final TextEditingController nameTEController = TextEditingController();
   final TextEditingController emailTEController = TextEditingController();
