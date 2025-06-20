@@ -18,11 +18,12 @@ class AboutDriverInformationView
     extends StatelessWidget {
 
   final DriverId? driver;
+  final UserId? userId;
 
-   AboutDriverInformationView({super.key,  this.driver});
+   AboutDriverInformationView({super.key,  this.driver, this.userId});
 
   final profileImage =
-      'https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=800&q=80';
+      'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg';
 
   final MessageSendController messageSendController = Get.put(MessageSendController());
   final SocketService socketService = Get.put(SocketService());
@@ -191,10 +192,10 @@ class AboutDriverInformationView
                         itemBuilder: (context, index) {
                           final review = driver!.reviews[index];
                           return _buildReviewItem(
-                            imageUrl: driver!.image ?? profileImage,
-                            name: driver!.fullname ?? 'Anonymous',
+                            imageUrl: userId!.image ?? profileImage,
+                            name: userId!.fullname ?? 'Anonymous',
                             rating:
-                            double.parse(driver!.averageRating.toString()) ??
+                            double.parse(driver!.reviews[index].rating.toString()) ??
                                 0.0,
                             review: driver!.reviews[index].review.toString() ??
                                 'No review provided',
