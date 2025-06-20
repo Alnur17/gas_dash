@@ -41,6 +41,7 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
 
   SocketService? _socketService;
   String? _driverId;
+  String? _orderId;
   String? _driverName;
 
   String _estimatedTime = '25 Minutes';
@@ -53,6 +54,7 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
     if (orderHistoryController.inProcessOrders.isNotEmpty &&
         orderHistoryController.inProcessOrders[0].driverId != null) {
       _driverId = orderHistoryController.inProcessOrders[0].driverId!.id.toString();
+      _orderId = orderHistoryController.inProcessOrders[0].id.toString();
       _driverName = orderHistoryController.inProcessOrders[0].driverId!.fullname ?? 'Driver';
     }
     // Timeout to prevent infinite loading
@@ -95,6 +97,10 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
       _socketService = await SocketService().init();
       print('Socket initialized successfully');
       if (_driverId != null) {
+        _socketService!.socket.on('orderDeleverd::$_orderId', (data) {
+          print('orderDeleverd event received: $data');
+        });
+
         _socketService!.socket.on('serverToSendLocation::$_driverId', (data) {
           print('Socket event received: $data');
           if (data is Map<String, dynamic> &&
