@@ -174,7 +174,7 @@ class _EditProfileViewState extends State<EditProfileView> {
               ),
               sh12,
               Text(
-                'Location',
+                'City and State',
                 style: h5,
               ),
               sh8,

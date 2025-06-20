@@ -89,7 +89,7 @@ class LocationCard extends StatelessWidget {
               CustomButton(
                 text: 'Set Zip Code',
                 onPressed: () {
-                  controller.promptForZipCode();
+                  controller.promptForZipCode(context);
                 },
                 height: 40,
                 width: 120,

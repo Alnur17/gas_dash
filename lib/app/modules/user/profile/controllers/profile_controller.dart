@@ -118,7 +118,8 @@ class ProfileController extends GetxController {
     required BuildContext context,
     required String name,
     required String email,
-  }) async {
+  })
+  async {
     try {
       String accessToken = LocalStorage.getData(key: AppConstant.accessToken);
       if (accessToken.isEmpty) {

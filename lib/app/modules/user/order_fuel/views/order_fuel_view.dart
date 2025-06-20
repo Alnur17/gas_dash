@@ -13,20 +13,31 @@ import '../../../../../common/helper/vehicle_card.dart';
 import '../../../../../common/widgets/custom_button.dart';
 import '../controllers/order_fuel_controller.dart';
 
-class OrderFuelView extends GetView<OrderFuelController> {
+class OrderFuelView extends StatefulWidget {
   final String? fuelName;
   final double? fuelPrice;
   final bool? isEmergency;
 
-  OrderFuelView({
+  const OrderFuelView({
     super.key,
     this.fuelName,
     this.isEmergency,
     this.fuelPrice,
   });
 
+  @override
+  State<OrderFuelView> createState() => _OrderFuelViewState();
+}
+
+class _OrderFuelViewState extends State<OrderFuelView> {
   final OrderFuelController orderFuelController =
       Get.put(OrderFuelController());
+
+  @override
+  void initState() {
+    super.initState();
+    orderFuelController.fetchCurrentLocation(context);
+  }
 
   void _showAddVehicleDialog() {
     orderFuelController.resetForm();
@@ -147,11 +158,11 @@ class OrderFuelView extends GetView<OrderFuelController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '\$${fuelPrice ?? 0.0}',
+                            '\$${widget.fuelPrice ?? 0.0}',
                             style: h1.copyWith(color: AppColors.white),
                           ),
                           Text(
-                            '$fuelName / gallons',
+                            '${widget.fuelName} / gallons',
                             style: h2.copyWith(
                               fontSize: 20,
                               color: AppColors.white,
@@ -164,14 +175,14 @@ class OrderFuelView extends GetView<OrderFuelController> {
                 ),
               ),
               sh20,
-              AmountToggleSection(fuelPrice: fuelPrice),
+              AmountToggleSection(fuelPrice: widget.fuelPrice),
               sh20,
               Obx(
                 () => LocationCard(
                   locationText: orderFuelController.currentLocation.value,
                   buttonText: 'Change Location',
                   onButtonPressed: () {
-                    orderFuelController.fetchCurrentLocation();
+                    orderFuelController.fetchCurrentLocation(context);
                   },
                 ),
               ),
@@ -226,10 +237,10 @@ class OrderFuelView extends GetView<OrderFuelController> {
                       return;
                     }
 
-                    if (isEmergency == true) {
+                    if (widget.isEmergency == true) {
                       Get.to(
                           () => ScheduleDeliveryFromCalenderView(
-                                isEmergency: isEmergency ?? false,
+                                isEmergency: widget.isEmergency ?? false,
                                 vehicleId: orderFuelController
                                         .selectedVehicle.value?.id ??
                                     '',
@@ -238,7 +249,7 @@ class OrderFuelView extends GetView<OrderFuelController> {
                                 presetAmount:
                                     orderFuelController.presetEnabled.value,
                                 amount: amount,
-                                fuelType: fuelName ?? '',
+                                fuelType: widget.fuelName ?? '',
                               ),
                           // arguments: {
                           //   'isEmergency': isEmergency,
@@ -260,13 +271,13 @@ class OrderFuelView extends GetView<OrderFuelController> {
                           );
                     } else {
                       orderFuelController.createOrder(
-                        isEmergency: isEmergency ?? false,
+                        isEmergency: widget.isEmergency ?? false,
                         vehicleId:
                             orderFuelController.selectedVehicle.value?.id ?? '',
                         presetAmount: orderFuelController.presetEnabled.value,
                         customAmount: orderFuelController.customEnabled.value,
                         amount: amount,
-                        fuelType: fuelName ?? 'Premium',
+                        fuelType: widget.fuelName ?? 'Premium',
                       );
                     }
 
@@ -308,16 +319,17 @@ class AmountToggleSection extends StatelessWidget {
 
     const inputTextStyle = TextStyle(
       fontSize: 14,
-      color: Color(0xFF9CA3AF),
+      color: AppColors.black100,
+      fontWeight: FontWeight.w600
     );
 
     InputDecoration inputDecoration(String hint) => InputDecoration(
           filled: true,
           fillColor: Colors.white,
           hintText: hint,
-          hintStyle: const TextStyle(
-            color: Color(0xFFD1D5DB),
-            fontSize: 14,
+          hintStyle:  TextStyle(
+            color: AppColors.black100,
+            fontSize: 12,
           ),
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -393,7 +405,7 @@ class AmountToggleSection extends StatelessWidget {
           filled: true,
           fillColor: Colors.white,
           hintText: price,
-          hintStyle: const TextStyle(color: Color(0xFFD1D5DB), fontSize: 14),
+          hintStyle: const TextStyle(color: AppColors.black100, fontSize: 14),
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           enabledBorder: OutlineInputBorder(

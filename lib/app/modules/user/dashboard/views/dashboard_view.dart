@@ -26,6 +26,7 @@ class _DashboardViewState extends State<DashboardView> {
       Get.put(DashboardController());
   final profileController = Get.put(ProfileController());
 
+
   static final List<Widget> _views = [
     HomeView(),
     OrderHistoryView(),

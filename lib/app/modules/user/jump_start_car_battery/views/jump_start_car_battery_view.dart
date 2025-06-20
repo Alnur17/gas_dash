@@ -16,18 +16,29 @@ import '../../../../../common/widgets/custom_textfield.dart';
 import '../../order_fuel/controllers/order_fuel_controller.dart';
 import '../controllers/jump_start_car_battery_controller.dart';
 
-class JumpStartCarBatteryView extends GetView<JumpStartCarBatteryController> {
+class JumpStartCarBatteryView extends StatefulWidget {
   final String? title;
   final String? price;
 
-  JumpStartCarBatteryView({
+  const JumpStartCarBatteryView({
     super.key,
     this.title,
     this.price,
   });
 
+  @override
+  State<JumpStartCarBatteryView> createState() => _JumpStartCarBatteryViewState();
+}
+
+class _JumpStartCarBatteryViewState extends State<JumpStartCarBatteryView> {
   final OrderFuelController orderFuelController =
       Get.put(OrderFuelController());
+
+  @override
+  void initState() {
+    super.initState();
+    orderFuelController.fetchCurrentLocation(context);
+  }
 
   void _showAddVehicleDialog() {
     orderFuelController.resetForm();
@@ -153,8 +164,8 @@ class JumpStartCarBatteryView extends GetView<JumpStartCarBatteryController> {
             children: [
               sh16,
               EarningsCard(
-                title: title ?? 'N/A',
-                amount: price ?? 'N/A',
+                title: widget.title ?? 'N/A',
+                amount: widget.price ?? 'N/A',
                 gradientColor: AppColors.gradientColorBlue,
               ),
               sh20,

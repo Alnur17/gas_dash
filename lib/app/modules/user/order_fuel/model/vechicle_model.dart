@@ -25,20 +25,20 @@ class Data {
     required this.meta,
   });
 
-  final List<Datum> data;
+  final List<VehicleListData> data;
   final Meta? meta;
 
   factory Data.fromJson(Map<String, dynamic> json){
     return Data(
-      data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
+      data: json["data"] == null ? [] : List<VehicleListData>.from(json["data"]!.map((x) => VehicleListData.fromJson(x))),
       meta: json["meta"] == null ? null : Meta.fromJson(json["meta"]),
     );
   }
 
 }
 
-class Datum {
-  Datum({
+class VehicleListData {
+  VehicleListData({
     required this.id,
     required this.make,
     required this.model,
@@ -58,8 +58,8 @@ class Datum {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  factory Datum.fromJson(Map<String, dynamic> json){
-    return Datum(
+  factory VehicleListData.fromJson(Map<String, dynamic> json){
+    return VehicleListData(
       id: json["_id"],
       make: json["make"],
       model: json["model"],

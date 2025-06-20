@@ -47,8 +47,8 @@ class OrderFuelController extends GetxController {
   var confirmedVehicle = Rxn<Map<String, String>>();
   var userId = RxnString();
 
-  var vehiclesList = <Datum>[].obs;
-  var selectedVehicle = Rxn<Datum>();
+  var vehiclesList = <VehicleListData>[].obs;
+  var selectedVehicle = Rxn<VehicleListData>();
   var presetEnabled = false.obs;
   var customEnabled = false.obs;
   var customAmountText = ''.obs;
@@ -65,7 +65,7 @@ class OrderFuelController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchCurrentLocation();
+   // fetchCurrentLocation();
     selectedMake.listen((value) {
       makeController.text = value ?? '';
       if (value == null) {
@@ -84,7 +84,7 @@ class OrderFuelController extends GetxController {
     });
   }
 
-  void promptForZipCode() {
+  void promptForZipCode(context) {
     final TextEditingController zipController = TextEditingController();
     Get.dialog(
       Dialog(
@@ -119,7 +119,7 @@ class OrderFuelController extends GetxController {
                   if (zipCode.value != null &&
                       zipCode.value!.isNotEmpty &&
                       RegExp(r'^\d{5}$').hasMatch(zipCode.value!)) {
-                    Get.back(); // Close dialog
+                    Navigator.pop(context); // Close dialog
                   } else {
                     Get.snackbar(
                         'Error', 'Please enter a valid 5-digit zip code',
@@ -132,7 +132,7 @@ class OrderFuelController extends GetxController {
           ),
         ),
       ),
-      barrierDismissible: false,
+      barrierDismissible: true,
     );
   }
 
@@ -347,7 +347,8 @@ class OrderFuelController extends GetxController {
     }
   }
 
-  Future<FinalConfirmationModel?> fuelTypeFinalConfirmation(String id) async {
+  Future<FinalConfirmationModel?> fuelTypeFinalConfirmation(String id)
+  async {
     try {
       isLoading.value = true;
       final String token = LocalStorage.getData(key: AppConstant.accessToken);
@@ -395,7 +396,8 @@ class OrderFuelController extends GetxController {
     }
   }
 
-  Future<void> showVehicleSelectionDialog() async {
+  Future<void> showVehicleSelectionDialog()
+  async {
     await fetchMyVehicles();
     if (vehiclesList.isEmpty) {
       Get.snackbar('No Vehicles', 'No vehicles found. Please add a vehicle.',
@@ -426,10 +428,10 @@ class OrderFuelController extends GetxController {
               const SizedBox(height: 16),
               Obx(() => Column(
                 children: vehiclesList.map((vehicle) {
-                  return RadioListTile<Datum>(
+                  return RadioListTile<VehicleListData>(
                     value: vehicle,
                     groupValue: selectedVehicle.value,
-                    onChanged: (Datum? value) {
+                    onChanged: (VehicleListData? value) {
                       selectedVehicle.value = value;
                     },
                     title: Text(
@@ -517,7 +519,7 @@ class OrderFuelController extends GetxController {
     }
   }
 
-  Future<void> fetchCurrentLocation() async {
+  Future<void> fetchCurrentLocation(context) async {
     try {
       isLoading.value = true;
 
@@ -525,7 +527,7 @@ class OrderFuelController extends GetxController {
       if (!serviceEnabled) {
         currentLocation.value = 'Location services are disabled.';
         zipCode.value = null;
-        promptForZipCode();
+        promptForZipCode(context);
         return;
       }
 
@@ -535,7 +537,7 @@ class OrderFuelController extends GetxController {
         if (permission == LocationPermission.denied) {
           currentLocation.value = 'Location permissions are denied.';
           zipCode.value = null;
-          promptForZipCode();
+          promptForZipCode(context);
           return;
         }
       }
@@ -543,7 +545,7 @@ class OrderFuelController extends GetxController {
       if (permission == LocationPermission.deniedForever) {
         currentLocation.value = 'Location permissions are permanently denied.';
         zipCode.value = null;
-        promptForZipCode();
+        promptForZipCode(context);
         return;
       }
 
@@ -562,17 +564,17 @@ class OrderFuelController extends GetxController {
         '${place.street}, ${place.subLocality}, ${place.locality}';
         zipCode.value = place.postalCode ?? '';
         if (zipCode.value!.isEmpty) {
-          promptForZipCode();
+          promptForZipCode(context);
         }
       } else {
         currentLocation.value = 'Address not found.';
         zipCode.value = '';
-        promptForZipCode();
+        promptForZipCode(context);
       }
     } catch (e) {
       currentLocation.value = 'Failed to get location: $e';
       zipCode.value = '';
-      promptForZipCode();
+      promptForZipCode(context);
     } finally {
       isLoading.value = false;
     }
