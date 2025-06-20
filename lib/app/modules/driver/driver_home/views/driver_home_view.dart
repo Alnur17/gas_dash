@@ -184,7 +184,7 @@ class _DriverHomeViewState extends State<DriverHomeView> {
                                         location: order.location?.coordinates !=
                                                 null
                                             ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
-                                            : 'Unknown',
+                                            : 'Unknown', userId: order.userId!.id.toString(),
                                       ));
                                 },
                                 onViewDetailsPressed: () =>

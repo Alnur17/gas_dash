@@ -13,6 +13,7 @@ import '../../../../../common/widgets/custom_circular_container.dart';
 
 class DriverStartDeliveryView extends StatefulWidget {
   final String orderId;
+  final String userId;
   final String deliveryId;
   final String customerName;
   final String? customerImage;
@@ -23,6 +24,7 @@ class DriverStartDeliveryView extends StatefulWidget {
   const DriverStartDeliveryView(
       {super.key,
       required this.orderId,
+      required this.userId,
       required this.deliveryId,
       required this.customerName,
       required this.customerImage,
@@ -291,7 +293,7 @@ class _DriverStartDeliveryViewState extends State<DriverStartDeliveryView> {
                       height: 40,
                       text: 'Yes, I Need Fuel',
                       onPressed: () {
-                        Get.to(() => StationNearYouView(deliveryId: widget.deliveryId, orderId: widget.orderId,));
+                        Get.to(() => StationNearYouView(deliveryId: widget.deliveryId, orderId: widget.orderId,userId: widget.userId,));
                       },
                       gradientColors: AppColors.gradientColorGreen,
                       textStyle: h7.copyWith(
@@ -306,7 +308,7 @@ class _DriverStartDeliveryViewState extends State<DriverStartDeliveryView> {
                       height: 40,
                       text: 'No, I Don’t Need Fuel',
                       onPressed: () {
-                        Get.to(() => DriverLiveTrackView(deliveryId: widget.deliveryId, orderId: widget.orderId,));
+                        Get.to(() => DriverLiveTrackView(deliveryId: widget.deliveryId, orderId: widget.orderId, userId: widget.userId ));
                       },
                       backgroundColor: AppColors.silver,
                       borderColor: AppColors.primaryColor,

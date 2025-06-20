@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/dashboard/views/dashboard_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
 import 'package:gas_dash/common/widgets/custom_textfield.dart';
@@ -19,7 +20,7 @@ class WriteReviewView extends StatefulWidget {
 
 class _WriteReviewViewState extends State<WriteReviewView> {
   final AboutDriverInformationController controller =
-  Get.find<AboutDriverInformationController>();
+  Get.put(AboutDriverInformationController());
   final TextEditingController textController = TextEditingController();
 
   @override
@@ -199,8 +200,7 @@ class _WriteReviewViewState extends State<WriteReviewView> {
               CustomButton(
                 text: 'Return to Reviews',
                 onPressed: () {
-                  Get.back(); // Close modal
-                  Get.back(); // Return to RatingsView or AboutDriverInformationView
+                  Get.offAll(() => DashboardView());
                 },
                 gradientColors: AppColors.gradientColorGreen,
               ),
