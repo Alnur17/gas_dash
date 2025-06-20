@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/user/about_driver_information/views/about_driver_information_view.dart';
+import 'package:gas_dash/common/size_box/custom_sizebox.dart';
+import 'package:gas_dash/common/widgets/custom_button.dart';
+import 'package:gas_dash/common/widgets/custom_textfield.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
@@ -12,18 +16,21 @@ import '../../../../../common/helper/socket_service.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
 import '../../about_driver_information/controllers/about_driver_information_controller.dart';
 import 'dart:convert';
+import '../../about_driver_information/views/write_review_view.dart';
 import '../../order_history/controllers/order_history_controller.dart';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 
 class LiveTrackingView extends StatefulWidget {
-  const LiveTrackingView({super.key});
+  final int index;
+  const LiveTrackingView({super.key, required this.index});
 
   @override
   State<LiveTrackingView> createState() => _LiveTrackingViewState();
 }
 
 class _LiveTrackingViewState extends State<LiveTrackingView> {
+  final TextEditingController tipsAmount = TextEditingController();
   GoogleMapController? _mapController;
   bool _mapCreated = false;
   bool _isLoading = true;
@@ -32,12 +39,13 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
   LatLng? _userLocation;
   LatLng _driverLocation = const LatLng(23.752844, 90.420082);
 
-  final OrderHistoryController orderHistoryController = Get.put(OrderHistoryController());
+  final OrderHistoryController orderHistoryController =
+      Get.put(OrderHistoryController());
 
   final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
 
-  final String _googleApiKey = 'AIzaSyB_3nOokGz9jksH5jN_f05YNEJeZqWizYM'; // Replace with your actual API key
+  final String _googleApiKey = 'AIzaSyB_3nOokGz9jksH5jN_f05YNEJeZqWizYM';
 
   SocketService? _socketService;
   String? _driverId;
@@ -53,9 +61,12 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
     _getUserLocation();
     if (orderHistoryController.inProcessOrders.isNotEmpty &&
         orderHistoryController.inProcessOrders[0].driverId != null) {
-      _driverId = orderHistoryController.inProcessOrders[0].driverId!.id.toString();
+      _driverId =
+          orderHistoryController.inProcessOrders[0].driverId!.id.toString();
       _orderId = orderHistoryController.inProcessOrders[0].id.toString();
-      _driverName = orderHistoryController.inProcessOrders[0].driverId!.fullname ?? 'Driver';
+      _driverName =
+          orderHistoryController.inProcessOrders[0].driverId!.fullname ??
+              'Driver';
     }
     // Timeout to prevent infinite loading
     Future.delayed(const Duration(seconds: 10), () {
@@ -75,7 +86,8 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
     super.dispose();
   }
 
-  Future<BitmapDescriptor> createCircularDotMarker({required Color color, double radius = 10.0}) async {
+  Future<BitmapDescriptor> createCircularDotMarker(
+      {required Color color, double radius = 10.0}) async {
     final recorder = ui.PictureRecorder();
     final canvas = ui.Canvas(recorder);
     final paint = ui.Paint()
@@ -85,7 +97,8 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
     canvas.drawCircle(Offset(radius, radius), radius, paint);
 
     final picture = recorder.endRecording();
-    final img = await picture.toImage((radius * 2).toInt(), (radius * 2).toInt());
+    final img =
+        await picture.toImage((radius * 2).toInt(), (radius * 2).toInt());
     final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
     final uint8List = byteData!.buffer.asUint8List();
 
@@ -97,8 +110,60 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
       _socketService = await SocketService().init();
       print('Socket initialized successfully');
       if (_driverId != null) {
-        _socketService!.socket.on('orderDeleverd::$_orderId', (data) {
+        _socketService!.socket.on('orderDelivery::$_orderId', (data) {
           print('orderDeleverd event received: $data');
+          Get.dialog(Dialog(
+            child: Container(
+              height: 300,
+              width: 500,
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.check_circle,
+                    size: 30,
+                    color: AppColors.green,
+                  ),
+                  sh10,
+                  Text(
+                    "Your delivery is complete! How was your experience? A quick review can make their day!",
+                    style: h2,
+                    textAlign: TextAlign.center,
+                  ),
+                  sh10,
+                  CustomButton(backgroundColor: AppColors.green,text: "Give Rating", onPressed: (){
+                    Get.to(() => WriteReviewView(_driverId));
+                  }),
+                  sh10,
+                  CustomButton(backgroundColor: AppColors.green,text: "Give Tips", onPressed: (){
+                   Get.dialog(Dialog(
+                     child: Container(
+                       height: 250,
+                       width: 500,
+                       child: Column(
+                       children: [
+                         CustomTextField(
+                           height: 48,
+                           hintText: 'Enter you tips',
+                           controller: tipsAmount,
+                         ),
+                         sh10,
+                         CustomButton(backgroundColor: AppColors.green,text: "Send", onPressed: (){
+                          //
+                         }),
+                       ],
+                     ),),
+                   ));
+                  }),
+                ],
+              ),
+            ),
+          ));
         });
 
         _socketService!.socket.on('serverToSendLocation::$_driverId', (data) {
@@ -125,7 +190,8 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
   }
 
   Future<void> _updateDriverMarker() async {
-    final driverIcon = await createCircularDotMarker(color: Colors.red, radius: 30.0);
+    final driverIcon =
+        await createCircularDotMarker(color: Colors.red, radius: 30.0);
     _markers.removeWhere((m) => m.markerId.value == 'Driver');
     _markers.add(
       Marker(
@@ -160,7 +226,8 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
         if (mounted) {
           setState(() {
             _isLoading = false;
-            _errorMessage = 'Location services are disabled. Please enable them.';
+            _errorMessage =
+                'Location services are disabled. Please enable them.';
           });
         }
         return;
@@ -197,7 +264,8 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
       if (mounted) {
-        final userIcon = await createCircularDotMarker(color: Colors.blue, radius: 30.0);
+        final userIcon =
+            await createCircularDotMarker(color: Colors.blue, radius: 30.0);
         setState(() {
           _userLocation = LatLng(position.latitude, position.longitude);
           _markers.add(
@@ -242,8 +310,8 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
         final data = jsonDecode(response.body);
         if (data['status'] == 'OK') {
           final polylinePoints = PolylinePoints();
-          final List<PointLatLng> result = polylinePoints.decodePolyline(
-              data['routes'][0]['overview_polyline']['points']);
+          final List<PointLatLng> result = polylinePoints
+              .decodePolyline(data['routes'][0]['overview_polyline']['points']);
 
           final List<LatLng> polylineCoordinates = result
               .map((point) => LatLng(point.latitude, point.longitude))
@@ -394,11 +462,16 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
                       contentPadding: EdgeInsets.zero,
                       onTap: () {
                         Get.to(() => AboutDriverInformationView(
-                            driver: orderHistoryController.inProcessOrders[0].driverId!));
+                              driver: orderHistoryController
+                                  .inProcessOrders[widget.index].driverId!,
+                              userId: orderHistoryController
+                                  .inProcessOrders[widget.index].userId!,
+                            ));
                       },
                       leading: const CircleAvatar(
                         radius: 25,
-                        backgroundImage: NetworkImage(AppImages.profileImageTwo),
+                        backgroundImage:
+                            NetworkImage(AppImages.profileImageTwo),
                       ),
                       title: Text(
                         _driverName ?? 'Unknown Driver',
@@ -408,10 +481,30 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
                         children: [
                           Image.asset(AppImages.star, scale: 4),
                           const SizedBox(width: 5),
-                          Text('4.5(1.2k)', style: h3.copyWith(fontSize: 14)),
+                          Text(
+                            '${orderHistoryController.inProcessOrders[widget.index].driverId!.avgRating}(${orderHistoryController.inProcessOrders[0].driverId?.reviews.length ?? 0})',
+                            style: h3.copyWith(fontSize: 14),
+                          ),
                         ],
                       ),
-                      trailing: Image.asset(AppImages.call, scale: 4),
+                      trailing: GestureDetector(
+                        onTap: () async {
+                          final Uri phoneUri = Uri(
+                              scheme: 'tel',
+                              path:
+                                  '${orderHistoryController.inProcessOrders[widget.index].driverId!.phoneNumber ?? 0}');
+                          if (await canLaunchUrl(phoneUri)) {
+                            await launchUrl(phoneUri);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text('Could not launch phone dialer')),
+                            );
+                          }
+                        },
+                        child: Image.asset(AppImages.call, scale: 4),
+                      ),
                     ),
                   ],
                 ),

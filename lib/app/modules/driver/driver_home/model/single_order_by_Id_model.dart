@@ -126,7 +126,7 @@ class DriverId {
   });
 
   final DriverIdVerification? verification;
-  final int? experience;
+  final dynamic experience;
   final String? id;
   final String? status;
   final String? fullname;
@@ -142,13 +142,13 @@ class DriverId {
   final dynamic image;
   final String? role;
   final dynamic address;
-  final int? freeDeliverylimit;
-  final int? coverVehiclelimit;
-  final int? durationDay;
+  final dynamic freeDeliverylimit;
+  final dynamic coverVehiclelimit;
+  final dynamic durationDay;
   final bool? isDeleted;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final int? v;
+  final dynamic v;
   final DateTime? passwordChangedAt;
 
   factory DriverId.fromJson(Map<String, dynamic> json){
@@ -189,7 +189,7 @@ class DriverIdVerification {
     required this.status,
   });
 
-  final int? otp;
+  final dynamic otp;
   final bool? status;
 
   factory DriverIdVerification.fromJson(Map<String, dynamic> json){
@@ -248,7 +248,7 @@ class UserId {
   });
 
   final UserIdVerification? verification;
-  final int? experience;
+  final dynamic experience;
   final String? id;
   final String? status;
   final String? fullname;
@@ -264,13 +264,13 @@ class UserId {
   final dynamic image;
   final String? role;
   final dynamic address;
-  final int? freeDeliverylimit;
-  final int? coverVehiclelimit;
-  final int? durationDay;
+  final dynamic freeDeliverylimit;
+  final dynamic coverVehiclelimit;
+  final dynamic durationDay;
   final bool? isDeleted;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final int? v;
+  final dynamic v;
 
   factory UserId.fromJson(Map<String, dynamic> json){
     return UserId(
@@ -310,7 +310,7 @@ class UserIdVerification {
     required this.status,
   });
 
-  final int? otp;
+  final dynamic otp;
   final DateTime? expiresAt;
   final bool? status;
 

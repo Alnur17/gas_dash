@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/helper/track_order_card.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
+import '../../track_order_details/views/live_tracking_view.dart';
 
 class TrackYourOrderView extends StatefulWidget {
   const TrackYourOrderView({super.key});
@@ -53,7 +54,8 @@ final OrderHistoryController orderHistoryController = Get.put(OrderHistoryContro
             fuelType: order.fuelType.toString(),
             paidPrice: order.price.toString(),
             onTrack: () {
-              Get.to(() => TrackOrderDetailsView());
+           //   Get.to(() => TrackOrderDetailsView());
+              Get.to(()=> LiveTrackingView(index: index,));
             },
           );
         },

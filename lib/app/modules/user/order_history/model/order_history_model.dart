@@ -142,7 +142,6 @@ class DriverId {
     required this.familyMember,
     required this.experience,
     required this.averageRating,
-    required this.avgRatings,
     required this.popularity,
     required this.fiftyPercentOffDeliveryFeeAfterWaivedTrips,
     required this.scheduledDelivery,
@@ -175,13 +174,13 @@ class DriverId {
     required this.v,
     required this.totalEarning,
     required this.reviews,
+    required this.avgRating,
   });
 
   final DriverIdVerification? verification;
   final FamilyMember? familyMember;
   final dynamic experience;
   final dynamic averageRating;
-  final dynamic avgRatings;
   final dynamic popularity;
   final bool? fiftyPercentOffDeliveryFeeAfterWaivedTrips;
   final bool? scheduledDelivery;
@@ -214,6 +213,7 @@ class DriverId {
   final dynamic v;
   final dynamic totalEarning;
   final List<Review> reviews;
+  final dynamic avgRating;
 
   factory DriverId.fromJson(Map<String, dynamic> json){
     return DriverId(
@@ -221,7 +221,6 @@ class DriverId {
       familyMember: json["familyMember"] == null ? null : FamilyMember.fromJson(json["familyMember"]),
       experience: json["experience"],
       averageRating: json["AverageRating"],
-      avgRatings: json["avgRatings"],
       popularity: json["popularity"],
       fiftyPercentOffDeliveryFeeAfterWaivedTrips: json["fiftyPercentOffDeliveryFeeAfterWaivedTrips"],
       scheduledDelivery: json["scheduledDelivery"],
@@ -254,6 +253,7 @@ class DriverId {
       v: json["__v"],
       totalEarning: json["totalEarning"],
       reviews: json["reviews"] == null ? [] : List<Review>.from(json["reviews"]!.map((x) => Review.fromJson(x))),
+      avgRating: json["avgRating"],
     );
   }
 
@@ -361,7 +361,7 @@ class UserId {
     required this.familyMember,
     required this.averageRating,
     required this.reviews,
-    required this.avgRatings,
+    required this.avgRating,
     required this.popularity,
     required this.remeningDurationDay,
     required this.id,
@@ -401,7 +401,7 @@ class UserId {
   final FamilyMember? familyMember;
   final dynamic averageRating;
   final List<dynamic> reviews;
-  final dynamic avgRatings;
+  final dynamic avgRating;
   final dynamic popularity;
   final dynamic remeningDurationDay;
   final String? id;
@@ -442,7 +442,7 @@ class UserId {
       familyMember: json["familyMember"] == null ? null : FamilyMember.fromJson(json["familyMember"]),
       averageRating: json["AverageRating"],
       reviews: json["reviews"] == null ? [] : List<dynamic>.from(json["reviews"]!.map((x) => x)),
-      avgRatings: json["avgRatings"],
+      avgRating: json["avgRating"],
       popularity: json["popularity"],
       remeningDurationDay: json["remeningDurationDay"],
       id: json["_id"],

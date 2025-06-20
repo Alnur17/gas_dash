@@ -16,25 +16,32 @@ class StationNearYouView extends StatefulWidget {
   final String deliveryId;
   final String orderId;
   final String userId;
-  const StationNearYouView({super.key, required this.deliveryId, required this.orderId, required this.userId});
+  const StationNearYouView({
+    super.key,
+    required this.deliveryId,
+    required this.orderId,
+    required this.userId,
+  });
 
   @override
   State<StationNearYouView> createState() => _StationNearYouViewState();
 }
 
 class _StationNearYouViewState extends State<StationNearYouView> {
-  late GoogleMapController _mapController;
+  GoogleMapController? _mapController;
   Position? _currentPosition;
   final Set<Marker> _markers = {};
   List<Map<String, dynamic>> _fuelStations = [];
   bool _isLoading = true;
+  bool _isMapLoaded = false;
 
   // Replace with your Google Maps API key
-  static const String _googleApiKey = 'AIzaSyB_3nOokGz9jksH5jN_f05YNEJeZqWizYM';
+  static const String _googleApiKey = 'AIzaSyB_3nOokGz9jksH5jN_f05YNEJeZqWizYM'; // Replace with actual key
 
   @override
   void initState() {
     super.initState();
+    print('StationNearYouView: initState');
     _getCurrentLocation();
   }
 
@@ -74,34 +81,44 @@ class _StationNearYouViewState extends State<StationNearYouView> {
     }
 
     // Get current position
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-
-    setState(() {
-      _currentPosition = position;
-      _markers.add(
-        Marker(
-          markerId: const MarkerId('current_location'),
-          position: LatLng(position.latitude, position.longitude),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-          infoWindow: const InfoWindow(title: 'Your Location'),
-        ),
+    try {
+      final Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
       );
-    });
 
-    // Fetch nearby fuel stations
-    await _fetchFuelStations(position.latitude, position.longitude);
+      setState(() {
+        _currentPosition = position;
+        _markers.add(
+          Marker(
+            markerId: const MarkerId('current_location'),
+            position: LatLng(position.latitude, position.longitude),
+            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+            infoWindow: const InfoWindow(title: 'Your Location'),
+          ),
+        );
+      });
 
-    // Move camera to current location
-    _mapController.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: LatLng(position.latitude, position.longitude),
-          zoom: 14,
-        ),
-      ),
-    );
+      // Fetch nearby fuel stations
+      await _fetchFuelStations(position.latitude, position.longitude);
+
+      // Animate camera if map is ready
+      if (_mapController != null && _isMapLoaded) {
+        _mapController!.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: LatLng(position.latitude, position.longitude),
+              zoom: 14,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error getting location: $e');
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error getting location: $e')),
+      );
+    }
 
     setState(() => _isLoading = false);
   }
@@ -113,7 +130,8 @@ class _StationNearYouViewState extends State<StationNearYouView> {
 
     try {
       final response = await http.get(Uri.parse(url));
-      print(url);
+      print('API URL: $url');
+      print('API Response Status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -131,10 +149,17 @@ class _StationNearYouViewState extends State<StationNearYouView> {
                 'price': station['price_level'] != null
                     ? '\$${station['price_level']}/gal'
                     : 'Price not available',
-                'distance': _calculateDistance(latitude, longitude,
-                    station['geometry']['location']['lat'], station['geometry']['location']['lng']),
+                'distance': double.parse(_calculateDistance(
+                  latitude,
+                  longitude,
+                  station['geometry']['location']['lat'],
+                  station['geometry']['location']['lng'],
+                ).replaceAll(' miles', '')),
               };
             }).toList();
+
+            // Sort by distance
+            _fuelStations.sort((a, b) => a['distance'].compareTo(b['distance']));
 
             // Add fuel station markers
             for (var station in _fuelStations) {
@@ -158,24 +183,38 @@ class _StationNearYouViewState extends State<StationNearYouView> {
         throw Exception('Failed to load fuel stations: ${response.statusCode}');
       }
     } catch (e) {
+      print('Error fetching fuel stations: $e');
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error fetching fuel stations: $e')),
       );
-      print(e);
     }
   }
 
   String _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-    // Simple distance calculation (as the crow flies) for display
-    // In a real app, use Directions API for accurate road distance
     double distanceInMeters = Geolocator.distanceBetween(lat1, lon1, lat2, lon2);
     double distanceInMiles = distanceInMeters / 1609.34;
     return '${distanceInMiles.toStringAsFixed(1)} miles';
   }
 
   void _onMapCreated(GoogleMapController controller) {
-    _mapController = controller;
+    if (mounted) {
+      setState(() {
+        _mapController = controller;
+        _isMapLoaded = true;
+      });
+      print('Map created successfully');
+      if (_currentPosition != null) {
+        _mapController?.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+              zoom: 14,
+            ),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -205,18 +244,25 @@ class _StationNearYouViewState extends State<StationNearYouView> {
           : Column(
         children: [
           Expanded(
-            child: GoogleMap(
-              onMapCreated: _onMapCreated,
-              initialCameraPosition: CameraPosition(
-                target: _currentPosition != null
-                    ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
-                    : const LatLng(23.8103, 90.4125),
-                zoom: 14,
-              ),
-              markers: _markers,
-              myLocationButtonEnabled: true,
-              myLocationEnabled: true,
-              zoomControlsEnabled: false,
+            child: Stack(
+              children: [
+                GoogleMap(
+                  key: UniqueKey(),
+                  onMapCreated: _onMapCreated,
+                  initialCameraPosition: CameraPosition(
+                    target: _currentPosition != null
+                        ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
+                        : const LatLng(23.8103, 90.4125),
+                    zoom: 14,
+                  ),
+                  markers: _markers,
+                  myLocationButtonEnabled: true,
+                  myLocationEnabled: true,
+                  zoomControlsEnabled: false,
+                ),
+                if (!_isMapLoaded)
+                  const Center(child: CircularProgressIndicator()),
+              ],
             ),
           ),
           Container(
@@ -226,43 +272,65 @@ class _StationNearYouViewState extends State<StationNearYouView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (_fuelStations.isNotEmpty)
-                  Row(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Image.asset(
-                        AppImages.gasStationSmall,
-                        scale: 4,
-                      ),
-                      sw8,
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _fuelStations[0]['name'],
-                              style: h5,
-                            ),
-                            sh5,
-                            Text(
-                              _fuelStations[0]['address'],
-                              style: h6,
-                            ),
-                            sh5,
-                            Text(
-                              _fuelStations[0]['distance'],
-                              style: h6,
-                            ),
-                          ],
-                        ),
-                      ),
                       Text(
-                        _fuelStations[0]['price'],
-                        style: h6.copyWith(color: AppColors.darkRed),
+                        'Nearby Fuel Stations',
+                        style: h5.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      sh8,
+                      SizedBox(
+                        height: 150, // Adjust height as needed
+                        child: ListView.builder(
+                          itemCount: _fuelStations.length > 5 ? 5 : _fuelStations.length,
+                          itemBuilder: (context, index) {
+                            final station = _fuelStations[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Image.asset(
+                                    AppImages.gasStationSmall,
+                                    scale: 4,
+                                  ),
+                                  sw8,
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          station['name'],
+                                          style: h5,
+                                        ),
+                                        sh5,
+                                        Text(
+                                          station['address'],
+                                          style: h6,
+                                        ),
+                                        sh5,
+                                        Text(
+                                          '${station['distance']} miles',
+                                          style: h6,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Text(
+                                    station['price'],
+                                    style: h6.copyWith(color: AppColors.darkRed),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ],
                   )
                 else
-                   Text(
+                  Text(
                     'No fuel stations found nearby.',
                     style: h6,
                   ),
@@ -270,10 +338,14 @@ class _StationNearYouViewState extends State<StationNearYouView> {
                 CustomButton(
                   text: 'On the Way',
                   onPressed: () {
-                    Get.to(() => DriverLiveTrackView(
-                      deliveryId: widget.deliveryId,
-                      orderId: widget.orderId, userId: widget.userId,
-                    ));
+                    if (!_isLoading) {
+                      setState(() => _isLoading = true);
+                      Get.off(() => DriverLiveTrackView(
+                        deliveryId: widget.deliveryId,
+                        orderId: widget.orderId,
+                        userId: widget.userId,
+                      ))?.then((_) => setState(() => _isLoading = false));
+                    }
                   },
                   gradientColors: AppColors.gradientColorGreen,
                 ),
@@ -283,5 +355,12 @@ class _StationNearYouViewState extends State<StationNearYouView> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    print('StationNearYouView: dispose');
+    _mapController?.dispose();
+    super.dispose();
   }
 }
