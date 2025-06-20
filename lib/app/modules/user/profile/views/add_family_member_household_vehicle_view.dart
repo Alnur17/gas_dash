@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gas_dash/app/modules/user/order_fuel/controllers/order_fuel_controller.dart';
 import 'package:gas_dash/app/modules/user/profile/controllers/profile_controller.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
@@ -67,38 +66,40 @@ class AddVehicleDetailsPopup extends StatelessWidget {
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       title: Text('Add Vehicle Details'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Make'),
-          CustomTextField(
-            controller: vehicleAddController.makeController,
-          ),
-          sh16,
-          Text('Model'),
-          CustomTextField(
-            controller: vehicleAddController.modelController,
-          ),
-          sh16,
-          Text('Year'),
-          CustomTextField(
-            controller: vehicleAddController.yearController,
-          ),
-          sh16,
-          Text('Fuel Level'),
-          CustomTextField(
-            controller: vehicleAddController.fuelLevelController,
-          ),
-          sh24,
-          CustomButton(
-            text: 'Confirmed',
-            onPressed: () {
-              vehicleAddController.confirmVehicle();
-            },
-            gradientColors: AppColors.gradientColorGreen,
-          ),
-        ],
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Make'),
+            CustomTextField(
+              controller: vehicleAddController.makeController,
+            ),
+            sh16,
+            Text('Model'),
+            CustomTextField(
+              controller: vehicleAddController.modelController,
+            ),
+            sh16,
+            Text('Year'),
+            CustomTextField(
+              controller: vehicleAddController.yearController,
+            ),
+            sh16,
+            Text('Fuel Level'),
+            CustomTextField(
+              controller: vehicleAddController.fuelLevelController,
+            ),
+            sh24,
+            CustomButton(
+              text: 'Confirmed',
+              onPressed: () {
+                vehicleAddController.confirmVehicle();
+              },
+              gradientColors: AppColors.gradientColorGreen,
+            ),
+          ],
+        ),
       ),
     );
   }

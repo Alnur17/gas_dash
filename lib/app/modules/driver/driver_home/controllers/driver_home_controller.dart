@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 import '../../../../../common/app_constant/app_constant.dart';
@@ -51,10 +52,11 @@ class DriverHomeController extends GetxController {
         filterOrders(); // Filter orders after fetching
         showPendingOrders(); // Default to showing pending orders
       } else {
-        kSnackBar(
-          message: assignedOrder.message ?? 'Failed to fetch orders',
-          bgColor: AppColors.orange,
-        );
+        debugPrint(assignedOrder.message ?? 'Failed to fetch orders',);
+        // kSnackBar(
+        //   message: assignedOrder.message ?? 'Failed to fetch orders',
+        //   bgColor: AppColors.orange,
+        // );
         // Clear all lists on failure
         assignedOrders.clear();
         pendingOrders.clear();
@@ -63,10 +65,8 @@ class DriverHomeController extends GetxController {
         displayedOrders.clear();
       }
     } catch (e) {
-      kSnackBar(
-        message: e.toString(),
-        bgColor: AppColors.orange,
-      );
+
+       debugPrint(e.toString());
       // Clear all lists on error
       assignedOrders.clear();
       pendingOrders.clear();

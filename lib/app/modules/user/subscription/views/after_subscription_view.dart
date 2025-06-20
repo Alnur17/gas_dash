@@ -108,20 +108,20 @@ class PlanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profileController = Get.put(ProfileController());
-    final remeningDuration = profileController.myProfileData.value?.remeningDurationDay ?? 0.0;
-
-    // Calculate total duration based on durationDay (DateTime?)
-    final durationDay = profileController.myProfileData.value?.durationDay;
-    final resetDate = DateTime(2020, 6, 30); // Example reset date from your UI
-    final now = DateTime.now();
-
-    // Calculate total duration in days (e.g., from durationDay to reset date)
-    final totalDuration = durationDay != null
-        ? resetDate.difference(durationDay as DateTime).inDays.toDouble()
-        : 1.0; // Avoid division by zero
-
-    // Calculate progress (remaining days / total days)
-    final progress = totalDuration > 0 ? remeningDuration / totalDuration : 0.0;
+    // final remeningDuration = profileController.myProfileData.value?.remeningDurationDay ?? 0.0;
+    //
+    // // Calculate total duration based on durationDay (DateTime?)
+    // final durationDay = profileController.myProfileData.value?.durationDay;
+    // final resetDate = DateTime(2020, 6, 30); // Example reset date from your UI
+    // final now = DateTime.now();
+    //
+    // // Calculate total duration in days (e.g., from durationDay to reset date)
+    // final totalDuration = durationDay != null
+    //     ? resetDate.difference(durationDay).inDays.toDouble()
+    //     : 1.0; // Avoid division by zero
+    //
+    // // Calculate progress (remaining days / total days)
+    // final progress = totalDuration > 0 ? remeningDuration / totalDuration : 0.0;
 
     return Container(
       padding: const EdgeInsets.all(16.0),
@@ -149,20 +149,20 @@ class PlanCard extends StatelessWidget {
                   style: h3,
                 ),
                 const SizedBox(height: 8.0),
+                // Text(
+                //   '${remeningDuration.toStringAsFixed(0)} / ${totalDuration.toStringAsFixed(0)} days',
+                //   style: h5,
+                // ),
+                // const SizedBox(height: 8.0),
+                // LinearProgressIndicator(
+                //   value: progress.clamp(0.0, 1.0),
+                //   backgroundColor: Colors.grey[300],
+                //   color: Colors.blue,
+                //   minHeight: 6.0,
+                // ),
+                // const SizedBox(height: 8.0),
                 Text(
-                  '${remeningDuration.toStringAsFixed(0)} / ${totalDuration.toStringAsFixed(0)} days',
-                  style: h5,
-                ),
-                const SizedBox(height: 8.0),
-                LinearProgressIndicator(
-                  value: progress.clamp(0.0, 1.0),
-                  backgroundColor: Colors.grey[300],
-                  color: Colors.blue,
-                  minHeight: 6.0,
-                ),
-                const SizedBox(height: 8.0),
-                Text(
-                  'Reset On June 30, 2020',
+                  '${profileController.myProfileData.value?.durationDay}',
                   style: const TextStyle(fontSize: 14.0, color: Colors.grey),
                 ),
               ],
@@ -173,7 +173,9 @@ class PlanCard extends StatelessWidget {
             height: 40,
             width: 130,
             text: 'Upgrade Plan',
-            onPressed: () {},
+            onPressed: () {
+              Get.to(()=> SubscriptionView());
+            },
             gradientColors: AppColors.gradientColorGreen,
             textStyle: h5.copyWith(
               color: AppColors.white,

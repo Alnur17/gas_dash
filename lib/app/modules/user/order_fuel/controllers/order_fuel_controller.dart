@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/data/api.dart';
 import 'package:gas_dash/app/modules/user/dashboard/views/dashboard_view.dart';
-import 'package:gas_dash/app/modules/user/emergency_fuel/views/schedule_delivery_from_calender_view.dart';
 import 'package:gas_dash/app/modules/user/order_fuel/views/fuel_type_final_confirmation_view.dart';
 import 'package:gas_dash/common/app_constant/app_constant.dart';
 import 'package:gas_dash/common/helper/local_store.dart';
@@ -84,7 +83,7 @@ class OrderFuelController extends GetxController {
     });
   }
 
-  void promptForZipCode(context) {
+  void promptForZipCode() {
     final TextEditingController zipController = TextEditingController();
     Get.dialog(
       Dialog(
@@ -119,7 +118,9 @@ class OrderFuelController extends GetxController {
                   if (zipCode.value != null &&
                       zipCode.value!.isNotEmpty &&
                       RegExp(r'^\d{5}$').hasMatch(zipCode.value!)) {
-                    Navigator.pop(context); // Close dialog
+                    Get.back();// Close dialog
+                    //zipController.dispose(); // Dispose controller
+                    //isProcessing = false;
                   } else {
                     Get.snackbar(
                         'Error', 'Please enter a valid 5-digit zip code',
@@ -133,6 +134,7 @@ class OrderFuelController extends GetxController {
         ),
       ),
       barrierDismissible: true,
+
     );
   }
 
@@ -171,6 +173,7 @@ class OrderFuelController extends GetxController {
     required String fuelType,
      String? schedulDate,
      String? schedulTime,
+    String? cuponCode,
   })
   async {
     isLoading.value = true;
@@ -413,73 +416,75 @@ class OrderFuelController extends GetxController {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Align(
-                alignment: Alignment.center,
-                child: Text(
-                  'Select Vehicle',
-                  style: h3.copyWith(fontSize: 20),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Obx(() => Column(
-                children: vehiclesList.map((vehicle) {
-                  return RadioListTile<VehicleListData>(
-                    value: vehicle,
-                    groupValue: selectedVehicle.value,
-                    onChanged: (VehicleListData? value) {
-                      selectedVehicle.value = value;
-                    },
-                    title: Text(
-                      '${vehicle.year} ${vehicle.make} ${vehicle.model}',
-                      style: h5,
-                    ),
-                    secondary: Image.asset(
-                      AppImages.car,
-                      scale: 4,
-                    ),
-                  );
-                }).toList(),
-              )),
-              const SizedBox(height: 20),
-              CustomButton(
-                text: 'Confirm',
-                onPressed: () {
-                  if (selectedVehicle.value != null) {
-                    confirmedVehicle.value = {
-                      'make': selectedVehicle.value!.make!,
-                      'model': selectedVehicle.value!.model!,
-                      'year': selectedVehicle.value!.year.toString(),
-                      'fuelLevel': selectedVehicle.value!.fuelLevel.toString(),
-                    };
-                    Get.back();
-                    kSnackBar(
-                        message: 'Vehicle selected successfully!',
-                        bgColor: AppColors.green);
-                  } else {
-                    Get.snackbar('Error', 'Please select a vehicle',
-                        snackPosition: SnackPosition.BOTTOM);
-                  }
-                },
-                gradientColors: AppColors.gradientColorGreen,
-              ),
-              const SizedBox(height: 10),
-              Center(
-                child: TextButton(
-                  onPressed: () {
-                    Get.back();
-                  },
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Align(
+                  alignment: Alignment.center,
                   child: Text(
-                    'Cancel',
-                    style: h5.copyWith(color: AppColors.blueLight),
+                    'Select Vehicle',
+                    style: h3.copyWith(fontSize: 20),
+                    textAlign: TextAlign.center,
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+                Obx(() => Column(
+                  children: vehiclesList.map((vehicle) {
+                    return RadioListTile<VehicleListData>(
+                      value: vehicle,
+                      groupValue: selectedVehicle.value,
+                      onChanged: (VehicleListData? value) {
+                        selectedVehicle.value = value;
+                      },
+                      title: Text(
+                        '${vehicle.year} ${vehicle.make} ${vehicle.model}',
+                        style: h5,
+                      ),
+                      secondary: Image.asset(
+                        AppImages.car,
+                        scale: 4,
+                      ),
+                    );
+                  }).toList(),
+                )),
+                const SizedBox(height: 20),
+                CustomButton(
+                  text: 'Confirm',
+                  onPressed: () {
+                    if (selectedVehicle.value != null) {
+                      confirmedVehicle.value = {
+                        'make': selectedVehicle.value!.make!,
+                        'model': selectedVehicle.value!.model!,
+                        'year': selectedVehicle.value!.year.toString(),
+                        'fuelLevel': selectedVehicle.value!.fuelLevel.toString(),
+                      };
+                      Get.back();
+                      kSnackBar(
+                          message: 'Vehicle selected successfully!',
+                          bgColor: AppColors.green);
+                    } else {
+                      Get.snackbar('Error', 'Please select a vehicle',
+                          snackPosition: SnackPosition.BOTTOM);
+                    }
+                  },
+                  gradientColors: AppColors.gradientColorGreen,
+                ),
+                const SizedBox(height: 10),
+                Center(
+                  child: TextButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    child: Text(
+                      'Cancel',
+                      style: h5.copyWith(color: AppColors.blueLight),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -519,7 +524,7 @@ class OrderFuelController extends GetxController {
     }
   }
 
-  Future<void> fetchCurrentLocation(context) async {
+  Future<void> fetchCurrentLocation() async {
     try {
       isLoading.value = true;
 
@@ -527,7 +532,7 @@ class OrderFuelController extends GetxController {
       if (!serviceEnabled) {
         currentLocation.value = 'Location services are disabled.';
         zipCode.value = null;
-        promptForZipCode(context);
+        promptForZipCode();
         return;
       }
 
@@ -537,7 +542,7 @@ class OrderFuelController extends GetxController {
         if (permission == LocationPermission.denied) {
           currentLocation.value = 'Location permissions are denied.';
           zipCode.value = null;
-          promptForZipCode(context);
+          promptForZipCode();
           return;
         }
       }
@@ -545,7 +550,7 @@ class OrderFuelController extends GetxController {
       if (permission == LocationPermission.deniedForever) {
         currentLocation.value = 'Location permissions are permanently denied.';
         zipCode.value = null;
-        promptForZipCode(context);
+        promptForZipCode();
         return;
       }
 
@@ -564,17 +569,17 @@ class OrderFuelController extends GetxController {
         '${place.street}, ${place.subLocality}, ${place.locality}';
         zipCode.value = place.postalCode ?? '';
         if (zipCode.value!.isEmpty) {
-          promptForZipCode(context);
+          promptForZipCode();
         }
       } else {
         currentLocation.value = 'Address not found.';
         zipCode.value = '';
-        promptForZipCode(context);
+        promptForZipCode();
       }
     } catch (e) {
       currentLocation.value = 'Failed to get location: $e';
       zipCode.value = '';
-      promptForZipCode(context);
+      promptForZipCode();
     } finally {
       isLoading.value = false;
     }

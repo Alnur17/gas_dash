@@ -44,6 +44,9 @@ class Api {
 
   static String orderDataConfirmation(String id) => "$baseUrl/orders/$id"; //
 
+  ///Coupon
+  static String coupon(String couponValue) => "$baseUrl/cupons/check/$couponValue"; //
+
   ///driver assigned order
   static const assignedOrder = "$baseUrl/orders/driver"; //
 

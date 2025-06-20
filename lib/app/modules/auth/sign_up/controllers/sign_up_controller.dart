@@ -12,6 +12,9 @@ import '../../../../data/base_client.dart';
 class SignUpController extends GetxController {
   var selectedRole = 'user'.obs;
   var isLoading = false.obs;
+  var isCheckboxVisible = false.obs;
+  var isPasswordVisible = false.obs;
+  var isPasswordVisible2 = false.obs;
 
   final fullNameController = TextEditingController();
   final emailController = TextEditingController();
@@ -25,6 +28,16 @@ class SignUpController extends GetxController {
   final driverEmailController = TextEditingController();
   final driverPasswordController = TextEditingController();
   final driverConfirmPasswordController = TextEditingController();
+
+  void toggleCheckboxVisibility() {
+    isCheckboxVisible.toggle();
+
+  } void togglePasswordVisibility() {
+    isPasswordVisible.toggle();
+  }
+  void togglePasswordVisibility2() {
+    isPasswordVisible2.toggle();
+  }
 
   void selectRole(String role) {
     selectedRole.value = role;

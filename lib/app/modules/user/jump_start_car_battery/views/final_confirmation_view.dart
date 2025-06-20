@@ -6,10 +6,11 @@ import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_button.dart';
-import '../../../../../common/widgets/custom_circular_container.dart';
 import '../../../../../common/widgets/custom_loader.dart';
+import '../../../../../common/widgets/custom_snackbar.dart';
+import '../../../../../common/widgets/custom_textfield.dart';
+import '../../order_fuel/controllers/coupon_controller.dart';
 import '../../order_fuel/controllers/order_fuel_controller.dart';
-import '../../order_fuel/model/final_confirmation_model.dart';
 
 class FinalConfirmationView extends StatefulWidget {
   final String? orderId;
@@ -25,6 +26,8 @@ class _FinalConfirmationViewState extends State<FinalConfirmationView> {
   // Initialize the controller
   final OrderFuelController controller = Get.put(OrderFuelController());
   final PaymentController paymentController = Get.put(PaymentController());
+  final CouponController couponController = Get.put(CouponController());
+  final TextEditingController couponTextController = TextEditingController();
 
   // Use addPostFrameCallback to fetch order details after the frame is rendered
  @override
@@ -36,25 +39,20 @@ class _FinalConfirmationViewState extends State<FinalConfirmationView> {
    }
     super.initState();
   }
+
+  @override
+  void dispose() {
+    couponTextController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
         scrolledUnderElevation: 0,
-        // leading: Padding(
-        //   padding: const EdgeInsets.only(left: 12),
-        //   child: CustomCircularContainer(
-        //     imagePath: AppImages.back,
-        //     onTap: () {
-        //       Get.back();
-        //     },
-        //     padding: 2,
-        //   ),
-        // ),
         automaticallyImplyLeading: false,
         title: Text('Final Confirmation', style: titleStyle),
         centerTitle: true,
@@ -70,6 +68,51 @@ class _FinalConfirmationViewState extends State<FinalConfirmationView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              sh20,
+              Text(
+                'Discount Coupon',
+                style: h5.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              sh8,
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      controller: couponTextController,
+                      borderColor: AppColors.orange,
+                      preIcon: Image.asset(
+                        AppImages.coupon,
+                        scale: 4,
+                      ),
+                      hintText: 'Enter coupon code',
+                    ),
+                  ),
+                  sw5,
+                  Obx(() =>
+                  couponController.isLoading.value
+                      ? const CircularProgressIndicator()
+                      : CustomButton(
+                    borderColor: AppColors.orange,
+                    borderRadius: 12,
+                    text: 'Apply',
+                    onPressed: () {
+                      if (couponTextController.text.isNotEmpty) {
+                        couponController
+                            .checkCoupon(couponTextController.text);
+                      } else {
+                        kSnackBar(
+                          message: 'Please enter a coupon code',
+                          bgColor: AppColors.orange,
+                        );
+                      }
+                    },
+                    width: 100,
+                    textColor: AppColors.orange,
+                  )),
+                ],
+              ),
               sh20,
               Container(
                 width: double.infinity,
@@ -124,9 +167,20 @@ class _FinalConfirmationViewState extends State<FinalConfirmationView> {
                           Text('Service Fee',
                               style: h5.copyWith(fontWeight: FontWeight.bold)),
                           const SizedBox(height: 8),
+                          // Text(
+                          //     '\$${orderData.servicesFee?.toStringAsFixed(2) ?? '0.00'}',
+                          //     style: h6),
                           Text(
-                              '\$${orderData.servicesFee?.toStringAsFixed(2) ?? '0.00'}',
-                              style: h6),
+                            couponController.couponModel.value?.data != null
+                                ? '\$${orderData.servicesFee?.toStringAsFixed(2) ?? '0.00'} - \$${couponController.couponModel.value?.data?.discount?.toStringAsFixed(2) ?? '0.00'}'
+                                : '\$${orderData.servicesFee?.toStringAsFixed(2) ?? '0.00'}',
+                            style: h6.copyWith(
+                                color: couponController.couponModel.value?.data != null
+                                    ? AppColors.green
+                                    : AppColors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+
                         ],
                       );
                     },

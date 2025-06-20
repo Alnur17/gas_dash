@@ -14,7 +14,6 @@ import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
 import '../../../../../common/widgets/custom_textfield.dart';
 import '../../order_fuel/controllers/order_fuel_controller.dart';
-import '../controllers/jump_start_car_battery_controller.dart';
 
 class JumpStartCarBatteryView extends StatefulWidget {
   final String? title;
@@ -37,7 +36,7 @@ class _JumpStartCarBatteryViewState extends State<JumpStartCarBatteryView> {
   @override
   void initState() {
     super.initState();
-    orderFuelController.fetchCurrentLocation(context);
+    orderFuelController.fetchCurrentLocation();
   }
 
   void _showAddVehicleDialog() {

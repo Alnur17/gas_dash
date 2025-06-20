@@ -64,6 +64,10 @@ class SubscriptionVehicleDatum {
 class UserId {
   UserId({
     required this.verification,
+    required this.familyMember,
+    required this.averageRating,
+    required this.reviews,
+    required this.avgRatings,
     required this.id,
     required this.status,
     required this.fullname,
@@ -96,29 +100,34 @@ class UserId {
     required this.updatedAt,
     required this.v,
     required this.title,
+    required this.remeningDurationDay,
   });
 
   final Verification? verification;
+  final FamilyMember? familyMember;
+  final int? averageRating;
+  final List<dynamic> reviews;
+  final int? avgRatings;
   final String? id;
   final String? status;
   final String? fullname;
   final String? location;
-  final String? country;
+  final dynamic country;
   final String? zipCode;
   final String? email;
-  final dynamic phoneNumber;
+  final String? phoneNumber;
   final String? password;
   final dynamic gender;
   final dynamic dateOfBirth;
   final bool? isGoogleLogin;
-  final dynamic image;
+  final String? image;
   final String? role;
   final int? totalEarning;
   final int? experience;
   final dynamic address;
   final int? freeDeliverylimit;
   final int? coverVehiclelimit;
-  final int? durationDay;
+  final DateTime? durationDay;
   final bool? isDeleted;
   final int? popularity;
   final bool? fiftyPercentOffDeliveryFeeAfterWaivedTrips;
@@ -131,10 +140,15 @@ class UserId {
   final DateTime? updatedAt;
   final int? v;
   final String? title;
+  final int? remeningDurationDay;
 
   factory UserId.fromJson(Map<String, dynamic> json){
     return UserId(
       verification: json["verification"] == null ? null : Verification.fromJson(json["verification"]),
+      familyMember: json["familyMember"] == null ? null : FamilyMember.fromJson(json["familyMember"]),
+      averageRating: json["AverageRating"],
+      reviews: json["reviews"] == null ? [] : List<dynamic>.from(json["reviews"]!.map((x) => x)),
+      avgRatings: json["avgRatings"],
       id: json["_id"],
       status: json["status"],
       fullname: json["fullname"],
@@ -154,7 +168,7 @@ class UserId {
       address: json["address"],
       freeDeliverylimit: json["freeDeliverylimit"],
       coverVehiclelimit: json["coverVehiclelimit"],
-      durationDay: json["durationDay"],
+      durationDay: DateTime.tryParse(json["durationDay"] ?? ""),
       isDeleted: json["isDeleted"],
       popularity: json["popularity"],
       fiftyPercentOffDeliveryFeeAfterWaivedTrips: json["fiftyPercentOffDeliveryFeeAfterWaivedTrips"],
@@ -167,6 +181,25 @@ class UserId {
       updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
       v: json["__v"],
       title: json["title"],
+      remeningDurationDay: json["remeningDurationDay"],
+    );
+  }
+
+}
+
+class FamilyMember {
+  FamilyMember({
+    required this.name,
+    required this.email,
+  });
+
+  final String? name;
+  final String? email;
+
+  factory FamilyMember.fromJson(Map<String, dynamic> json){
+    return FamilyMember(
+      name: json["name"],
+      email: json["email"],
     );
   }
 
@@ -174,20 +207,17 @@ class UserId {
 
 class Verification {
   Verification({
-    required this.otp,
-    required this.expiresAt,
     required this.status,
+    required this.otp,
   });
 
-  final int? otp;
-  final DateTime? expiresAt;
   final bool? status;
+  final int? otp;
 
   factory Verification.fromJson(Map<String, dynamic> json){
     return Verification(
-      otp: json["otp"],
-      expiresAt: DateTime.tryParse(json["expiresAt"] ?? ""),
       status: json["status"],
+      otp: json["otp"],
     );
   }
 

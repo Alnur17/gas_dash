@@ -36,7 +36,7 @@ class _OrderFuelViewState extends State<OrderFuelView> {
   @override
   void initState() {
     super.initState();
-    orderFuelController.fetchCurrentLocation(context);
+    orderFuelController.fetchCurrentLocation();
   }
 
   void _showAddVehicleDialog() {
@@ -182,7 +182,7 @@ class _OrderFuelViewState extends State<OrderFuelView> {
                   locationText: orderFuelController.currentLocation.value,
                   buttonText: 'Change Location',
                   onButtonPressed: () {
-                    orderFuelController.fetchCurrentLocation(context);
+                    orderFuelController.fetchCurrentLocation();
                   },
                 ),
               ),

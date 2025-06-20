@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:gas_dash/app/modules/driver/driver_profile/controllers/driver_profile_controller.dart';
 import 'package:get/get.dart';
 
 import '../../../../../common/app_color/app_colors.dart';
@@ -13,12 +12,16 @@ import '../../../../data/api.dart';
 import '../../../../data/base_client.dart';
 import '../../../driver/driver_dashboard/views/driver_dashboard_view.dart';
 import '../../../user/dashboard/views/dashboard_view.dart';
-import '../../../user/profile/controllers/profile_controller.dart';
 
 class LoginController extends GetxController {
   var isLoading = false.obs;
-  final DriverProfileController driverProfileController = Get.put(DriverProfileController());
-  final ProfileController profileController = Get.put(ProfileController());
+  var isPasswordVisible = false.obs; // Observable for password visibility
+  var isCheckboxVisible = false.obs; // Observable for password visibility
+
+  void toggleCheckboxVisibility() {
+    isCheckboxVisible.toggle();
+
+  }
 
   Future userLogin({
     required String email,
@@ -71,17 +74,16 @@ class LoginController extends GetxController {
           );
 
           String role =
-              responseBody['data']['user']['role'].toString().toLowerCase();
+          responseBody['data']['user']['role'].toString().toLowerCase();
           LocalStorage.saveData(key: AppConstant.role, data: role);
           kSnackBar(message: message, bgColor: AppColors.green);
 
           if (role == 'user') {
-            await profileController.getMyProfile();
+            //await profileController.getMyProfile();
             Get.offAll(() => DashboardView());
           } else if (role == 'driver') {
-         await   driverProfileController.getDriverProfile();
+            //await driverProfileController.getDriverProfile();
             Get.offAll(() => DriverDashboardView());
-
           } else {
             kSnackBar(message: 'Unknown role', bgColor: AppColors.red);
           }
@@ -95,9 +97,15 @@ class LoginController extends GetxController {
       }
     } catch (e) {
       debugPrint("Catch Error:::::: $e");
+      kSnackBar(message: '$e', bgColor: AppColors.red);
       isLoading(false);
     } finally {
       isLoading(false);
     }
+  }
+
+  // Method to toggle password visibility
+  void togglePasswordVisibility() {
+    isPasswordVisible.toggle();
   }
 }

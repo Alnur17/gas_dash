@@ -13,6 +13,7 @@ class CustomTextField extends StatelessWidget {
   final double borderRadius;
   final Color? containerColor;
   final Color? borderColor;
+  final bool obscureText;
 
   const CustomTextField({
     super.key,
@@ -26,6 +27,7 @@ class CustomTextField extends StatelessWidget {
     this.borderRadius = 12,
     this.containerColor,
     this.borderColor,
+    this.obscureText = false,
   });
 
   @override
@@ -41,8 +43,9 @@ class CustomTextField extends StatelessWidget {
         textInputAction: TextInputAction.done,
         onChanged: onChange,
         controller: controller,
-        maxLines: null,
-        keyboardType: TextInputType.multiline,
+        maxLines: obscureText ? 1 : null, // Set maxLines to 1 if obscureText is true
+        keyboardType: obscureText ? TextInputType.text : TextInputType.multiline,
+        obscureText: obscureText,
         decoration: InputDecoration(
           hintText: hintText ?? '',
           hintStyle: hintTextStyle ?? h5.copyWith(color: AppColors.grey),
