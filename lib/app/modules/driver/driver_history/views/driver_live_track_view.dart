@@ -46,7 +46,7 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
   final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
 
-  final String _googleApiKey = 'AIzaSyB_3nOokGz9jksH5jN_f05YNEJeZqWizYM'; // Replace with your actual API key
+  final String _googleApiKey = 'AIzaSyB_3nOokGz9jksH5jN_f05YNEJeZqWizYM';
 
   SocketService? _socketService;
   String _estimatedTime = 'Calculating...';
@@ -56,11 +56,12 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
     super.initState();
     _initSocketService();
     _getDriverLocation();
+    // Timeout to prevent infinite loading
     Future.delayed(const Duration(seconds: 10), () {
-      if (mounted && _isLoading) {
+      if (mounted && !_mapCreated) {
         setState(() {
           _isLoading = false;
-          _errorMessage = 'Failed to load map. Check API key, network, or billing.';
+          _errorMessage = 'Failed to load map. Please check your network or Google Maps configuration.';
         });
       }
     });
@@ -129,7 +130,7 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
       print('Error fetching address: $e');
       if (mounted) {
         setState(() {
-          _customerAddress = 'Error fetching address';
+          _customerAddress = 'Error fetching address: $e';
         });
       }
     }
@@ -231,13 +232,13 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
 
   void _onMapCreated(GoogleMapController controller) {
     if (mounted) {
-      print('Map created successfully');
+      print('Map created with controller: $controller');
       setState(() {
         _mapController = controller;
         _mapCreated = true;
         _isLoading = false;
       });
-      if (_driverLocation != null) {
+      if (_driverLocation != null || _userLocation != null) {
         _updateCameraPosition();
       }
     }
@@ -252,7 +253,7 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
         if (mounted) {
           setState(() {
             _isLoading = false;
-            _errorMessage = 'Location services are disabled. Please enable them.';
+            _errorMessage = 'Location services are disabled. Please enable them in your device settings.';
           });
         }
         return;
@@ -267,7 +268,7 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
           if (mounted) {
             setState(() {
               _isLoading = false;
-              _errorMessage = 'Location permissions are denied.';
+              _errorMessage = 'Location permissions are denied. Please grant location access.';
             });
           }
           return;
@@ -279,7 +280,7 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
         if (mounted) {
           setState(() {
             _isLoading = false;
-            _errorMessage = 'Location permissions are permanently denied.';
+            _errorMessage = 'Location permissions are permanently denied. Please enable them in app settings.';
           });
         }
         return;
@@ -293,8 +294,8 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
         setState(() {
           _driverLocation = LatLng(position.latitude, position.longitude);
         });
-        await _updateDriverMarker();
         print('Driver location set: $_driverLocation');
+        await _updateDriverMarker();
         _emitDriverLocation();
         if (_userLocation != null) {
           await _fetchRoute();
@@ -309,14 +310,17 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _errorMessage = 'Failed to get location: $e';
+          _errorMessage = 'Failed to get location: $e. Please ensure location services are enabled.';
         });
       }
     }
   }
 
   Future<void> _fetchRoute() async {
-    if (_driverLocation == null || _userLocation == null) return;
+    if (_driverLocation == null || _userLocation == null) {
+      print('Cannot fetch route: driverLocation or userLocation is null');
+      return;
+    }
 
     final String url =
         'https://maps.googleapis.com/maps/api/directions/json?origin=${_driverLocation!.latitude},${_driverLocation!.longitude}&destination=${_userLocation!.latitude},${_userLocation!.longitude}&key=$_googleApiKey';
@@ -380,25 +384,44 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
   }
 
   void _updateCameraPosition() {
-    if (_driverLocation == null || !_mapCreated || _mapController == null) return;
+    if (!_mapCreated || _mapController == null) {
+      print('Cannot update camera: map not created or controller is null');
+      return;
+    }
 
     print('Updating camera position...');
+    if (_driverLocation == null && _userLocation == null) {
+      _mapController!.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: const LatLng(23.8103, 90.4125),
+            zoom: 14,
+          ),
+        ),
+      );
+      return;
+    }
+
     final bounds = LatLngBounds(
       southwest: LatLng(
-        _driverLocation!.latitude < (_userLocation?.latitude ?? _driverLocation!.latitude)
-            ? _driverLocation!.latitude
-            : (_userLocation?.latitude ?? _driverLocation!.latitude),
-        _driverLocation!.longitude < (_userLocation?.longitude ?? _driverLocation!.longitude)
-            ? _driverLocation!.longitude
-            : (_userLocation?.longitude ?? _driverLocation!.longitude),
+        (_driverLocation?.latitude ?? _userLocation!.latitude) <
+            (_userLocation?.latitude ?? _driverLocation?.latitude ?? _userLocation!.latitude)
+            ? (_driverLocation?.latitude ?? _userLocation!.latitude)
+            : (_userLocation?.latitude ?? _driverLocation?.latitude ?? _userLocation!.latitude),
+        (_driverLocation?.longitude ?? _userLocation!.longitude) <
+            (_userLocation?.longitude ?? _driverLocation?.longitude ?? _userLocation!.longitude)
+            ? (_driverLocation?.longitude ?? _userLocation!.longitude)
+            : (_userLocation?.longitude ?? _driverLocation?.longitude ?? _userLocation!.longitude),
       ),
       northeast: LatLng(
-        _driverLocation!.latitude > (_userLocation?.latitude ?? _driverLocation!.latitude)
-            ? _driverLocation!.latitude
-            : (_userLocation?.latitude ?? _driverLocation!.latitude),
-        _driverLocation!.longitude > (_userLocation?.longitude ?? _driverLocation!.longitude)
-            ? _driverLocation!.longitude
-            : (_userLocation?.longitude ?? _driverLocation!.longitude),
+        (_driverLocation?.latitude ?? _userLocation!.latitude) >
+            (_userLocation?.latitude ?? _driverLocation?.latitude ?? _userLocation!.latitude)
+            ? (_driverLocation?.latitude ?? _userLocation!.latitude)
+            : (_userLocation?.latitude ?? _driverLocation?.latitude ?? _userLocation!.latitude),
+        (_driverLocation?.longitude ?? _userLocation!.longitude) >
+            (_userLocation?.longitude ?? _driverLocation?.longitude ?? _userLocation!.longitude)
+            ? (_driverLocation?.longitude ?? _userLocation!.longitude)
+            : (_userLocation?.longitude ?? _driverLocation?.longitude ?? _userLocation!.longitude),
       ),
     );
 
@@ -409,6 +432,7 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
 
   @override
   Widget build(BuildContext context) {
+    print('Building widget: _isLoading=$_isLoading, _errorMessage=$_errorMessage, _mapCreated=$_mapCreated');
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -431,6 +455,19 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
       ),
       body: Stack(
         children: [
+          GoogleMap(
+            key: const ValueKey('driver_live_tracking_map'),
+            onMapCreated: _onMapCreated,
+            initialCameraPosition: const CameraPosition(
+              target: LatLng(23.8103, 90.4125),
+              zoom: 14,
+            ),
+            markers: _markers,
+            polylines: _polylines,
+            myLocationEnabled: _driverLocation != null,
+            myLocationButtonEnabled: _driverLocation != null,
+            zoomControlsEnabled: false,
+          ),
           if (_isLoading)
             const Center(child: CircularProgressIndicator())
           else if (_errorMessage != null)
@@ -443,20 +480,6 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
                   textAlign: TextAlign.center,
                 ),
               ),
-            )
-          else
-            GoogleMap(
-              key: const ValueKey('driver_live_tracking_map'),
-              onMapCreated: _onMapCreated,
-              initialCameraPosition: CameraPosition(
-                target: _driverLocation ?? const LatLng(23.8103, 90.4125),
-                zoom: 14,
-              ),
-              markers: _markers,
-              polylines: _polylines,
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              zoomControlsEnabled: false,
             ),
           Align(
             alignment: Alignment.bottomCenter,
