@@ -94,4 +94,12 @@ class Api {
   static  String createReview(String driverId) => "$baseUrl/reviews/create";
 
   static  String getReviews(String driverId) => "$baseUrl/reviews/driver/$driverId";
+
+  ///tips
+  static const String optionalTipCreate = "$baseUrl/optionalTip/create";
+  static const String optionalTipCheckout = "$baseUrl/payments/optional-tip/checkout";
+
+  ///Banner
+  static const String emergencyBanner = "$baseUrl/discountBanner";
+  static const String discountBanner = "$baseUrl/emergencyFuelBanner";
 }

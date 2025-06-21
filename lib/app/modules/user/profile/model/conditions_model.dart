@@ -21,6 +21,8 @@ class ConditionsModel {
 
 class Datum {
   Datum({
+    required this.emergencyFuelBanner,
+    required this.discountBanner,
     required this.id,
     required this.v,
     required this.createdAt,
@@ -29,6 +31,8 @@ class Datum {
     required this.termsConditions,
   });
 
+  final String? emergencyFuelBanner;
+  final String? discountBanner;
   final String? id;
   final int? v;
   final DateTime? createdAt;
@@ -38,6 +42,8 @@ class Datum {
 
   factory Datum.fromJson(Map<String, dynamic> json){
     return Datum(
+      emergencyFuelBanner: json["emergencyFuelBanner"],
+      discountBanner: json["discountBanner"],
       id: json["_id"],
       v: json["__v"],
       createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
