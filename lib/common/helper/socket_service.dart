@@ -56,6 +56,7 @@ class SocketService {
     });
 
     _socket.onDisconnect((_) {
+      init();
       print('Disconnected from socket server');
       // Cancel location updates on disconnect
       _stopLocationUpdates();
@@ -94,7 +95,7 @@ class SocketService {
     // Cancel any existing timer to avoid duplicates
     _stopLocationUpdates();
 
-    _locationTimer = Timer.periodic(Duration(seconds: 3), (timer) async {
+    _locationTimer = Timer.periodic(Duration(seconds: 20), (timer) async {
       if (_socket.connected) {
         try {
           final position = await _getCurrentLocation();

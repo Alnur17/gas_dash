@@ -57,6 +57,9 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      orderHistoryController.fetchOrderHistory();
+    });
     _initSocketService();
     _getUserLocation();
     if (orderHistoryController.inProcessOrders.isNotEmpty &&
@@ -68,6 +71,8 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
           orderHistoryController.inProcessOrders[0].driverId!.fullname ??
               'Driver';
     }
+    print("$_driverId ddd"+ "${orderHistoryController.inProcessOrders[0].driverId!.id}" + "eeeeeeeeeee");
+    print("$_orderId"+ "order ID>>>>>>>>>>>>>>");
     // Timeout to prevent infinite loading
     Future.delayed(const Duration(seconds: 10), () {
       if (mounted && _isLoading) {
@@ -120,47 +125,50 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
                 color: AppColors.white,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.check_circle,
-                    size: 30,
-                    color: AppColors.green,
-                  ),
-                  sh10,
-                  Text(
-                    "Your delivery is complete! How was your experience? A quick review can make their day!",
-                    style: h2,
-                    textAlign: TextAlign.center,
-                  ),
-                  sh10,
-                  CustomButton(backgroundColor: AppColors.green,text: "Give Rating", onPressed: (){
-                    Get.to(() => WriteReviewView(_driverId));
-                  }),
-                  sh10,
-                  CustomButton(backgroundColor: AppColors.green,text: "Give Tips", onPressed: (){
-                   Get.dialog(Dialog(
-                     child: Container(
-                       height: 250,
-                       width: 500,
-                       child: Column(
-                       children: [
-                         CustomTextField(
-                           height: 48,
-                           hintText: 'Enter you tips',
-                           controller: tipsAmount,
-                         ),
-                         sh10,
-                         CustomButton(backgroundColor: AppColors.green,text: "Send", onPressed: (){
-                          //
-                         }),
-                       ],
-                     ),),
-                   ));
-                  }),
-                ],
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.check_circle,
+                      size: 50,
+                      color: AppColors.green,
+                    ),
+                    sh10,
+                    Text(
+                      "Your delivery is complete! How was your experience? A quick review can make their day!",
+                      style: h4,
+                      textAlign: TextAlign.center,
+                    ),
+                    sh10,
+                    CustomButton(backgroundColor: AppColors.green,text: "Give Rating", gradientColors: AppColors.gradientColorGreen ,onPressed: (){
+                      Get.to(() => WriteReviewView(_driverId));
+                    }),
+                    sh10,
+                    CustomButton(backgroundColor: AppColors.green,text: "Give Tips", gradientColors: AppColors.gradientColorGreen, onPressed: (){
+                     Get.dialog(Dialog(
+                       child: Container(
+                         height: 250,
+                         width: 500,
+                         child: Column(
+                         children: [
+                           CustomTextField(
+                             height: 48,
+                             hintText: 'Enter you tips',
+                             controller: tipsAmount,
+                           ),
+                           sh10,
+                           CustomButton(backgroundColor: AppColors.green,text: "Send",  gradientColors: AppColors.gradientColorGreen , onPressed: (){
+                            //
+                           }),
+                         ],
+                       ),),
+                     ));
+                    }),
+                  ],
+                ),
               ),
             ),
           ));

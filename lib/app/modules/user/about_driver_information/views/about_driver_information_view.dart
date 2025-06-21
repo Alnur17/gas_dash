@@ -9,6 +9,7 @@ import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
 import 'package:gas_dash/common/widgets/custom_row_header.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../../common/helper/socket_service.dart';
 import '../../message/controllers/message_send_controller.dart';
 import '../../order_history/model/order_history_model.dart';
@@ -152,15 +153,33 @@ class AboutDriverInformationView
                             const SizedBox(width: 8),
                             _buildIconLabel(
                               icon: AppImages.star,
-                              label: driver!.averageRating.toString(),
+                              label: driver!.avgRating.toString(),
                               backgroundColor:
                               Colors.black.withOpacity(0.4),
                             ),
                             const SizedBox(width: 8),
-                            _buildIconLabel(
-                              icon: AppImages.callSmall,
-                              label: '',
-                              backgroundColor: Colors.black.withOpacity(0.4),
+                            GestureDetector(
+                              onTap: () async {
+                                final Uri phoneUri = Uri(
+                                    scheme: 'tel',
+                                    path:
+                                    '${driver!.phoneNumber ?? 0}');
+                                if (await canLaunchUrl(phoneUri)) {
+                                  await launchUrl(phoneUri);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content:
+                                        Text('Could not launch phone dialer')),
+                                  );
+                                }
+                              },
+                              child: _buildIconLabel(
+
+                                icon: AppImages.callSmall,
+                                label: '',
+                                backgroundColor: Colors.black.withOpacity(0.4),
+                              ),
                             ),
                           ],
                         )
