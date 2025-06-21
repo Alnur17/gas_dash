@@ -73,6 +73,8 @@ class PaymentController extends GetxController {
         //debugPrint('::::::::::::::::: $id :::::::::::::::::');
         Get.offAll(() => PaymentSuccessView());
       } else {
+        kSnackBar(message: "${responseBody['message']}", bgColor: AppColors.red);
+
         debugPrint("Error on Payment Result: $responseBody['message'] ");
       }
     } catch (e) {

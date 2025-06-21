@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 
 import '../../../../../common/app_text_style/styles.dart';
 import '../../home/views/home_view.dart';
+import '../../profile/controllers/conditions_controller.dart';
 import '../../profile/controllers/profile_controller.dart';
 import '../../subscription/views/subscription_view.dart';
 import '../controllers/dashboard_controller.dart';
@@ -25,6 +26,7 @@ class _DashboardViewState extends State<DashboardView> {
   final DashboardController dashboardController =
       Get.put(DashboardController());
   final profileController = Get.put(ProfileController());
+  final settingsController = Get.put(ConditionsController());
 
 
   static final List<Widget> _views = [

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/user/about_driver_information/views/about_driver_information_view.dart';
+import 'package:gas_dash/app/modules/user/track_order_details/controllers/trips_controller.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
+import 'package:gas_dash/common/widgets/custom_loader.dart';
 import 'package:gas_dash/common/widgets/custom_textfield.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -31,6 +33,8 @@ class LiveTrackingView extends StatefulWidget {
 
 class _LiveTrackingViewState extends State<LiveTrackingView> {
   final TextEditingController tipsAmount = TextEditingController();
+  final TripsController tripsController = Get.put(TripsController());
+
   GoogleMapController? _mapController;
   bool _mapCreated = false;
   bool _isLoading = true;
@@ -152,19 +156,24 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
                        child: Container(
                          height: 250,
                          width: 500,
-                         child: Column(
-                         children: [
-                           CustomTextField(
-                             height: 48,
-                             hintText: 'Enter you tips',
-                             controller: tipsAmount,
-                           ),
-                           sh10,
-                           CustomButton(backgroundColor: AppColors.green,text: "Send",  gradientColors: AppColors.gradientColorGreen , onPressed: (){
-                            //
-                           }),
-                         ],
-                       ),),
+                         child: Padding(
+                           padding: const EdgeInsets.all(16.0),
+                           child: Column(
+                             crossAxisAlignment: CrossAxisAlignment.center,
+                           mainAxisAlignment: MainAxisAlignment.center,
+                           children: [
+                             CustomTextField(
+                               height: 48,
+                               hintText: 'Enter you tips',
+                               controller: tipsAmount,
+                             ),
+                             sh10,
+                           Obx(() => tripsController.isLoading.value == true? CustomLoader(color: AppColors.white) :  CustomButton(backgroundColor: AppColors.green,text: "Send",  gradientColors: AppColors.gradientColorGreen , onPressed: (){
+                             tripsController.createTrips(driverId: _driverId.toString(), amount: tipsAmount.text.trim());
+                           }),)
+                           ],
+                                                  ),
+                         ),),
                      ));
                     }),
                   ],

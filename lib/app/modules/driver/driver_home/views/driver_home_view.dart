@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/driver/driver_home/views/notification_view.dart';
+import 'package:gas_dash/app/modules/user/profile/controllers/profile_controller.dart';
 import 'package:gas_dash/common/helper/fuel_and_service_card.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/helper/earnings_card.dart';
@@ -21,6 +22,7 @@ class DriverHomeView extends StatefulWidget {
 
 class _DriverHomeViewState extends State<DriverHomeView> {
   final DriverHomeController controller = Get.put(DriverHomeController());
+  final ProfileController profileController = Get.put(ProfileController());
   final DriverEarningController driverEarningController =
   Get.put(DriverEarningController());
 
@@ -71,8 +73,9 @@ class _DriverHomeViewState extends State<DriverHomeView> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Obx(() => RefreshIndicator(
-              onRefresh: () {
-                return controller.fetchAssignedOrders();
+              onRefresh: () async{
+                await controller.fetchAssignedOrders();
+                await profileController.getMyProfile();
               },
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
