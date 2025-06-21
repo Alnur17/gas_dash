@@ -68,7 +68,7 @@ class HomeView extends GetView<HomeController> {
         automaticallyImplyLeading: false,
       ),
       body: RefreshIndicator(
-        onRefresh: ()async{
+        onRefresh: () async {
           await oHController.fetchOrderHistory();
           await profileController.getMyProfile();
         },
@@ -257,7 +257,6 @@ class HomeView extends GetView<HomeController> {
                       ),
                     ),
                     sh8,
-
                     CustomButton(
                       height: 40,
                       text: 'Order Now',
@@ -455,29 +454,41 @@ class HomeView extends GetView<HomeController> {
                       bottom: 12,
                       left: 12,
                       right: 12,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Join Now for Discounts & No Tips!',
-                            style: h5.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.white,
+                      child: profileController.myProfileData.value
+                                  ?.fiftyPercentOffDeliveryFeeAfterWaivedTrips ==
+                              true
+                          ? Center(
+                            child: Text(
+                                'Premium Subscriber – 20% Off Today!',
+                                style: h5.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.white,
+                                ),
+                              ),
+                          )
+                          : Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Join Now for Discounts & No Tips!',
+                                  style: h5.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.white,
+                                  ),
+                                ),
+                                sh8,
+                                CustomButton(
+                                  height: 40,
+                                  text: 'Join Now',
+                                  onPressed: () {
+                                    Get.to(() => SubscriptionView());
+                                  },
+                                  gradientColors: AppColors.gradientColor,
+                                  width: 150,
+                                ),
+                              ],
                             ),
-                          ),
-                          sh8,
-                          CustomButton(
-                            height: 40,
-                            text: 'Join Now',
-                            onPressed: () {
-                              Get.to(() => SubscriptionView());
-                            },
-                            gradientColors: AppColors.gradientColor,
-                            width: 150,
-                          ),
-                        ],
-                      ),
                     ),
                   ],
                 ),
@@ -510,7 +521,9 @@ class HomeView extends GetView<HomeController> {
 
                   // Filter only Pending orders
                   final orders = oHController.orders
-                      .where((order) => order.orderStatus == 'Unassigned'&& order.isPaid == true)
+                      .where((order) =>
+                          order.orderStatus == 'Unassigned' &&
+                          order.isPaid == true)
                       .toList();
 
                   // Show message if no Pending orders are found

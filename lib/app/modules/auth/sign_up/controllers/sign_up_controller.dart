@@ -31,10 +31,12 @@ class SignUpController extends GetxController {
 
   void toggleCheckboxVisibility() {
     isCheckboxVisible.toggle();
+  }
 
-  } void togglePasswordVisibility() {
+  void togglePasswordVisibility() {
     isPasswordVisible.toggle();
   }
+
   void togglePasswordVisibility2() {
     isPasswordVisible2.toggle();
   }
@@ -47,8 +49,22 @@ class SignUpController extends GetxController {
     try {
       isLoading(true);
 
+      if (!isCheckboxVisible.value) {
+        Get.snackbar('Error', 'Please agree to the Terms & Conditions');
+        return;
+      }
+
       Map<String, dynamic> body;
       if (selectedRole.value == 'user') {
+        if (passwordController.text.trim().length < 6) {
+          Get.snackbar('Error', 'Password must be at least 6 characters');
+          return;
+        }
+
+        if (confirmPasswordController.text.trim().length < 6) {
+          Get.snackbar('Error', 'Confirm Password must be at least 6 characters');
+          return;
+        }
         if (passwordController.text.trim() !=
             confirmPasswordController.text.trim()) {
           Get.snackbar('Error', 'Passwords do not match');
@@ -65,6 +81,14 @@ class SignUpController extends GetxController {
           "password": passwordController.text.trim(),
         };
       } else {
+        if (driverPasswordController.text.trim().length < 6) {
+          Get.snackbar('Error', 'Password must be at least 6 characters');
+          return;
+        }
+        if (driverConfirmPasswordController.text.trim().length < 6) {
+          Get.snackbar('Error', 'Confirm Password must be at least 6 characters');
+          return;
+        }
         if (driverPasswordController.text.trim() !=
             driverConfirmPasswordController.text.trim()) {
           Get.snackbar('Error', 'Passwords do not match');
@@ -140,7 +164,6 @@ class SignUpController extends GetxController {
       print('OTP verification response data: $data');
 
       if (data != null) {
-
         Get.offAll(() => LoginView());
         isLoading(false);
         //final authToken = data['data']?['token'];
@@ -156,7 +179,7 @@ class SignUpController extends GetxController {
         // } else {
         //   Get.snackbar('Error', 'Auth token is missing in response.');
         // }
-      }else {
+      } else {
         throw 'verify otp in Failed!';
       }
     } catch (e) {

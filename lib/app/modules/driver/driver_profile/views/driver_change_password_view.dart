@@ -16,12 +16,13 @@ class DriverChangePasswordView extends StatefulWidget {
   const DriverChangePasswordView({super.key});
 
   @override
-  State<DriverChangePasswordView> createState() => _DriverChangePasswordViewState();
+  State<DriverChangePasswordView> createState() =>
+      _DriverChangePasswordViewState();
 }
 
 class _DriverChangePasswordViewState extends State<DriverChangePasswordView> {
-
-  final DriverProfileController driverProfileController = Get.put(DriverProfileController());
+  final DriverProfileController driverProfileController =
+      Get.put(DriverProfileController());
   final TextEditingController currentPassTEController = TextEditingController();
   final TextEditingController newPassTEController = TextEditingController();
   final TextEditingController confirmPassTEController = TextEditingController();
@@ -33,7 +34,8 @@ class _DriverChangePasswordViewState extends State<DriverChangePasswordView> {
       appBar: AppBar(
         backgroundColor: AppColors.mainColor,
         title: Text(
-          'Change Password',style: titleStyle,
+          'Change Password',
+          style: titleStyle,
         ),
         leading: Padding(
           padding: const EdgeInsets.only(left: 12),
@@ -52,56 +54,89 @@ class _DriverChangePasswordViewState extends State<DriverChangePasswordView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             sh30,
-            Text('Current Password',style: h5,),
+            Text(
+              'Current Password',
+              style: h5,
+            ),
             sh8,
-            CustomTextField(
-              controller: currentPassTEController,
-              hintText: '***********',
-              sufIcon: Image.asset(
-                AppImages.eyeClose,
-                scale: 4,
+            Obx(
+              () => CustomTextField(
+                controller: currentPassTEController,
+                hintText: '***********',
+                sufIcon: GestureDetector(
+                    onTap: () {
+                      driverProfileController.togglePasswordVisibility();
+                    },
+                    child: Image.asset(
+                        driverProfileController.isPasswordVisible.value
+                            ? AppImages.eyeOpen
+                            : AppImages.eyeClose,
+                        scale: 4)),
+                obscureText: !driverProfileController.isPasswordVisible.value,
               ),
             ),
             sh16,
-            Text('New Password',style: h5,),
+            Text(
+              'New Password',
+              style: h5,
+            ),
             sh8,
-            CustomTextField(
-              controller: newPassTEController,
-              hintText: '***********',
-              sufIcon: Image.asset(
-                AppImages.eyeClose,
-                scale: 4,
+            Obx(
+              () => CustomTextField(
+                controller: newPassTEController,
+                hintText: '***********',
+                sufIcon: GestureDetector(
+                    onTap: () {
+                      driverProfileController.togglePasswordVisibility1();
+                    },
+                    child: Image.asset(
+                        driverProfileController.isPasswordVisible1.value
+                            ? AppImages.eyeOpen
+                            : AppImages.eyeClose,
+                        scale: 4)),
+                obscureText: !driverProfileController.isPasswordVisible1.value,
               ),
             ),
             sh16,
-            Text('Re-type New Password',style: h5,),
+            Text(
+              'Re-type New Password',
+              style: h5,
+            ),
             sh8,
-            CustomTextField(
-              controller: confirmPassTEController,
-              hintText: '***********',
-              sufIcon: Image.asset(
-                AppImages.eyeClose,
-                scale: 4,
+            Obx(
+              () => CustomTextField(
+                controller: confirmPassTEController,
+                hintText: '***********',
+                sufIcon: GestureDetector(
+                    onTap: () {
+                      driverProfileController.togglePasswordVisibility2();
+                    },
+                    child: Image.asset(
+                        driverProfileController.isPasswordVisible2.value
+                            ? AppImages.eyeOpen
+                            : AppImages.eyeClose,
+                        scale: 4)),
+                obscureText: !driverProfileController.isPasswordVisible2.value,
               ),
             ),
             sh30,
             Obx(
-                  () => driverProfileController.isLoading.value == true
+              () => driverProfileController.isLoading.value == true
                   ? CustomLoader(
-                color: AppColors.white,
-              )
+                      color: AppColors.white,
+                    )
                   : CustomButton(
-                text: 'Confirm',
-                onPressed: () {
-                  driverProfileController.driverChangePassword(
-                    currentPassword: currentPassTEController.text,
-                    newPassword: newPassTEController.text,
-                    confirmPassword: confirmPassTEController.text,
-                    context: context,
-                  );
-                },
-                gradientColors: AppColors.gradientColorGreen,
-              ),
+                      text: 'Confirm',
+                      onPressed: () {
+                        driverProfileController.driverChangePassword(
+                          currentPassword: currentPassTEController.text,
+                          newPassword: newPassTEController.text,
+                          confirmPassword: confirmPassTEController.text,
+                          context: context,
+                        );
+                      },
+                      gradientColors: AppColors.gradientColorGreen,
+                    ),
             ),
           ],
         ),
