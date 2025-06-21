@@ -70,13 +70,12 @@ class HomeView extends GetView<HomeController> {
         automaticallyImplyLeading: false,
       ),
       body: RefreshIndicator(
-        onRefresh: ()async{
+        onRefresh: () async {
           await oHController.fetchOrderHistory();
           await profileController.getMyProfile();
           await homeController.getFuelInfo();
           await homeController.fetchServices();
           await settingsController.fetchConditions();
-
         },
         child: SingleChildScrollView(
           child: Column(
@@ -263,7 +262,6 @@ class HomeView extends GetView<HomeController> {
                       ),
                     ),
                     sh8,
-
                     CustomButton(
                       height: 40,
                       text: 'Order Now',
@@ -516,7 +514,9 @@ class HomeView extends GetView<HomeController> {
 
                   // Filter only Pending orders
                   final orders = oHController.orders
-                      .where((order) => order.orderStatus == 'Unassigned'&& order.isPaid == true)
+                      .where((order) =>
+                          order.orderStatus == 'Unassigned' &&
+                          order.isPaid == true)
                       .toList();
 
                   // Show message if no Pending orders are found

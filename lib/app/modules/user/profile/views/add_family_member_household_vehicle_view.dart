@@ -15,7 +15,7 @@ class AddFamilyMemberPopup extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final ProfileController profileController = Get.put(ProfileController());
   final VehicleAddController vehicleAddController =
-  Get.put(VehicleAddController());
+      Get.put(VehicleAddController());
 
   AddFamilyMemberPopup({super.key});
 
@@ -57,7 +57,7 @@ class AddFamilyMemberPopup extends StatelessWidget {
 
 class AddVehicleDetailsPopup extends StatelessWidget {
   final VehicleAddController vehicleAddController =
-  Get.put(VehicleAddController());
+      Get.put(VehicleAddController());
 
   AddVehicleDetailsPopup({super.key});
 
@@ -107,9 +107,8 @@ class AddVehicleDetailsPopup extends StatelessWidget {
 
 class AddFamilyMemberHouseholdVehicleView extends GetView {
   final ProfileController profileController = Get.put(ProfileController());
-  final VehicleAddController vehicleAddController = Get.put(VehicleAddController());
- // final OrderFuelController orderFuelController = Get.put(OrderFuelController());
-
+  final VehicleAddController vehicleAddController =
+      Get.put(VehicleAddController());
 
   AddFamilyMemberHouseholdVehicleView({super.key});
 
@@ -136,20 +135,28 @@ class AddFamilyMemberHouseholdVehicleView extends GetView {
             sh20,
             // Family Member Card or Add Card
             Obx(() {
-              final familyMember = profileController.myProfileData.value?.familyMember;
-              if (familyMember != null && familyMember.name != null && familyMember.email != null) {
+              final familyMemberName =
+                  profileController.myProfileData.value?.familyMember?.name ??
+                      "";
+
+              final familyMemberEmail =
+                  profileController.myProfileData.value?.familyMember?.email ??
+                      "";
+              if (familyMemberName != '' && familyMemberEmail != '') {
                 return Card(
                   margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   color: Colors.white,
                   child: ListTile(
                     leading: Image.asset(AppImages.family, scale: 4),
                     title: Text(
-                      familyMember.name!,
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      familyMemberName,
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
-                      familyMember.email!,
+                      familyMemberEmail,
                       style: TextStyle(color: Colors.pink, fontSize: 14),
                     ),
                   ),
@@ -157,13 +164,15 @@ class AddFamilyMemberHouseholdVehicleView extends GetView {
               } else {
                 return Card(
                   margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   color: Colors.white,
                   child: ListTile(
                     leading: Image.asset(AppImages.family, scale: 4),
                     title: Text(
                       'Add Family Member',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     onTap: () {
                       Get.dialog(AddFamilyMemberPopup());
@@ -174,18 +183,22 @@ class AddFamilyMemberHouseholdVehicleView extends GetView {
             }),
             // Vehicle Card or Add Card
             Obx(() {
-              print("${vehicleAddController.myVehicleList.length}" + ">>>>>>>>>>>>>>>>>>>");
+              print("${vehicleAddController.myVehicleList.length}" +
+                  ">>>>>>>>>>>>>>>>>>>");
               if (vehicleAddController.myVehicleList.isNotEmpty) {
-                final vehicle = vehicleAddController.myVehicleList[0]; // First vehicle
+                final vehicle =
+                    vehicleAddController.myVehicleList[0]; // First vehicle
                 return Card(
                   margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   color: Colors.white,
                   child: ListTile(
                     leading: Image.asset(AppImages.car, scale: 4),
                     title: Text(
                       '${vehicle.make}, ${vehicle.year} ~${vehicle.fuelLevel}% fuel',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
                       'Household vehicle',
@@ -196,13 +209,15 @@ class AddFamilyMemberHouseholdVehicleView extends GetView {
               } else {
                 return Card(
                   margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   color: Colors.white,
                   child: ListTile(
                     leading: Image.asset(AppImages.family, scale: 4),
                     title: Text(
                       'Add Household Vehicle',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     onTap: () {
                       Get.dialog(AddVehicleDetailsPopup());

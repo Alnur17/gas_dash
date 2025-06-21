@@ -26,6 +26,24 @@ class DriverProfileController extends GetxController {
 
   var selectedImage = Rxn<File>();
 
+  var isPasswordVisible = false.obs;
+  var isPasswordVisible1 = false.obs;
+  var isPasswordVisible2 = false.obs;
+
+
+
+  void togglePasswordVisibility() {
+    isPasswordVisible.toggle();
+  }
+
+  void togglePasswordVisibility1() {
+    isPasswordVisible1.toggle();
+  }
+
+  void togglePasswordVisibility2() {
+    isPasswordVisible2.toggle();
+  }
+
   @override
   void onInit() {
     getDriverProfile();
@@ -85,6 +103,23 @@ class DriverProfileController extends GetxController {
   }) async {
     try {
       isLoading(true);
+
+
+        if (currentPassword.trim().length < 6) {
+          Get.snackbar('Error', 'Password must be at least 6 characters');
+          return;
+        }
+
+        if (newPassword.trim().length < 6) {
+          Get.snackbar('Error', ' New Password must be at least 6 characters');
+          return;
+        }
+
+        if (confirmPassword.trim().length < 6) {
+          Get.snackbar('Error', ' Re-type New Password must be at least 6 characters');
+          return;
+        }
+
       var accessToken = LocalStorage.getData(key: AppConstant.accessToken);
       var map = {
         "oldPassword": currentPassword,
@@ -176,7 +211,7 @@ class DriverProfileController extends GetxController {
               message: "Profile updated successfully",
               bgColor: AppColors.green);
 
-          await getDriverProfile();
+          getDriverProfile();
           update();
           if (Get.context != null) {
             Navigator.pop(Get.context!);

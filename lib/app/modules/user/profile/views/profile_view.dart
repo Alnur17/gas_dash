@@ -88,9 +88,9 @@ class ProfileView extends GetView<ProfileController> {
             sh12,
             CustomListTile(
               onTap: () {
-                profileController.myProfileData.value?.title != '' ?
-                Get.to(() => AfterSubscriptionView()) :
-                Get.to(() => SubscriptionView());
+                profileController.myProfileData.value?.title != ''
+                    ? Get.to(() => AfterSubscriptionView())
+                    : Get.to(() => SubscriptionView());
               },
               leadingImage: AppImages.subscription,
               title: 'Subscription',
@@ -99,7 +99,9 @@ class ProfileView extends GetView<ProfileController> {
             sh12,
             CustomListTile(
               onTap: () {
-                Get.to(() => AddFamilyMemberHouseholdVehicleView());
+                profileController.myProfileData.value?.freeSubscriptionAdditionalFamilyMember == true
+                    ? Get.to(() => AddFamilyMemberHouseholdVehicleView())
+                    : Get.to(() => SubscriptionView());
               },
               leadingImage: AppImages.family,
               title: 'Family member or\nhousehold vehicle',
@@ -115,7 +117,6 @@ class ProfileView extends GetView<ProfileController> {
               trailingImage: AppImages.arrowRightSmall,
             ),
             sh12,
-
             CustomListTile(
               onTap: () {
                 Get.to(() => PoliciesView());
@@ -126,10 +127,10 @@ class ProfileView extends GetView<ProfileController> {
             ),
             sh12,
             CustomListTile(
-              onTap: () async {
-                await LocalStorage.removeData(key: AppConstant.accessToken);
-                await LocalStorage.removeData(key: AppConstant.refreshToken);
-                await LocalStorage.removeData(key: AppConstant.role);
+              onTap: ()  {
+                 LocalStorage.removeData(key: AppConstant.accessToken);
+                 LocalStorage.removeData(key: AppConstant.refreshToken);
+                 LocalStorage.removeData(key: AppConstant.role);
                 Get.offAll(() => LoginView());
               },
               leadingImage: AppImages.logout,

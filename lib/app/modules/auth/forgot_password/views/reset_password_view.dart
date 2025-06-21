@@ -19,10 +19,11 @@ class ResetPasswordView extends StatefulWidget {
 }
 
 class _ResetPasswordViewState extends State<ResetPasswordView> {
-  final ForgotPasswordController forgotPasswordController = Get.put(ForgotPasswordController());
+  final ForgotPasswordController forgotPasswordController =
+      Get.put(ForgotPasswordController());
   final TextEditingController newPasswordTEController = TextEditingController();
   final TextEditingController confirmPasswordTEController =
-  TextEditingController();
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -59,12 +60,20 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
               style: h4,
             ),
             sh12,
-            CustomTextField(
-              controller: newPasswordTEController,
-              hintText: '**********',
-              sufIcon: Image.asset(
-                AppImages.eyeClose,
-                scale: 4,
+            Obx(
+              () => CustomTextField(
+                controller: newPasswordTEController,
+                hintText: '**********',
+                sufIcon: GestureDetector(
+                    onTap: () {
+                      forgotPasswordController.togglePasswordVisibility();
+                    },
+                    child: Image.asset(
+                        forgotPasswordController.isPasswordVisible.value
+                            ? AppImages.eyeOpen
+                            : AppImages.eyeClose,
+                        scale: 4)),
+                obscureText: !forgotPasswordController.isPasswordVisible.value,
               ),
             ),
             sh16,
@@ -73,28 +82,36 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
               style: h4,
             ),
             sh12,
-            CustomTextField(
-              controller: confirmPasswordTEController,
-              sufIcon: Image.asset(
-                AppImages.eyeClose,
-                scale: 4,
+            Obx(
+              () => CustomTextField(
+                controller: confirmPasswordTEController,
+                sufIcon: GestureDetector(
+                    onTap: () {
+                      forgotPasswordController.togglePasswordVisibility2();
+                    },
+                    child: Image.asset(
+                        forgotPasswordController.isPasswordVisible2.value
+                            ? AppImages.eyeOpen
+                            : AppImages.eyeClose,
+                        scale: 4)),
+                obscureText: !forgotPasswordController.isPasswordVisible2.value,
+                hintText: '**********',
               ),
-              hintText: '**********',
             ),
             sh16,
             Obx(
-                  () => forgotPasswordController.isLoading.value == true
+              () => forgotPasswordController.isLoading.value == true
                   ? CustomLoader(color: AppColors.white)
                   : CustomButton(
-                text: 'Update Password',
-                onPressed: () {
-                  forgotPasswordController.resetPassword(
-                    newPassword: newPasswordTEController.text,
-                    confirmPassword: confirmPasswordTEController.text,
-                  );
-                },
-                gradientColors: AppColors.gradientColor,
-              ),
+                      text: 'Update Password',
+                      onPressed: () {
+                        forgotPasswordController.resetPassword(
+                          newPassword: newPasswordTEController.text,
+                          confirmPassword: confirmPasswordTEController.text,
+                        );
+                      },
+                      gradientColors: AppColors.gradientColor,
+                    ),
             ),
           ],
         ),

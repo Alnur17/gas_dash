@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/data/api.dart';
 import 'package:gas_dash/app/modules/user/dashboard/views/dashboard_view.dart';
-import 'package:gas_dash/app/modules/user/order_fuel/views/fuel_type_final_confirmation_view.dart';
+import 'package:gas_dash/app/modules/user/payment/controllers/payment_controller.dart';
 import 'package:gas_dash/common/app_constant/app_constant.dart';
 import 'package:gas_dash/common/helper/local_store.dart';
 import 'package:geocoding/geocoding.dart';
@@ -29,6 +29,8 @@ class OrderFuelController extends GetxController {
   final TextEditingController yearController = TextEditingController();
   final TextEditingController fuelLevelController = TextEditingController();
   final TextEditingController customAmountController = TextEditingController();
+
+  final PaymentController paymentController = Get.put(PaymentController());
 
   final isLoading = false.obs;
   // Observable for final confirmation data
@@ -173,7 +175,7 @@ class OrderFuelController extends GetxController {
     required String fuelType,
      String? schedulDate,
      String? schedulTime,
-    String? cuponCode,
+    String? couponCode,
   })
   async {
     isLoading.value = true;
@@ -195,6 +197,7 @@ class OrderFuelController extends GetxController {
         'zipCode': zipCode.value ?? '90001',
         'emergency': isEmergency ?? false,
         'cancelReason': '',
+        'cuponCode': couponCode ?? '',
         if (isEmergency == true )
           'schedulDate': schedulDate,
           'schedulTime': schedulTime,
@@ -225,7 +228,10 @@ class OrderFuelController extends GetxController {
           message: 'Order created successfully!',
           bgColor: AppColors.green,
         );
-        Get.to(() => FuelTypeFinalConfirmationView(orderId: orderId));
+        paymentController.createPaymentSession(
+          orderId: orderId, couponCode: couponCode,
+        );
+        //Get.to(() => FuelTypeFinalConfirmationView(orderId: orderId));
       }
     } catch (e) {
       Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
@@ -237,6 +243,7 @@ class OrderFuelController extends GetxController {
   Future<void> createOrderForServices({
     required String vehicleId,
     required String orderType,
+   // String? couponCode,
   })
   async {
     try {
@@ -254,6 +261,7 @@ class OrderFuelController extends GetxController {
         'orderType': orderType,
         'zipCode': zipCode.value ?? '90001',
         'cancelReason': '',
+        //'cuponCode': couponCode ?? '',
       };
 
       String body = jsonEncode(orderData);
@@ -281,7 +289,10 @@ class OrderFuelController extends GetxController {
           message: 'Order created successfully!',
           bgColor: AppColors.green,
         );
-        Get.to(() => FinalConfirmationView(orderId: orderId));
+        Get.to(()=> FinalConfirmationView(orderId: orderId,));
+        // paymentController.createPaymentSession(
+        //   orderId: orderId, couponCode: couponCode,
+        // );
       }
     } catch (e) {
       Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);

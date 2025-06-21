@@ -68,6 +68,7 @@ class FuelAndServiceCard extends StatelessWidget {
                   ),
                   sh5,
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Image.asset(
                         locationIconPath,
@@ -77,6 +78,8 @@ class FuelAndServiceCard extends StatelessWidget {
                       Text(
                         location,
                         style: h6,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
                       ),
                     ],
                   ),

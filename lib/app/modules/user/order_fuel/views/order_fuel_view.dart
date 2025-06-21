@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/user/emergency_fuel/views/schedule_delivery_from_calender_view.dart';
+import 'package:gas_dash/app/modules/user/order_fuel/views/fuel_type_final_confirmation_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
@@ -109,7 +110,7 @@ class _OrderFuelViewState extends State<OrderFuelView> {
           ),
         ),
       ),
-      barrierDismissible: true,
+      barrierDismissible: false,
     );
   }
 
@@ -251,34 +252,28 @@ class _OrderFuelViewState extends State<OrderFuelView> {
                                 amount: amount,
                                 fuelType: widget.fuelName ?? '',
                               ),
-                          // arguments: {
-                          //   'isEmergency': isEmergency,
-                          //   'vehicleId':
-                          //       orderFuelController.selectedVehicle.value?.id ??
-                          //           '',
-                          //   'presetAmount':
-                          //       orderFuelController.presetEnabled.value,
-                          //   'customAmount':
-                          //       orderFuelController.customEnabled.value,
-                          //   'amount': amount,
-                          //   'fuelType': fuelName ?? 'Premium',
-                          //   //'fuelPrice': fuelPrice,
-                          //   'location': {
-                          //     'latitude': orderFuelController.latitude.value,
-                          //     'longitude': orderFuelController.longitude.value,
-                          //   },
-                          // }
                           );
                     } else {
-                      orderFuelController.createOrder(
-                        isEmergency: widget.isEmergency ?? false,
-                        vehicleId:
-                            orderFuelController.selectedVehicle.value?.id ?? '',
-                        presetAmount: orderFuelController.presetEnabled.value,
-                        customAmount: orderFuelController.customEnabled.value,
+                      Get.to(()=> FuelTypeFinalConfirmationView(
+                        vehicleId: orderFuelController
+                            .selectedVehicle.value?.id ??
+                            '',
+                        customAmount:
+                        orderFuelController.customEnabled.value,
+                        presetAmount:
+                        orderFuelController.presetEnabled.value,
                         amount: amount,
-                        fuelType: widget.fuelName ?? 'Premium',
-                      );
+                        fuelType: widget.fuelName ?? '',
+                      ));
+                      // orderFuelController.createOrder(
+                      //   isEmergency: widget.isEmergency ?? false,
+                      //   vehicleId:
+                      //       orderFuelController.selectedVehicle.value?.id ?? '',
+                      //   presetAmount: orderFuelController.presetEnabled.value,
+                      //   customAmount: orderFuelController.customEnabled.value,
+                      //   amount: amount,
+                      //   fuelType: widget.fuelName ?? 'Premium',
+                      // );
                     }
 
                     // orderFuelController.createOrder(
