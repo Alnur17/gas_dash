@@ -109,7 +109,7 @@ class _OrderFuelViewState extends State<OrderFuelView> {
           ),
         ),
       ),
-      barrierDismissible: true,
+      barrierDismissible: false,
     );
   }
 
