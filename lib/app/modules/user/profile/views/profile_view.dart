@@ -127,10 +127,10 @@ class ProfileView extends GetView<ProfileController> {
             ),
             sh12,
             CustomListTile(
-              onTap: () async {
-                await LocalStorage.removeData(key: AppConstant.accessToken);
-                await LocalStorage.removeData(key: AppConstant.refreshToken);
-                await LocalStorage.removeData(key: AppConstant.role);
+              onTap: ()  {
+                 LocalStorage.removeData(key: AppConstant.accessToken);
+                 LocalStorage.removeData(key: AppConstant.refreshToken);
+                 LocalStorage.removeData(key: AppConstant.role);
                 Get.offAll(() => LoginView());
               },
               leadingImage: AppImages.logout,

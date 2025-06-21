@@ -71,6 +71,7 @@ class HomeView extends GetView<HomeController> {
         onRefresh: () async {
           await oHController.fetchOrderHistory();
           await profileController.getMyProfile();
+          await homeController.getFuelInfo();
         },
         child: SingleChildScrollView(
           child: Column(
@@ -421,76 +422,78 @@ class HomeView extends GetView<HomeController> {
                   },
                 );
               }),
-              Container(
-                height: 250,
-                width: double.infinity,
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  image: DecorationImage(
-                    image: AssetImage(AppImages.discount),
-                    scale: 4,
-                    fit: BoxFit.cover,
+              Obx(
+                () => Container(
+                  height: 250,
+                  width: double.infinity,
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    image: DecorationImage(
+                      image: AssetImage(AppImages.discount),
+                      scale: 4,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      left: 0,
-                      top: Get.height * 0.2,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.blurBack,
-                          borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(20),
-                            bottomRight: Radius.circular(20),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        left: 0,
+                        top: Get.height * 0.2,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.blurBack,
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(20),
+                              bottomRight: Radius.circular(20),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      bottom: 12,
-                      left: 12,
-                      right: 12,
-                      child: profileController.myProfileData.value
-                                  ?.fiftyPercentOffDeliveryFeeAfterWaivedTrips ==
-                              true
-                          ? Center(
-                            child: Text(
-                                'Premium Subscriber – 20% Off Today!',
-                                style: h5.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.white,
-                                ),
-                              ),
-                          )
-                          : Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Join Now for Discounts & No Tips!',
+                      Positioned(
+                        bottom: 12,
+                        left: 12,
+                        right: 12,
+                        child: profileController.myProfileData.value
+                                    ?.fiftyPercentOffDeliveryFeeAfterWaivedTrips ==
+                                true
+                            ? Center(
+                                child: Text(
+                                  'Premium Subscriber : Discount & No Tips!',
                                   style: h5.copyWith(
                                     fontWeight: FontWeight.w700,
                                     color: AppColors.white,
                                   ),
                                 ),
-                                sh8,
-                                CustomButton(
-                                  height: 40,
-                                  text: 'Join Now',
-                                  onPressed: () {
-                                    Get.to(() => SubscriptionView());
-                                  },
-                                  gradientColors: AppColors.gradientColor,
-                                  width: 150,
-                                ),
-                              ],
-                            ),
-                    ),
-                  ],
+                              )
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Join Now for Discounts & No Tips!',
+                                    style: h5.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.white,
+                                    ),
+                                  ),
+                                  sh8,
+                                  CustomButton(
+                                    height: 40,
+                                    text: 'Join Now',
+                                    onPressed: () {
+                                      Get.to(() => SubscriptionView());
+                                    },
+                                    gradientColors: AppColors.gradientColor,
+                                    width: 150,
+                                  ),
+                                ],
+                              ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               sh12,

@@ -211,7 +211,7 @@ class DriverProfileController extends GetxController {
               message: "Profile updated successfully",
               bgColor: AppColors.green);
 
-          await getDriverProfile();
+          getDriverProfile();
           update();
           if (Get.context != null) {
             Navigator.pop(Get.context!);

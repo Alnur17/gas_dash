@@ -26,7 +26,9 @@ class _OrderHistoryViewState extends State<OrderHistoryView> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        backgroundColor: AppColors.background,
         appBar: AppBar(
+          backgroundColor: AppColors.white,
           title: Text('Order History', style: titleStyle),
           centerTitle: true,
           bottom: TabBar(

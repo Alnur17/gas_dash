@@ -18,6 +18,7 @@ class PaymentController extends GetxController {
 
   Future<void> createPaymentSession({
     required String orderId,
+    String? couponCode,
   })
   async {
     isLoading.value = true;
