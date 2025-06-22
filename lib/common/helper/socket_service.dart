@@ -95,7 +95,7 @@ class SocketService {
     // Cancel any existing timer to avoid duplicates
     _stopLocationUpdates();
 
-    _locationTimer = Timer.periodic(Duration(seconds: 10), (timer) async {
+    _locationTimer = Timer.periodic(Duration(seconds: 20), (timer) async {
       if (_socket.connected) {
         try {
           final position = await _getCurrentLocation();
