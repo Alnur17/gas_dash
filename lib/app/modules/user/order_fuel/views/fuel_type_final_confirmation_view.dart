@@ -104,7 +104,7 @@ class _FuelTypeFinalConfirmationViewState
                       onPressed: () {
                         if (couponTextController.text.isNotEmpty) {
                           couponController
-                              .checkCoupon(couponTextController.text);
+                              .checkCoupon(couponTextController.text.trim());
                         } else {
                           kSnackBar(
                             message: 'Please enter a coupon code',
@@ -162,8 +162,9 @@ class _FuelTypeFinalConfirmationViewState
                                 customAmount: widget.customAmount,
                                 amount: widget.amount,
                                 fuelType: widget.fuelType,
-                                schedulTime: widget.scheduleTime,
-                                schedulDate: widget.scheduleDate,
+                                scheduleTime: widget.scheduleTime,
+                                scheduleDate: widget.scheduleDate,
+                                couponCode: couponTextController.text.trim(),
                               );
                             } else {
                               controller.createOrder(
@@ -173,6 +174,7 @@ class _FuelTypeFinalConfirmationViewState
                                 customAmount: widget.customAmount,
                                 amount: widget.amount,
                                 fuelType: widget.fuelType,
+                                couponCode: couponTextController.text.trim(),
                               );
                             }
                           },

@@ -124,9 +124,8 @@ class HomeView extends GetView<HomeController> {
                                   ),
                                 ),
                                 Text(
-                                  profileController
-                                              .myProfileData.value?.title !=
-                                          ''
+                                  profileController.myProfileData.value?.title !=
+                                          null
                                       ? 'Subscription Type:\n${profileController.myProfileData.value?.title.toString()}'
                                       : 'Subscription Type: Unsubscribe',
                                   style: h6,
@@ -142,7 +141,7 @@ class HomeView extends GetView<HomeController> {
                       text: 'Manage Subscription',
                       onPressed: () {
                         Get.to(() =>
-                            profileController.myProfileData.value?.title != ''
+                            profileController.myProfileData.value?.title != null
                                 ? AfterSubscriptionView()
                                 : SubscriptionView());
                       },
@@ -459,7 +458,16 @@ class HomeView extends GetView<HomeController> {
                    bottom: 12,
                    left: 12,
                    right: 12,
-                   child: Column(
+                   child: profileController.myProfileData.value
+                       ?.fiftyPercentOffDeliveryFeeAfterWaivedTrips ==
+                       true
+                       ? Center(child: Text(
+                     'You\'ve successfully enabled the discount and chosen not to leave a tip. Wishing you a wonderful day!',
+                     style: h5.copyWith(
+                       fontWeight: FontWeight.w700,
+                       color: AppColors.white,
+                     ),
+                   ),) : Column(
                      mainAxisAlignment: MainAxisAlignment.center,
                      crossAxisAlignment: CrossAxisAlignment.start,
                      children: [

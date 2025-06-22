@@ -11,8 +11,9 @@ import '../../driver_home/model/single_order_by_Id_model.dart';
 
 class DriverOrderDetailsView extends GetView {
   final SingleOrderData? orderData;
+  final String? location;
 
-  const DriverOrderDetailsView({super.key, this.orderData});
+  const DriverOrderDetailsView( {super.key, this.orderData,this.location,});
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +103,7 @@ class DriverOrderDetailsView extends GetView {
                   ),
                   sw8,
                   Text(
-                    orderData?.zipCode ?? 'Unknown Location',
+                   location ?? 'Unknown Location',
                     style: h6,
                   ),
                 ],

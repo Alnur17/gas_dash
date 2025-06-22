@@ -85,60 +85,60 @@ class OrderFuelController extends GetxController {
     });
   }
 
-  void promptForZipCode() {
-    final TextEditingController zipController = TextEditingController();
-    Get.dialog(
-      Dialog(
-        backgroundColor: AppColors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Align(
-                alignment: Alignment.center,
-                child: Text(
-                  'Enter Zip Code',
-                  style: h3.copyWith(fontSize: 20),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                hintText: 'Enter zip code (e.g., 90001)',
-                controller: zipController,
-                onChange: (value) {
-                  zipCode.value = value;
-                },
-              ),
-              const SizedBox(height: 20),
-              CustomButton(
-                text: 'Confirm',
-                onPressed: () {
-                  if (zipCode.value != null &&
-                      zipCode.value!.isNotEmpty &&
-                      RegExp(r'^\d{5}$').hasMatch(zipCode.value!)) {
-                    Get.back();// Close dialog
-                    //zipController.dispose(); // Dispose controller
-                    //isProcessing = false;
-                  } else {
-                    Get.snackbar(
-                        'Error', 'Please enter a valid 5-digit zip code',
-                        snackPosition: SnackPosition.BOTTOM);
-                  }
-                },
-                gradientColors: AppColors.gradientColorGreen,
-              ),
-            ],
-          ),
-        ),
-      ),
-      barrierDismissible: true,
-
-    );
-  }
+  // void promptForZipCode() {
+  //   final TextEditingController zipController = TextEditingController();
+  //   Get.dialog(
+  //     Dialog(
+  //       backgroundColor: AppColors.white,
+  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+  //       child: Padding(
+  //         padding: const EdgeInsets.all(16),
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Align(
+  //               alignment: Alignment.center,
+  //               child: Text(
+  //                 'Enter Zip Code',
+  //                 style: h3.copyWith(fontSize: 20),
+  //                 textAlign: TextAlign.center,
+  //               ),
+  //             ),
+  //             const SizedBox(height: 16),
+  //             CustomTextField(
+  //               hintText: 'Enter zip code (e.g., 90001)',
+  //               controller: zipController,
+  //               onChange: (value) {
+  //                 zipCode.value = value;
+  //               },
+  //             ),
+  //             const SizedBox(height: 20),
+  //             CustomButton(
+  //               text: 'Confirm',
+  //               onPressed: () {
+  //                 if (zipCode.value != null &&
+  //                     zipCode.value!.isNotEmpty &&
+  //                     RegExp(r'^\d{5}$').hasMatch(zipCode.value!)) {
+  //                   Get.back();// Close dialog
+  //                   //zipController.dispose(); // Dispose controller
+  //                   //isProcessing = false;
+  //                 } else {
+  //                   Get.snackbar(
+  //                       'Error', 'Please enter a valid 5-digit zip code',
+  //                       snackPosition: SnackPosition.BOTTOM);
+  //                 }
+  //               },
+  //               gradientColors: AppColors.gradientColorGreen,
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //     barrierDismissible: true,
+  //
+  //   );
+  // }
 
   double parseGallons(String amount) {
     try {
@@ -173,8 +173,8 @@ class OrderFuelController extends GetxController {
     required bool customAmount,
     required double amount,
     required String fuelType,
-     String? schedulDate,
-     String? schedulTime,
+     String? scheduleDate,
+     String? scheduleTime,
     String? couponCode,
   })
   async {
@@ -184,8 +184,8 @@ class OrderFuelController extends GetxController {
       final Map<String, dynamic> orderData = {
         'location': {
           'coordinates': [
-            longitude.value ?? 90.4125,
-            latitude.value ?? 23.8103,
+            longitude.value,
+            latitude.value,
           ],
         },
         'vehicleId': vehicleId,
@@ -199,8 +199,8 @@ class OrderFuelController extends GetxController {
         'cancelReason': '',
         'cuponCode': couponCode ?? '',
         if (isEmergency == true )
-          'schedulDate': schedulDate,
-          'schedulTime': schedulTime,
+          'schedulDate': scheduleDate,
+          'schedulTime': scheduleTime,
       };
 
       String body = jsonEncode(orderData);
@@ -543,7 +543,7 @@ class OrderFuelController extends GetxController {
       if (!serviceEnabled) {
         currentLocation.value = 'Location services are disabled.';
         zipCode.value = null;
-        promptForZipCode();
+        //promptForZipCode();
         return;
       }
 
@@ -553,7 +553,7 @@ class OrderFuelController extends GetxController {
         if (permission == LocationPermission.denied) {
           currentLocation.value = 'Location permissions are denied.';
           zipCode.value = null;
-          promptForZipCode();
+          //promptForZipCode();
           return;
         }
       }
@@ -561,7 +561,7 @@ class OrderFuelController extends GetxController {
       if (permission == LocationPermission.deniedForever) {
         currentLocation.value = 'Location permissions are permanently denied.';
         zipCode.value = null;
-        promptForZipCode();
+        //promptForZipCode();
         return;
       }
 
@@ -578,19 +578,32 @@ class OrderFuelController extends GetxController {
         Placemark place = placeMarks.first;
         currentLocation.value =
         '${place.street}, ${place.subLocality}, ${place.locality}';
-        zipCode.value = place.postalCode ?? '';
-        if (zipCode.value!.isEmpty) {
-          promptForZipCode();
-        }
+        zipCode.value = place.postalCode?.isNotEmpty == true
+            ? place.postalCode
+            : '90001'; // ✅ set default here
       } else {
         currentLocation.value = 'Address not found.';
-        zipCode.value = '';
-        promptForZipCode();
+        zipCode.value = '90001'; // ✅ fallback zip
       }
+
+
+      // if (placeMarks.isNotEmpty) {
+      //   Placemark place = placeMarks.first;
+      //   currentLocation.value =
+      //   '${place.street}, ${place.subLocality}, ${place.locality}';
+      //   zipCode.value = place.postalCode ?? '';
+      //   if (zipCode.value!.isEmpty) {
+      //    // promptForZipCode();
+      //   }
+      // } else {
+      //   currentLocation.value = 'Address not found.';
+      //   zipCode.value = '';
+      //   //promptForZipCode();
+      // }
     } catch (e) {
       currentLocation.value = 'Failed to get location: $e';
-      zipCode.value = '';
-      promptForZipCode();
+      zipCode.value = '90001';
+      //promptForZipCode();
     } finally {
       isLoading.value = false;
     }

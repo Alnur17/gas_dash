@@ -52,9 +52,9 @@ class PaymentSuccessView extends GetView {
             CustomButton(
               text: 'Back to Homepage',
               onPressed: () {
-                Get.offAll(()=> DashboardView());
                 orderHController.fetchOrderHistory();
                 profileController.getMyProfile();
+                Get.offAll(()=> DashboardView());
               },
               gradientColors: AppColors.gradientColor,
             ),

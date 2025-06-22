@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 
 import '../../../../../common/app_constant/app_constant.dart';
@@ -104,7 +105,7 @@ class DriverHomeController extends GetxController {
     displayedOrders.value = deliveredOrders;
   }
 
-  Future<void> fetchSingleOrder(String orderId) async {
+  Future<void> fetchSingleOrder(String orderId,location) async {
     try {
       isLoading.value = true;
 
@@ -172,6 +173,8 @@ class DriverHomeController extends GetxController {
           bgColor: AppColors.primaryColor,
         );
         fetchAssignedOrders(); // Refresh orders after acceptance
+        pendingOrders.refresh();
+        displayedOrders.refresh();
       } else {
         kSnackBar(
           message: result['message'] ?? 'Failed to accept order',
@@ -196,8 +199,28 @@ class DriverHomeController extends GetxController {
   //   );
   // }
 
+  var locationNames = <String, String>{}.obs;
+
+  Future<void> resolveLocation(String orderId, double lat, double lng) async {
+    if (!locationNames.containsKey(orderId)) {
+      try {
+        List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+        if (placemarks.isNotEmpty) {
+          final place = placemarks.first;
+          final address = "${place.locality}, ${place.country}";
+          locationNames[orderId] = address;
+        } else {
+          locationNames[orderId] = "Unknown";
+        }
+      } catch (e) {
+        locationNames[orderId] = "Unknown";
+      }
+    }
+  }
+
+
   // Placeholder for view details action
-  void viewOrderDetails(String orderId) {
-    fetchSingleOrder(orderId); // Call fetchSingleOrder to get details and navigate
+  void viewOrderDetails(String orderId,location) {
+    fetchSingleOrder(orderId,location); // Call fetchSingleOrder to get details and navigate
   }
 }

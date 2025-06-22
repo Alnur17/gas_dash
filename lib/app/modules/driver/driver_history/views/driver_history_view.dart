@@ -76,6 +76,19 @@ class OrderStatusSection extends GetView<DriverHomeController> {
             itemCount: orders.length,
             itemBuilder: (context, index) {
               final order = orders[index];
+              final orderId = order.id ?? 'unknown';
+              final coords = order.location?.coordinates;
+
+              // Start resolving location if not already done
+              if (coords != null &&
+                  !controller.locationNames.containsKey(orderId)) {
+                controller.resolveLocation(
+                    orderId, coords[1], coords[0]); // ✅ latitude, longitude
+              }
+
+              final locationName =
+                  controller.locationNames[orderId] ?? "Loading location...";
+
               return OrderHistoryCard(
                 emergency: order.emergency ?? false,
                 emergencyImage: AppImages.emergency,
@@ -98,16 +111,17 @@ class OrderStatusSection extends GetView<DriverHomeController> {
                           amounts:
                               '${order.amount?.toStringAsFixed(2) ?? '0.00'} Gallons',
                           orderName: order.fuelType ?? 'Unknown',
-                          location: order.location?.coordinates != null
-                              ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
-                              : 'Unknown', userId: order.userId!.id.toString(),
+                          location: locationName,
+                          userId: order.userId!.id.toString(),
                         ));
                   } else if (status == 'Pending') {
                     controller.acceptOrder(order.id ?? '');
                   }
                 },
                 onButton2Pressed: () {
-                  controller.viewOrderDetails(order.id ?? '');
+                  controller.viewOrderDetails(
+                    order.id ?? '', locationName,
+                  );
                 },
               );
             },

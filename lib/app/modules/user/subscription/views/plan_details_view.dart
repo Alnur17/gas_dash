@@ -119,7 +119,7 @@ class PlanDetailsView extends StatelessWidget {
       if (package.fuelPriceTrackingAlerts == true)
         'Fuel price tracking and alerts for low-price windows.',
       if (package.noExtraChargeForEmergencyFuelServiceLimit == true)
-        'Emergency fuel service at no extra charge (up to 2 times per month).',
+        'Emergency fuel service at no extra charge (up to ${package.freeDeliverylimit} times per month).',
       if (package.freeSubscriptionAdditionalFamilyMember == true)
         'Free subscription for one additional family member or vehicle.',
       if (package.exclusivePromotionsEarlyAccess == true)

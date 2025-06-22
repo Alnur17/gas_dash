@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_constant/app_constant.dart';
@@ -22,6 +23,26 @@ class OrderHistoryController extends GetxController {
     fetchOrderHistory();
     super.onInit();
 
+  }
+
+
+  var locationNames = <String, String>{}.obs;
+
+  Future<void> resolveLocation(String orderId, double lat, double lng) async {
+    if (!locationNames.containsKey(orderId)) {
+      try {
+        List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+        if (placemarks.isNotEmpty) {
+          final place = placemarks.first;
+          final address = "${place.locality}, ${place.country}";
+          locationNames[orderId] = address;
+        } else {
+          locationNames[orderId] = "Unknown";
+        }
+      } catch (e) {
+        locationNames[orderId] = "Unknown";
+      }
+    }
   }
 
   Future<void> fetchOrderHistory() async {
@@ -64,7 +85,7 @@ class OrderHistoryController extends GetxController {
     }
   }
 
-  Future<void> getSingleOrder(String orderId,amount) async {
+  Future<void> getSingleOrder(String orderId,amount,location) async {
     try {
       isLoading.value = true;
       errorMessage('');
@@ -100,7 +121,7 @@ class OrderHistoryController extends GetxController {
         final singleOrderData = SingleOrderByIdModel.fromJson(jsonResponse);
         if (singleOrderData.success == true && singleOrderData.data != null) {
           singleOrder.value = singleOrderData;
-          Get.to(() =>  OrderDetailsView(amount));
+          Get.to(() =>  OrderDetailsView(amount,location));
         } else {
           kSnackBar(
             message: singleOrderData.message ?? 'Failed to fetch order details',

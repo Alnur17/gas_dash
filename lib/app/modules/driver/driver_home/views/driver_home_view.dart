@@ -24,12 +24,10 @@ class _DriverHomeViewState extends State<DriverHomeView> {
   final DriverHomeController controller = Get.put(DriverHomeController());
   final ProfileController profileController = Get.put(ProfileController());
   final DriverEarningController driverEarningController =
-  Get.put(DriverEarningController());
-
+      Get.put(DriverEarningController());
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -73,7 +71,7 @@ class _DriverHomeViewState extends State<DriverHomeView> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Obx(() => RefreshIndicator(
-              onRefresh: () async{
+              onRefresh: () async {
                 await controller.fetchAssignedOrders();
                 await profileController.getMyProfile();
               },
@@ -126,25 +124,38 @@ class _DriverHomeViewState extends State<DriverHomeView> {
                                 itemCount: controller.pendingOrders.length,
                                 itemBuilder: (context, index) {
                                   final order = controller.pendingOrders[index];
-                                  return FuelAndServiceCard(
-                                    emergencyImage: AppImages.emergency,
-                                    emergency: order.emergency ?? false,
-                                    fuelAmount:
-                                        '${order.amount?.toStringAsFixed(2) ?? '0.00'} gallons',
-                                    fuelType: order.orderType ?? 'Unknown',
-                                    location: order.location?.coordinates !=
-                                            null
-                                        ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
-                                        : 'Unknown',
-                                    onAcceptPressed: () =>
-                                        controller.acceptOrder(order.id ?? ''),
-                                    onViewDetailsPressed: () => controller
-                                        .viewOrderDetails(order.id ?? ''),
-                                    fuelIconPath: AppImages.fuelFiller,
-                                    locationIconPath: AppImages.locationRed,
-                                  );
+                                  final orderId = order.id ?? 'unknown';
+                                  final coords = order.location?.coordinates;
+
+                                  // Start resolving location if not already done
+                                  if (coords != null &&
+                                      !controller.locationNames
+                                          .containsKey(orderId)) {
+                                    controller.resolveLocation(
+                                        orderId,coords[1], coords[0] );
+                                  }
+
+                                  return Obx(() {
+                                    final locationName =
+                                        controller.locationNames[orderId] ?? "Loading location...";
+
+                                    return FuelAndServiceCard(
+                                      emergencyImage: AppImages.emergency,
+                                      emergency: order.emergency ?? false,
+                                      fuelAmount:
+                                      '${order.amount?.toStringAsFixed(2) ?? '0.00'} gallons',
+                                      fuelType: order.orderType ?? 'Unknown',
+                                      location: locationName,
+                                      onAcceptPressed: () => controller.acceptOrder(order.id ?? ''),
+                                      onViewDetailsPressed: () => controller.viewOrderDetails(order.id ?? '',locationName),
+                                      fuelIconPath: AppImages.fuelFiller,
+                                      locationIconPath: AppImages.locationRed,
+                                    );
+                                  });
+
                                 },
                               ),
+
                     sh20,
                     Text(
                       'Active Order',
@@ -165,34 +176,49 @@ class _DriverHomeViewState extends State<DriverHomeView> {
                             itemCount: controller.inProgressOrders.length,
                             itemBuilder: (context, index) {
                               final order = controller.inProgressOrders[index];
-                              return ActiveOrder(
-                                emergencyImage: AppImages.emergency,
-                                emergency: order.emergency ?? false,
-                                orderId: order.id ?? 'Unknown',
-                                location: order.location?.coordinates != null
-                                    ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
-                                    : 'Unknown',
-                                fuelAmount: order.amount != null ? double.parse(order.amount.toString()) : 0.0,
-                                fuelType: order.orderType ?? 'Unknown',
-                                onAcceptPressed: () {
-                                  Get.to(() => DriverStartDeliveryView(
-                                        orderId: order.id ?? 'Unknown',
-                                        deliveryId: order.deleveryId ?? '',
-                                        customerName:
-                                            order.userId?.fullname ?? '',
-                                        customerImage: order.userId?.image,
-                                        amounts:
-                                            '${order.amount?.toStringAsFixed(2) ?? '0.00'} Gallons',
-                                        orderName: order.fuelType ?? 'Unknown',
-                                        location: order.location?.coordinates !=
-                                                null
-                                            ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
-                                            : 'Unknown', userId: order.userId!.id.toString(),
-                                      ));
-                                },
-                                onViewDetailsPressed: () =>
-                                    controller.viewOrderDetails(order.id ?? ''),
-                              );
+                              final orderId = order.id ?? 'unknown';
+                              final coords = order.location?.coordinates;
+
+                              // Start resolving location if not already done
+                              if (coords != null &&
+                                  !controller.locationNames
+                                      .containsKey(orderId)) {
+                                controller.resolveLocation(orderId, coords[1], coords[0]); // latitude, longitude
+
+                              }
+
+                              return Obx(() {
+                                final locationName =
+                                    controller.locationNames[orderId] ?? "Loading location...";
+
+                                return ActiveOrder(
+                                  emergencyImage: AppImages.emergency,
+                                  emergency: order.emergency ?? false,
+                                  orderId: order.id ?? 'Unknown',
+                                  location: locationName,
+                                  fuelAmount: order.amount != null
+                                      ? double.parse(order.amount.toString())
+                                      : 0.0,
+                                  fuelType: order.orderType ?? 'Unknown',
+                                  onAcceptPressed: () {
+                                    Get.to(() => DriverStartDeliveryView(
+                                      orderId: order.id ?? 'Unknown',
+                                      deliveryId: order.deleveryId ?? '',
+                                      customerName: order.userId?.fullname ?? '',
+                                      customerImage: order.userId?.image,
+                                      amounts:
+                                      '${order.amount?.toStringAsFixed(2) ?? '0.00'} Gallons',
+                                      orderName: order.fuelType ?? 'Unknown',
+                                      location: locationName,
+                                      userId: order.userId!.id.toString(),
+                                    ));
+                                  },
+                                  onViewDetailsPressed: () =>
+                                      controller.viewOrderDetails(order.id ?? '', locationName),
+                                );
+                              });
+
+
                             },
                           ),
                   ],

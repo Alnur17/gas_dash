@@ -8,7 +8,8 @@ import '../controllers/order_history_controller.dart';
 
 class OrderDetailsView extends GetView<OrderHistoryController> {
   final String? amount;
-  const OrderDetailsView(this.amount, {super.key});
+  final String? locationName;
+  const OrderDetailsView(this.amount, this.locationName, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +95,7 @@ class OrderDetailsView extends GetView<OrderHistoryController> {
                     ),
                     sw8,
                     Text(
-                      orderData.zipCode ?? 'Unknown',
+                      locationName ?? 'Unknown',
                       style: h6,
                     ),
                   ],

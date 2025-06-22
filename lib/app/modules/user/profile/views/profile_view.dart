@@ -88,7 +88,7 @@ class ProfileView extends GetView<ProfileController> {
             sh12,
             CustomListTile(
               onTap: () {
-                profileController.myProfileData.value?.title != ''
+                profileController.myProfileData.value?.title != null
                     ? Get.to(() => AfterSubscriptionView())
                     : Get.to(() => SubscriptionView());
               },
