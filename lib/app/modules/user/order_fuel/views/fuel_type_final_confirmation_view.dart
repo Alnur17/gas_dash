@@ -221,6 +221,7 @@ class _FuelTypeFinalConfirmationViewState
     extends State<FuelTypeFinalConfirmationView> {
   final OrderFuelController controller = Get.put(OrderFuelController());
   final CouponController couponController = Get.put(CouponController());
+  final PaymentController paymentController = Get.put(PaymentController());
   final TextEditingController couponTextController = TextEditingController();
 
   @override
@@ -247,7 +248,12 @@ class _FuelTypeFinalConfirmationViewState
       appBar: AppBar(
         backgroundColor: AppColors.background,
         scrolledUnderElevation: 0,
-        automaticallyImplyLeading: false,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+          },
+          child: Image.asset(AppImages.back, scale: 4),
+        ),
         title: Text('Final Confirmation', style: titleStyle),
         centerTitle: true,
       ),
@@ -393,7 +399,14 @@ class _FuelTypeFinalConfirmationViewState
                               ? CustomLoader(color: AppColors.white)
                               : CustomButton(
                                   text: 'Next',
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    paymentController.createPaymentSession(
+                                      orderId: widget.orderId ?? '',
+                                      couponCode:
+                                          couponTextController.text.trim(),
+                                    );
+                                    print(";;;;;;;;;;;;;;;;;;${couponTextController.text}");
+                                  },
                                   gradientColors: AppColors.gradientColorGreen,
                                 ),
                         ],

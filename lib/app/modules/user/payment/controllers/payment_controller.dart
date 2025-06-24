@@ -35,7 +35,7 @@ class PaymentController extends GetxController {
       'Content-Type': 'application/json',
     };
 
-    var map = {"orderFuelId": orderId};
+    var map = {"orderFuelId": orderId,"cuponCode": couponCode};
 
     dynamic responseBody = await BaseClient.handleResponse(
       await BaseClient.postRequest(

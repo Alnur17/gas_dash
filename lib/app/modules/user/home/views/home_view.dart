@@ -81,7 +81,7 @@ class HomeView extends GetView<HomeController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
+          profileController.myProfileData.value?.title != '' ? Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -150,7 +150,7 @@ class HomeView extends GetView<HomeController> {
                     ),
                   ],
                 ),
-              ),
+              ): Container(),
               sh16,
               Obx(() {
                 if (homeController.isLoading.value) {
@@ -229,21 +229,25 @@ class HomeView extends GetView<HomeController> {
                 );
               }),
               sh16,
-            Obx(() =>   Container(
-              height: 180,
-              width: double.infinity,
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: AppColors.silver,
-                image: DecorationImage(
-                  image: NetworkImage(settingsController.conditionsModel.value.data[0].emergencyFuelBanner.toString()),
-                  scale: 4,
-                  fit: BoxFit.cover,
+              Obx(
+                () => Container(
+                  height: 180,
+                  width: double.infinity,
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: AppColors.silver,
+                    image: DecorationImage(
+                      image: NetworkImage(settingsController
+                          .conditionsModel.value.data[0].emergencyFuelBanner
+                          .toString()),
+                      scale: 4,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
               ),
-            ),),
               sh16,
               // Obx(
               //   () => settingsController.isLoading.value == true
@@ -399,20 +403,22 @@ class HomeView extends GetView<HomeController> {
               //   },
               // ),
               sh16,
-              Container(
-                height: 180,
-                width: double.infinity,
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: AppColors.silver,
-                  image: DecorationImage(
-                    image: NetworkImage(settingsController
-                        .conditionsModel.value.data[0].emergencyFuelBanner
-                        .toString()),
-                    scale: 4,
-                    fit: BoxFit.cover,
+              Obx(
+                () => Container(
+                  height: 180,
+                  width: double.infinity,
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: AppColors.silver,
+                    image: DecorationImage(
+                      image: NetworkImage(settingsController
+                          .conditionsModel.value.data[0].emergencyFuelBanner
+                          .toString()),
+                      scale: 4,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
@@ -591,7 +597,8 @@ class HomeView extends GetView<HomeController> {
                   if (orders.isEmpty) {
                     return Padding(
                       padding: const EdgeInsets.only(top: 12),
-                      child: const Center(child: Text('No Pending orders found')),
+                      child:
+                          const Center(child: Text('No Pending orders found')),
                     );
                   }
 
@@ -621,20 +628,22 @@ class HomeView extends GetView<HomeController> {
                 },
               ),
               sh16,
-              Container(
-                height: 180,
-                width: double.infinity,
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: AppColors.silver,
-                  image: DecorationImage(
-                    image: NetworkImage(settingsController
-                        .conditionsModel.value.data[0].emergencyFuelBanner
-                        .toString()),
-                    scale: 4,
-                    fit: BoxFit.cover,
+              Obx(
+                () => Container(
+                  height: 180,
+                  width: double.infinity,
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: AppColors.silver,
+                    image: DecorationImage(
+                      image: NetworkImage(settingsController
+                          .conditionsModel.value.data[0].emergencyFuelBanner
+                          .toString()),
+                      scale: 4,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),

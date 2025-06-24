@@ -241,7 +241,7 @@ class _OrderFuelViewState extends State<OrderFuelView> {
                     if (widget.isEmergency == true) {
                       Get.to(
                         () => ScheduleDeliveryFromCalenderView(
-                          isEmergency: widget.isEmergency ?? false,
+                          isEmergency: widget.isEmergency!,
                           vehicleId:
                               orderFuelController.selectedVehicle.value?.id ??
                                   '',
@@ -251,19 +251,17 @@ class _OrderFuelViewState extends State<OrderFuelView> {
                           fuelType: widget.fuelName ?? '',
                         ),
                       );
+                    }else {
+                        orderFuelController.createOrder(
+                         // isEmergency: widget.isEmergency ?? false,
+                          vehicleId:
+                              orderFuelController.selectedVehicle.value?.id ?? '',
+                          presetAmount: orderFuelController.presetEnabled.value,
+                          customAmount: orderFuelController.customEnabled.value,
+                          amount: amount,
+                          fuelType: widget.fuelName ?? 'Premium',
+                        );
                     }
-                    //else {
-                      //Get.to(() => FuelTypeFinalConfirmationView(orderId: ,));
-                      //   orderFuelController.createOrder(
-                      //     isEmergency: widget.isEmergency ?? false,
-                      //     vehicleId:
-                      //         orderFuelController.selectedVehicle.value?.id ?? '',
-                      //     presetAmount: orderFuelController.presetEnabled.value,
-                      //     customAmount: orderFuelController.customEnabled.value,
-                      //     amount: amount,
-                      //     fuelType: widget.fuelName ?? 'Premium',
-                      //   );
-                    //}
 
                     // orderFuelController.createOrder(
                     //   isEmergency: isEmergency ?? false,
