@@ -240,41 +240,30 @@ class _OrderFuelViewState extends State<OrderFuelView> {
 
                     if (widget.isEmergency == true) {
                       Get.to(
-                          () => ScheduleDeliveryFromCalenderView(
-                                isEmergency: widget.isEmergency ?? false,
-                                vehicleId: orderFuelController
-                                        .selectedVehicle.value?.id ??
-                                    '',
-                                customAmount:
-                                    orderFuelController.customEnabled.value,
-                                presetAmount:
-                                    orderFuelController.presetEnabled.value,
-                                amount: amount,
-                                fuelType: widget.fuelName ?? '',
-                              ),
-                          );
-                    } else {
-                      Get.to(()=> FuelTypeFinalConfirmationView(
-                        vehicleId: orderFuelController
-                            .selectedVehicle.value?.id ??
-                            '',
-                        customAmount:
-                        orderFuelController.customEnabled.value,
-                        presetAmount:
-                        orderFuelController.presetEnabled.value,
-                        amount: amount,
-                        fuelType: widget.fuelName ?? '',
-                      ));
-                      // orderFuelController.createOrder(
-                      //   isEmergency: widget.isEmergency ?? false,
-                      //   vehicleId:
-                      //       orderFuelController.selectedVehicle.value?.id ?? '',
-                      //   presetAmount: orderFuelController.presetEnabled.value,
-                      //   customAmount: orderFuelController.customEnabled.value,
-                      //   amount: amount,
-                      //   fuelType: widget.fuelName ?? 'Premium',
-                      // );
+                        () => ScheduleDeliveryFromCalenderView(
+                          isEmergency: widget.isEmergency ?? false,
+                          vehicleId:
+                              orderFuelController.selectedVehicle.value?.id ??
+                                  '',
+                          customAmount: orderFuelController.customEnabled.value,
+                          presetAmount: orderFuelController.presetEnabled.value,
+                          amount: amount,
+                          fuelType: widget.fuelName ?? '',
+                        ),
+                      );
                     }
+                    //else {
+                      //Get.to(() => FuelTypeFinalConfirmationView(orderId: ,));
+                      //   orderFuelController.createOrder(
+                      //     isEmergency: widget.isEmergency ?? false,
+                      //     vehicleId:
+                      //         orderFuelController.selectedVehicle.value?.id ?? '',
+                      //     presetAmount: orderFuelController.presetEnabled.value,
+                      //     customAmount: orderFuelController.customEnabled.value,
+                      //     amount: amount,
+                      //     fuelType: widget.fuelName ?? 'Premium',
+                      //   );
+                    //}
 
                     // orderFuelController.createOrder(
                     //   isEmergency: isEmergency ?? false,
@@ -313,16 +302,13 @@ class AmountToggleSection extends StatelessWidget {
     );
 
     const inputTextStyle = TextStyle(
-      fontSize: 14,
-      color: AppColors.black100,
-      fontWeight: FontWeight.w600
-    );
+        fontSize: 14, color: AppColors.black100, fontWeight: FontWeight.w600);
 
     InputDecoration inputDecoration(String hint) => InputDecoration(
           filled: true,
           fillColor: Colors.white,
           hintText: hint,
-          hintStyle:  TextStyle(
+          hintStyle: TextStyle(
             color: AppColors.black100,
             fontSize: 12,
           ),

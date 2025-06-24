@@ -21,6 +21,7 @@ import '../../../../data/base_client.dart';
 import '../../jump_start_car_battery/views/final_confirmation_view.dart';
 import '../model/final_confirmation_model.dart';
 import '../model/vechicle_model.dart';
+import '../views/fuel_type_final_confirmation_view.dart';
 
 class OrderFuelController extends GetxController {
   // TextEditingControllers for text fields
@@ -194,7 +195,7 @@ class OrderFuelController extends GetxController {
         'amount': amount,
         'fuelType': fuelType,
         'orderType': 'Fuel',
-        'zipCode': zipCode.value ?? '90001',
+        'zipCode': zipCode.value ?? '12080',
         'emergency': isEmergency ?? false,
         'cancelReason': '',
         'cuponCode': couponCode ?? '',
@@ -228,10 +229,10 @@ class OrderFuelController extends GetxController {
           message: 'Order created successfully!',
           bgColor: AppColors.green,
         );
-        paymentController.createPaymentSession(
-          orderId: orderId, couponCode: couponCode,
-        );
-        //Get.to(() => FuelTypeFinalConfirmationView(orderId: orderId));
+        // paymentController.createPaymentSession(
+        //   orderId: orderId, couponCode: couponCode,
+        // );
+        Get.to(() => FuelTypeFinalConfirmationView(orderId: orderId));
       }
     } catch (e) {
       Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
@@ -253,13 +254,13 @@ class OrderFuelController extends GetxController {
       final Map<String, dynamic> orderData = {
         'location': {
           'coordinates': [
-            longitude.value ?? 90.4125,
-            latitude.value ?? 23.8103,
+            longitude.value,
+            latitude.value,
           ],
         },
         'vehicleId': vehicleId,
         'orderType': orderType,
-        'zipCode': zipCode.value ?? '90001',
+        'zipCode': zipCode.value ?? '12080',
         'cancelReason': '',
         //'cuponCode': couponCode ?? '',
       };
@@ -580,10 +581,10 @@ class OrderFuelController extends GetxController {
         '${place.street}, ${place.subLocality}, ${place.locality}';
         zipCode.value = place.postalCode?.isNotEmpty == true
             ? place.postalCode
-            : '90001'; // ✅ set default here
+            : '12080'; // ✅ set default here
       } else {
         currentLocation.value = 'Address not found.';
-        zipCode.value = '90001'; // ✅ fallback zip
+        zipCode.value = '12080'; // ✅ fallback zip
       }
 
 

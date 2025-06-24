@@ -252,34 +252,34 @@ class ScheduleDeliveryFromCalenderView extends GetView {
                 'Date: ${scheduleDeliveryFromCalenderController.selectedDay.value}');
             print(
                 'Time: ${scheduleDeliveryFromCalenderController.selectedTime.value.format(context)}');
-            Get.to(
-              () => FuelTypeFinalConfirmationView(
-                isEmergency: isEmergency,
-                vehicleId: vehicleId,
-                presetAmount: presetAmount,
-                fuelType: fuelType,
-                amount: amount,
-                customAmount: customAmount,
-                scheduleDate:
-                    "${scheduleDeliveryFromCalenderController.selectedDay.value}",
-                scheduleTime: scheduleDeliveryFromCalenderController
-                    .selectedTime.value
-                    .format(context),
-              ),
-            );
-            // orderFuelController.createOrder(
-            //   isEmergency: isEmergency,
-            //   vehicleId: orderFuelController.selectedVehicle.value?.id ?? '',
-            //   presetAmount: orderFuelController.presetEnabled.value,
-            //   customAmount: orderFuelController.customEnabled.value,
-            //   amount: amount,
-            //   fuelType: fuelType,
-            //   schedulDate:
-            //       "${scheduleDeliveryFromCalenderController.selectedDay.value}",
-            //   schedulTime: scheduleDeliveryFromCalenderController
-            //       .selectedTime.value
-            //       .format(context),
+            // Get.to(
+            //   () => FuelTypeFinalConfirmationView(
+            //     isEmergency: isEmergency,
+            //     vehicleId: vehicleId,
+            //     presetAmount: presetAmount,
+            //     fuelType: fuelType,
+            //     amount: amount,
+            //     customAmount: customAmount,
+            //     scheduleDate:
+            //         "${scheduleDeliveryFromCalenderController.selectedDay.value}",
+            //     scheduleTime: scheduleDeliveryFromCalenderController
+            //         .selectedTime.value
+            //         .format(context),
+            //   ),
             // );
+            orderFuelController.createOrder(
+              isEmergency: isEmergency,
+              vehicleId: orderFuelController.selectedVehicle.value?.id ?? '',
+              presetAmount: orderFuelController.presetEnabled.value,
+              customAmount: orderFuelController.customEnabled.value,
+              amount: amount,
+              fuelType: fuelType,
+              scheduleDate:
+                  "${scheduleDeliveryFromCalenderController.selectedDay.value}",
+              scheduleTime: scheduleDeliveryFromCalenderController
+                  .selectedTime.value
+                  .format(context),
+            );
           },
           gradientColors: AppColors.gradientColorGreen,
         ),

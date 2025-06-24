@@ -96,7 +96,7 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
         sh8,
         CustomTextField(
           //preIcon: Image.asset(AppImages.message, scale: 4),
-          hintText: 'Enter your location',
+          hintText: 'Enter your city and state',
           controller: signupController.locationController,
         ),
         sh24,
