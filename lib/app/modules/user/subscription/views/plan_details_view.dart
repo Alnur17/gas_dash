@@ -93,6 +93,7 @@ import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/widgets/custom_background.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
+import 'package:gas_dash/common/widgets/custom_loader.dart';
 import 'package:get/get.dart';
 
 import '../../../../../common/app_color/app_colors.dart';
@@ -176,6 +177,7 @@ class PlanDetailsView extends StatelessWidget {
                 ),
               )),
               sh30,
+              controller.isLoading.value == true ? CustomLoader(color: AppColors.white) :
               CustomButton(
                 text: 'Buy Now',
                 onPressed: () {

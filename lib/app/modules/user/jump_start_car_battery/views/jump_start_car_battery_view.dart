@@ -14,6 +14,7 @@ import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
 import '../../../../../common/widgets/custom_textfield.dart';
 import '../../order_fuel/controllers/order_fuel_controller.dart';
+import '../../order_fuel/views/map_picker_view.dart';
 
 class JumpStartCarBatteryView extends StatefulWidget {
   final String? title;
@@ -172,7 +173,9 @@ class _JumpStartCarBatteryViewState extends State<JumpStartCarBatteryView> {
                 () => LocationCard(
                   locationText: orderFuelController.currentLocation.value,
                   buttonText: 'Change Location',
-                  onButtonPressed: () {},
+                  onButtonPressed: () {
+                    Get.to(() => const MapPickerView());
+                  },
                 ),
               ),
               sh20,

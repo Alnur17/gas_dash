@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/user/payment/controllers/payment_controller.dart';
 import 'package:get/get.dart';
 import '../../../../../common/app_color/app_colors.dart';
+import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_button.dart';
@@ -10,8 +11,9 @@ import '../../order_fuel/controllers/order_fuel_controller.dart';
 
 class FinalConfirmationView extends StatefulWidget {
   final String? orderId;
+  final String address;
 
-  const FinalConfirmationView({super.key, this.orderId});
+  const FinalConfirmationView({super.key, this.orderId, required this.address});
 
   @override
   State<FinalConfirmationView> createState() => _FinalConfirmationViewState();
@@ -49,7 +51,12 @@ class _FinalConfirmationViewState extends State<FinalConfirmationView> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         scrolledUnderElevation: 0,
-        automaticallyImplyLeading: false,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+          },
+          child: Image.asset(AppImages.back, scale: 4),
+        ),
         title: Text('Final Confirmation', style: titleStyle),
         centerTitle: true,
       ),

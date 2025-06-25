@@ -98,81 +98,82 @@ class _HomeViewState extends State<HomeView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              profileController.myProfileData.value?.title != null
+              Obx(() => profileController.myProfileData.value?.title != null
                   ? Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: AppColors.silver),
-                        color: AppColors.white,
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Obx(
-                                () => CircleAvatar(
-                                  radius: 25,
-                                  backgroundColor: AppColors.white,
-                                  backgroundImage: NetworkImage(
-                                    profileController
-                                            .myProfileData.value?.image ??
-                                        AppImages.profileImageTwo,
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.silver),
+                  color: AppColors.white,
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Obx(
+                              () => CircleAvatar(
+                            radius: 25,
+                            backgroundColor: AppColors.white,
+                            backgroundImage: NetworkImage(
+                              profileController
+                                  .myProfileData.value?.image ??
+                                  AppImages.profileImageTwo,
+                            ),
+                          ),
+                        ),
+                        sw8,
+                        Obx(
+                              () {
+                            return Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  profileController.myProfileData.value
+                                      ?.fullname ??
+                                      'Unknown',
+                                  style: h3.copyWith(
+                                    fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                              ),
-                              sw8,
-                              Obx(
-                                () {
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        profileController.myProfileData.value
-                                                ?.fullname ??
-                                            'Unknown',
-                                        style: h3.copyWith(
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Customer',
-                                        style: h6.copyWith(
-                                          color: AppColors.blueTurquoise,
-                                        ),
-                                      ),
-                                      Text(
-                                        profileController.myProfileData.value
-                                                    ?.title !=
-                                                null
-                                            ? 'Subscription Type:\n${profileController.myProfileData.value?.title.toString()}'
-                                            : 'Subscription Type: Unsubscribe',
-                                        style: h6,
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                          sh12,
-                          CustomButton(
-                            text: 'Manage Subscription',
-                            onPressed: () {
-                              Get.to(() => profileController
-                                          .myProfileData.value?.title !=
+                                Text(
+                                  'Customer',
+                                  style: h6.copyWith(
+                                    color: AppColors.blueTurquoise,
+                                  ),
+                                ),
+                                Text(
+                                  profileController.myProfileData.value
+                                      ?.title !=
                                       null
-                                  ? AfterSubscriptionView()
-                                  : SubscriptionView());
-                            },
-                            gradientColors: AppColors.gradientColor,
-                          ),
-                        ],
-                      ),
-                    )
-                  : Container(),
+                                      ? 'Subscription Type:\n${profileController.myProfileData.value?.title.toString()}'
+                                      : 'Subscription Type: Unsubscribe',
+                                  style: h6,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    sh12,
+                    CustomButton(
+                      text: 'Manage Subscription',
+                      onPressed: () {
+                        Get.to(() => profileController
+                            .myProfileData.value?.title !=
+                            null
+                            ? AfterSubscriptionView()
+                            : SubscriptionView());
+                      },
+                      gradientColors: AppColors.gradientColor,
+                    ),
+                  ],
+                ),
+              )
+                  : Container(),),
+
               sh16,
               Obx(() {
                 if (homeController.isLoading.value) {
@@ -426,7 +427,7 @@ class _HomeViewState extends State<HomeView> {
               sh16,
               BannerWidget(
                 settingsController: settingsController,
-                bannerSelector: (data) => data.emergencyFuelBanner,
+                bannerSelector: (data) => data.fuelTypeBanner,
               ),
               sh16,
               Padding(
@@ -640,7 +641,7 @@ class _HomeViewState extends State<HomeView> {
               sh16,
               BannerWidget(
                 settingsController: settingsController,
-                bannerSelector: (data) => data.discountBanner,
+                bannerSelector: (data) => data.orderHistoryBanner,
               ),
 
               sh40,

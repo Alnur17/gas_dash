@@ -15,7 +15,10 @@ class Api {
   static const changePassword = "$baseUrl/auth/change-password"; //done
 
   ///Gas Prices
-  static const fuelInfo = "$baseUrl/fuelInfo"; //done
+  static const fuelInfo = "$baseUrl/fuelInfo/userzipprise"; //done
+
+  ///Business Hour
+  static const businessHour = "$baseUrl/business-ours"; //done
 
   ///Services
   static const service = "$baseUrl/services/"; //done

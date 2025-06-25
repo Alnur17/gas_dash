@@ -292,10 +292,8 @@ class OrderFuelController extends GetxController {
         );
         Get.to(() => FinalConfirmationView(
               orderId: orderId,
+              address: currentLocation.value,
             ));
-        // paymentController.createPaymentSession(
-        //   orderId: orderId, couponCode: couponCode,
-        // );
       }
     } catch (e) {
       Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);

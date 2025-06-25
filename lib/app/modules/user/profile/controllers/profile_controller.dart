@@ -169,8 +169,7 @@ class ProfileController extends GetxController {
       };
       var headers = {
         'Content-Type': 'application/json',
-        'Authorization':
-        'Bearer ${LocalStorage.getData(key: AppConstant.accessToken)}',
+        'Authorization': 'Bearer ${LocalStorage.getData(key: AppConstant.accessToken)}',
       };
 
       dynamic responseBody = await BaseClient.handleResponse(

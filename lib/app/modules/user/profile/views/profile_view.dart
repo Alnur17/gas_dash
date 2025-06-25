@@ -36,109 +36,109 @@ class ProfileView extends GetView<ProfileController> {
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            sh20,
-            Obx(
-              () => CircleAvatar(
+        child: Obx(
+          () => Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              sh20,
+              CircleAvatar(
                 radius: 50,
                 backgroundColor: AppColors.white,
                 backgroundImage: NetworkImage(
                     profileController.myProfileData.value?.image ??
                         AppImages.profileImageTwo),
               ),
-            ),
-            sh8,
-            Obx(
-              () => Text(
+              sh8,
+              Text(
                 profileController.myProfileName.value,
                 style: h5.copyWith(
                   fontWeight: FontWeight.w500,
                 ),
               ),
-            ),
-            sh20,
-            CustomListTile(
-              onTap: () {
-                Get.to(() => EditProfileView());
-              },
-              leadingImage: AppImages.editProfile,
-              title: 'Edit Profile',
-              trailingImage: AppImages.arrowRightSmall,
-            ),
-            sh12,
-            CustomListTile(
-              onTap: () {
-                Get.to(() => ChangePasswordView());
-              },
-              leadingImage: AppImages.changePass,
-              title: 'Change  Password ',
-              trailingImage: AppImages.arrowRightSmall,
-            ),
-            sh12,
-            CustomListTile(
-              onTap: () {
-                Get.to(() => TrackYourOrderView());
-              },
-              leadingImage: AppImages.locationBlue,
-              title: 'Track your Order',
-              trailingImage: AppImages.arrowRightSmall,
-            ),
-            sh12,
-            CustomListTile(
-              onTap: () {
-                profileController.myProfileData.value?.title != null
-                    ? Get.to(() => AfterSubscriptionView())
-                    : Get.to(() => SubscriptionView());
-              },
-              leadingImage: AppImages.subscription,
-              title: 'Subscription',
-              trailingImage: AppImages.arrowRightSmall,
-            ),
-            sh12,
-            CustomListTile(
-              onTap: () {
-                profileController.myProfileData.value?.freeSubscriptionAdditionalFamilyMember == true
-                    ? Get.to(() => AddFamilyMemberHouseholdVehicleView())
-                    : Get.to(() => SubscriptionView());
-              },
-              leadingImage: AppImages.family,
-              title: 'Family member or\nhousehold vehicle',
-              trailingImage: AppImages.arrowRightSmall,
-            ),
-            sh12,
-            CustomListTile(
-              onTap: () {
-                Get.to(() => TermsAndConditionsView());
-              },
-              leadingImage: AppImages.termsAndConditions,
-              title: 'Terms and conditions',
-              trailingImage: AppImages.arrowRightSmall,
-            ),
-            sh12,
-            CustomListTile(
-              onTap: () {
-                Get.to(() => PoliciesView());
-              },
-              leadingImage: AppImages.policy,
-              title: 'Privacy and Policies',
-              trailingImage: AppImages.arrowRightSmall,
-            ),
-            sh12,
-            CustomListTile(
-              onTap: ()  {
-                 LocalStorage.removeData(key: AppConstant.accessToken);
-                 LocalStorage.removeData(key: AppConstant.refreshToken);
-                 LocalStorage.removeData(key: AppConstant.role);
-                Get.offAll(() => LoginView());
-              },
-              leadingImage: AppImages.logout,
-              title: 'Log Out',
-              trailingImage: AppImages.arrowRightSmall,
-            ),
-            sh40,
-          ],
+              sh20,
+              CustomListTile(
+                onTap: () {
+                  Get.to(() => EditProfileView());
+                },
+                leadingImage: AppImages.editProfile,
+                title: 'Edit Profile',
+                trailingImage: AppImages.arrowRightSmall,
+              ),
+              sh12,
+              CustomListTile(
+                onTap: () {
+                  Get.to(() => ChangePasswordView());
+                },
+                leadingImage: AppImages.changePass,
+                title: 'Change  Password ',
+                trailingImage: AppImages.arrowRightSmall,
+              ),
+              sh12,
+              CustomListTile(
+                onTap: () {
+                  Get.to(() => TrackYourOrderView());
+                },
+                leadingImage: AppImages.locationBlue,
+                title: 'Track your Order',
+                trailingImage: AppImages.arrowRightSmall,
+              ),
+              sh12,
+              CustomListTile(
+                onTap: () {
+                  profileController.myProfileData.value?.title != null
+                      ? Get.to(() => AfterSubscriptionView())
+                      : Get.to(() => SubscriptionView());
+                },
+                leadingImage: AppImages.subscription,
+                title: 'Subscription',
+                trailingImage: AppImages.arrowRightSmall,
+              ),
+              sh12,
+              CustomListTile(
+                onTap: () {
+                  profileController.myProfileData.value
+                              ?.freeSubscriptionAdditionalFamilyMember !=
+                          true
+                      ? Get.to(() => SubscriptionView())
+                      : Get.to(() => AddFamilyMemberHouseholdVehicleView());
+                },
+                leadingImage: AppImages.family,
+                title: 'Family member or\nhousehold vehicle',
+                trailingImage: AppImages.arrowRightSmall,
+              ),
+              sh12,
+              CustomListTile(
+                onTap: () {
+                  Get.to(() => TermsAndConditionsView());
+                },
+                leadingImage: AppImages.termsAndConditions,
+                title: 'Terms and conditions',
+                trailingImage: AppImages.arrowRightSmall,
+              ),
+              sh12,
+              CustomListTile(
+                onTap: () {
+                  Get.to(() => PoliciesView());
+                },
+                leadingImage: AppImages.policy,
+                title: 'Privacy and Policies',
+                trailingImage: AppImages.arrowRightSmall,
+              ),
+              sh12,
+              CustomListTile(
+                onTap: () {
+                  LocalStorage.removeData(key: AppConstant.accessToken);
+                  LocalStorage.removeData(key: AppConstant.refreshToken);
+                  LocalStorage.removeData(key: AppConstant.role);
+                  Get.offAll(() => LoginView());
+                },
+                leadingImage: AppImages.logout,
+                title: 'Log Out',
+                trailingImage: AppImages.arrowRightSmall,
+              ),
+              sh40,
+            ],
+          ),
         ),
       ),
     );
