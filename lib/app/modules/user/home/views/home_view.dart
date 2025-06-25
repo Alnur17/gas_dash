@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gas_dash/app/modules/user/emergency_fuel/views/emergency_fuel_view.dart';
 import 'package:gas_dash/app/modules/user/home/views/notification_view.dart';
 import 'package:gas_dash/app/modules/user/jump_start_car_battery/views/jump_start_car_battery_view.dart';
 import 'package:gas_dash/app/modules/user/order_fuel/views/order_fuel_view.dart';
@@ -14,18 +13,36 @@ import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
 import 'package:get/get.dart';
 import '../../../../../common/app_text_style/styles.dart';
+import '../../../../../common/helper/banner_widget.dart';
 import '../../../../../common/helper/fuel_card.dart';
 import '../../../../../common/helper/order_history_card.dart';
 import '../../profile/controllers/conditions_controller.dart';
 import '../controllers/home_controller.dart';
 
-class HomeView extends GetView<HomeController> {
+class HomeView extends StatefulWidget {
   HomeView({super.key});
 
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
   final profileController = Get.put(ProfileController());
+
   final homeController = Get.put(HomeController());
+
   final oHController = Get.put(OrderHistoryController());
+
   final settingsController = Get.put(ConditionsController());
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // Refresh order history when HomeView is initialized
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     oHController.fetchOrderHistory();
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -81,76 +98,81 @@ class HomeView extends GetView<HomeController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-          profileController.myProfileData.value?.title != '' ? Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.silver),
-                  color: AppColors.white,
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Obx(
-                          () => CircleAvatar(
-                            radius: 25,
-                            backgroundColor: AppColors.white,
-                            backgroundImage: NetworkImage(
-                              profileController.myProfileData.value?.image ??
-                                  AppImages.profileImageTwo,
-                            ),
+              profileController.myProfileData.value?.title != null
+                  ? Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: AppColors.silver),
+                        color: AppColors.white,
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Obx(
+                                () => CircleAvatar(
+                                  radius: 25,
+                                  backgroundColor: AppColors.white,
+                                  backgroundImage: NetworkImage(
+                                    profileController
+                                            .myProfileData.value?.image ??
+                                        AppImages.profileImageTwo,
+                                  ),
+                                ),
+                              ),
+                              sw8,
+                              Obx(
+                                () {
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        profileController.myProfileData.value
+                                                ?.fullname ??
+                                            'Unknown',
+                                        style: h3.copyWith(
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Customer',
+                                        style: h6.copyWith(
+                                          color: AppColors.blueTurquoise,
+                                        ),
+                                      ),
+                                      Text(
+                                        profileController.myProfileData.value
+                                                    ?.title !=
+                                                null
+                                            ? 'Subscription Type:\n${profileController.myProfileData.value?.title.toString()}'
+                                            : 'Subscription Type: Unsubscribe',
+                                        style: h6,
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ],
                           ),
-                        ),
-                        sw8,
-                        Obx(
-                          () {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  profileController
-                                          .myProfileData.value?.fullname ??
-                                      'Unknown',
-                                  style: h3.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                Text(
-                                  'Customer',
-                                  style: h6.copyWith(
-                                    color: AppColors.blueTurquoise,
-                                  ),
-                                ),
-                                Text(
-                                  profileController
-                                              .myProfileData.value?.title !=
-                                          null
-                                      ? 'Subscription Type:\n${profileController.myProfileData.value?.title.toString()}'
-                                      : 'Subscription Type: Unsubscribe',
-                                  style: h6,
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                    sh12,
-                    CustomButton(
-                      text: 'Manage Subscription',
-                      onPressed: () {
-                        Get.to(() =>
-                            profileController.myProfileData.value?.title != null
-                                ? AfterSubscriptionView()
-                                : SubscriptionView());
-                      },
-                      gradientColors: AppColors.gradientColor,
-                    ),
-                  ],
-                ),
-              ): Container(),
+                          sh12,
+                          CustomButton(
+                            text: 'Manage Subscription',
+                            onPressed: () {
+                              Get.to(() => profileController
+                                          .myProfileData.value?.title !=
+                                      null
+                                  ? AfterSubscriptionView()
+                                  : SubscriptionView());
+                            },
+                            gradientColors: AppColors.gradientColor,
+                          ),
+                        ],
+                      ),
+                    )
+                  : Container(),
               sh16,
               Obx(() {
                 if (homeController.isLoading.value) {
@@ -199,17 +221,27 @@ class HomeView extends GetView<HomeController> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              _getFuelIcon(fuel.fuelName ?? ''),
-                              const SizedBox(width: 8),
-                              Text(
-                                fuel.fuelName?.toUpperCase() ?? '',
-                                style: h3.copyWith(
-                                  fontSize: 14,
-                                  color: AppColors.white,
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    _getFuelIcon(fuel.fuelName ?? ''),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        fuel.fuelName?.toUpperCase() ?? '',
+                                        style: h3.copyWith(
+                                          fontSize: 14,
+                                          color: AppColors.white,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const Spacer(),
+                              //const Spacer(),
                               CustomButton(
                                 height: 40,
                                 width: 110,
@@ -229,24 +261,9 @@ class HomeView extends GetView<HomeController> {
                 );
               }),
               sh16,
-              Obx(
-                () => Container(
-                  height: 180,
-                  width: double.infinity,
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: AppColors.silver,
-                    image: DecorationImage(
-                      image: NetworkImage(settingsController
-                          .conditionsModel.value.data[0].emergencyFuelBanner
-                          .toString()),
-                      scale: 4,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+              BannerWidget(
+                settingsController: settingsController,
+                bannerSelector: (data) => data.emergencyFuelBanner,
               ),
               sh16,
               // Obx(
@@ -343,7 +360,11 @@ class HomeView extends GetView<HomeController> {
                           Get.to(() => OrderFuelView(
                                 fuelName: fuelData?.fuelName,
                                 fuelPrice: fuelData?.fuelPrice,
-                              ));
+                              ))?.then((result) {
+                            if (result == true) {
+                              oHController.fetchOrderHistory();
+                            }
+                          });
                         },
                       ),
                     );
@@ -403,24 +424,9 @@ class HomeView extends GetView<HomeController> {
               //   },
               // ),
               sh16,
-              Obx(
-                () => Container(
-                  height: 180,
-                  width: double.infinity,
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: AppColors.silver,
-                    image: DecorationImage(
-                      image: NetworkImage(settingsController
-                          .conditionsModel.value.data[0].emergencyFuelBanner
-                          .toString()),
-                      scale: 4,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+              BannerWidget(
+                settingsController: settingsController,
+                bannerSelector: (data) => data.emergencyFuelBanner,
               ),
               sh16,
               Padding(
@@ -477,89 +483,93 @@ class HomeView extends GetView<HomeController> {
                   },
                 );
               }),
-              Obx(
-                () => settingsController.isLoading.value == true
-                    ? Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : Container(
-                        height: 250,
-                        width: double.infinity,
-                        margin: const EdgeInsets.symmetric(horizontal: 20),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          image: DecorationImage(
-                            image: NetworkImage(settingsController
-                                .conditionsModel.value.data[0].discountBanner
-                                .toString()),
-                            scale: 4,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              left: 0,
-                              top: Get.height * 0.2,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: AppColors.blurBack,
-                                  borderRadius: const BorderRadius.only(
-                                    bottomLeft: Radius.circular(20),
-                                    bottomRight: Radius.circular(20),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 12,
-                              left: 12,
-                              right: 12,
-                              child: profileController.myProfileData.value
-                                          ?.fiftyPercentOffDeliveryFeeAfterWaivedTrips ==
-                                      true
-                                  ? Center(
-                                      child: Text(
-                                        'You\'ve successfully enabled the discount and chosen not to leave a tip. Wishing you a wonderful day!',
-                                        style: h5.copyWith(
-                                          fontWeight: FontWeight.w700,
-                                          color: AppColors.white,
-                                        ),
-                                      ),
-                                    )
-                                  : Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Join Now for Discounts & No Tips!',
-                                          style: h5.copyWith(
-                                            fontWeight: FontWeight.w700,
-                                            color: AppColors.white,
-                                          ),
-                                        ),
-                                        sh8,
-                                        CustomButton(
-                                          height: 40,
-                                          text: 'Join Now',
-                                          onPressed: () {
-                                            Get.to(() => SubscriptionView());
-                                          },
-                                          gradientColors:
-                                              AppColors.gradientColor,
-                                          width: 150,
-                                        ),
-                                      ],
-                                    ),
-                            ),
-                          ],
-                        ),
-                      ),
+              BannerWidget(
+                settingsController: settingsController,
+                bannerSelector: (data) => data.discountBanner,
               ),
+              // Obx(
+              //   () => settingsController.isLoading.value == true
+              //       ? Center(
+              //           child: CircularProgressIndicator(),
+              //         )
+              //       : Container(
+              //           height: 250,
+              //           width: double.infinity,
+              //           margin: const EdgeInsets.symmetric(horizontal: 20),
+              //           decoration: BoxDecoration(
+              //             borderRadius: BorderRadius.circular(20),
+              //             image: DecorationImage(
+              //               image: NetworkImage(settingsController
+              //                   .conditionsModel.value.data[0].discountBanner
+              //                   .toString()),
+              //               scale: 4,
+              //               fit: BoxFit.cover,
+              //             ),
+              //           ),
+              //           child: Stack(
+              //             children: [
+              //               Positioned(
+              //                 bottom: 0,
+              //                 right: 0,
+              //                 left: 0,
+              //                 top: Get.height * 0.2,
+              //                 child: Container(
+              //                   decoration: BoxDecoration(
+              //                     color: AppColors.blurBack,
+              //                     borderRadius: const BorderRadius.only(
+              //                       bottomLeft: Radius.circular(20),
+              //                       bottomRight: Radius.circular(20),
+              //                     ),
+              //                   ),
+              //                 ),
+              //               ),
+              //               Positioned(
+              //                 bottom: 12,
+              //                 left: 12,
+              //                 right: 12,
+              //                 child: profileController.myProfileData.value
+              //                             ?.fiftyPercentOffDeliveryFeeAfterWaivedTrips ==
+              //                         true
+              //                     ? Center(
+              //                         child: Text(
+              //                           'You\'ve successfully enabled the discount and chosen not to leave a tip. Wishing you a wonderful day!',
+              //                           style: h5.copyWith(
+              //                             fontWeight: FontWeight.w700,
+              //                             color: AppColors.white,
+              //                           ),
+              //                         ),
+              //                       )
+              //                     : Column(
+              //                         mainAxisAlignment:
+              //                             MainAxisAlignment.center,
+              //                         crossAxisAlignment:
+              //                             CrossAxisAlignment.start,
+              //                         children: [
+              //                           Text(
+              //                             'Join Now for Discounts & No Tips!',
+              //                             style: h5.copyWith(
+              //                               fontWeight: FontWeight.w700,
+              //                               color: AppColors.white,
+              //                             ),
+              //                           ),
+              //                           sh8,
+              //                           CustomButton(
+              //                             height: 40,
+              //                             text: 'Join Now',
+              //                             onPressed: () {
+              //                               Get.to(() => SubscriptionView());
+              //                             },
+              //                             gradientColors:
+              //                                 AppColors.gradientColor,
+              //                             width: 150,
+              //                           ),
+              //                         ],
+              //                       ),
+              //               ),
+              //             ],
+              //           ),
+              //         ),
+              // ),
               sh12,
               Padding(
                 padding: const EdgeInsets.only(left: 20),
@@ -628,24 +638,9 @@ class HomeView extends GetView<HomeController> {
                 },
               ),
               sh16,
-              Obx(
-                () => Container(
-                  height: 180,
-                  width: double.infinity,
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: AppColors.silver,
-                    image: DecorationImage(
-                      image: NetworkImage(settingsController
-                          .conditionsModel.value.data[0].emergencyFuelBanner
-                          .toString()),
-                      scale: 4,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+              BannerWidget(
+                settingsController: settingsController,
+                bannerSelector: (data) => data.discountBanner,
               ),
 
               sh40,

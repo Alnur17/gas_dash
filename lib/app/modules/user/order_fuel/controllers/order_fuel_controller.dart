@@ -16,7 +16,6 @@ import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/widgets/custom_button.dart';
 import '../../../../../common/widgets/custom_snackbar.dart';
-import '../../../../../common/widgets/custom_textfield.dart';
 import '../../../../data/base_client.dart';
 import '../../jump_start_car_battery/views/final_confirmation_view.dart';
 import '../model/final_confirmation_model.dart';
@@ -34,6 +33,7 @@ class OrderFuelController extends GetxController {
   final PaymentController paymentController = Get.put(PaymentController());
 
   final isLoading = false.obs;
+
   // Observable for final confirmation data
   final finalConfirmation = Rxn<FinalConfirmationModel>();
 
@@ -67,7 +67,7 @@ class OrderFuelController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-   // fetchCurrentLocation();
+    // fetchCurrentLocation();
     selectedMake.listen((value) {
       makeController.text = value ?? '';
       if (value == null) {
@@ -174,11 +174,10 @@ class OrderFuelController extends GetxController {
     required bool customAmount,
     required double amount,
     required String fuelType,
-     String? scheduleDate,
-     String? scheduleTime,
+    String? scheduleDate,
+    String? scheduleTime,
     String? couponCode,
-  })
-  async {
+  }) async {
     isLoading.value = true;
     try {
       final String token = LocalStorage.getData(key: AppConstant.accessToken);
@@ -199,9 +198,8 @@ class OrderFuelController extends GetxController {
         'emergency': isEmergency ?? false,
         'cancelReason': '',
         'cuponCode': couponCode ?? '',
-        if (isEmergency == true )
-          'schedulDate': scheduleDate,
-          'schedulTime': scheduleTime,
+        if (isEmergency == true) 'schedulDate': scheduleDate,
+        'schedulTime': scheduleTime,
       };
 
       String body = jsonEncode(orderData);
@@ -232,7 +230,10 @@ class OrderFuelController extends GetxController {
         // paymentController.createPaymentSession(
         //   orderId: orderId, couponCode: couponCode,
         // );
-        Get.to(() => FuelTypeFinalConfirmationView(orderId: orderId));
+        Get.to(() => FuelTypeFinalConfirmationView(
+              orderId: orderId,
+              address: currentLocation.value,
+            ));
       }
     } catch (e) {
       Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
@@ -244,9 +245,8 @@ class OrderFuelController extends GetxController {
   Future<void> createOrderForServices({
     required String vehicleId,
     required String orderType,
-   // String? couponCode,
-  })
-  async {
+    // String? couponCode,
+  }) async {
     try {
       isLoading.value = true;
 
@@ -290,7 +290,9 @@ class OrderFuelController extends GetxController {
           message: 'Order created successfully!',
           bgColor: AppColors.green,
         );
-        Get.to(()=> FinalConfirmationView(orderId: orderId,));
+        Get.to(() => FinalConfirmationView(
+              orderId: orderId,
+            ));
         // paymentController.createPaymentSession(
         //   orderId: orderId, couponCode: couponCode,
         // );
@@ -303,10 +305,8 @@ class OrderFuelController extends GetxController {
   }
 
   Future<void> cancelOrder(
-
     String orderId,
-  )
-  async {
+  ) async {
     isLoading.value = true;
     try {
       // final String token = LocalStorage.getData(key: AppConstant.accessToken);
@@ -362,8 +362,7 @@ class OrderFuelController extends GetxController {
     }
   }
 
-  Future<FinalConfirmationModel?> fuelTypeFinalConfirmation(String id)
-  async {
+  Future<FinalConfirmationModel?> fuelTypeFinalConfirmation(String id) async {
     try {
       isLoading.value = true;
       final String token = LocalStorage.getData(key: AppConstant.accessToken);
@@ -380,12 +379,12 @@ class OrderFuelController extends GetxController {
       var responseData = await BaseClient.handleResponse(response);
       if (responseData != null) {
         FinalConfirmationModel orderModel =
-        FinalConfirmationModel.fromJson(responseData);
+            FinalConfirmationModel.fromJson(responseData);
         if (orderModel.success == true && orderModel.data != null) {
           finalConfirmation.value = orderModel; // Store in observable
           kSnackBar(
             message:
-            orderModel.message ?? 'Order details fetched successfully!',
+                orderModel.message ?? 'Order details fetched successfully!',
             bgColor: AppColors.green,
           );
           return orderModel;
@@ -411,8 +410,7 @@ class OrderFuelController extends GetxController {
     }
   }
 
-  Future<void> showVehicleSelectionDialog()
-  async {
+  Future<void> showVehicleSelectionDialog() async {
     await fetchMyVehicles();
     if (vehiclesList.isEmpty) {
       Get.snackbar('No Vehicles', 'No vehicles found. Please add a vehicle.',
@@ -443,24 +441,24 @@ class OrderFuelController extends GetxController {
                 ),
                 const SizedBox(height: 16),
                 Obx(() => Column(
-                  children: vehiclesList.map((vehicle) {
-                    return RadioListTile<VehicleListData>(
-                      value: vehicle,
-                      groupValue: selectedVehicle.value,
-                      onChanged: (VehicleListData? value) {
-                        selectedVehicle.value = value;
-                      },
-                      title: Text(
-                        '${vehicle.year} ${vehicle.make} ${vehicle.model}',
-                        style: h5,
-                      ),
-                      secondary: Image.asset(
-                        AppImages.car,
-                        scale: 4,
-                      ),
-                    );
-                  }).toList(),
-                )),
+                      children: vehiclesList.map((vehicle) {
+                        return RadioListTile<VehicleListData>(
+                          value: vehicle,
+                          groupValue: selectedVehicle.value,
+                          onChanged: (VehicleListData? value) {
+                            selectedVehicle.value = value;
+                          },
+                          title: Text(
+                            '${vehicle.year} ${vehicle.make} ${vehicle.model}',
+                            style: h5,
+                          ),
+                          secondary: Image.asset(
+                            AppImages.car,
+                            scale: 4,
+                          ),
+                        );
+                      }).toList(),
+                    )),
                 const SizedBox(height: 20),
                 CustomButton(
                   text: 'Confirm',
@@ -470,7 +468,8 @@ class OrderFuelController extends GetxController {
                         'make': selectedVehicle.value!.make!,
                         'model': selectedVehicle.value!.model!,
                         'year': selectedVehicle.value!.year.toString(),
-                        'fuelLevel': selectedVehicle.value!.fuelLevel.toString(),
+                        'fuelLevel':
+                            selectedVehicle.value!.fuelLevel.toString(),
                       };
                       Get.back();
                       kSnackBar(
@@ -573,12 +572,12 @@ class OrderFuelController extends GetxController {
       longitude.value = position.longitude;
 
       List<Placemark> placeMarks =
-      await placemarkFromCoordinates(position.latitude, position.longitude);
+          await placemarkFromCoordinates(position.latitude, position.longitude);
 
       if (placeMarks.isNotEmpty) {
         Placemark place = placeMarks.first;
         currentLocation.value =
-        '${place.street}, ${place.subLocality}, ${place.locality}';
+            '${place.street}, ${place.subLocality}, ${place.locality}';
         zipCode.value = place.postalCode?.isNotEmpty == true
             ? place.postalCode
             : '12080'; // ✅ set default here
@@ -586,7 +585,6 @@ class OrderFuelController extends GetxController {
         currentLocation.value = 'Address not found.';
         zipCode.value = '12080'; // ✅ fallback zip
       }
-
 
       // if (placeMarks.isNotEmpty) {
       //   Placemark place = placeMarks.first;
@@ -607,6 +605,24 @@ class OrderFuelController extends GetxController {
       //promptForZipCode();
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  void updateLocation(double lat, double lng, String address) async {
+    latitude.value = lat;
+    longitude.value = lng;
+    currentLocation.value = address;
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+      if (placemarks.isNotEmpty) {
+        zipCode.value = placemarks.first.postalCode?.isNotEmpty == true
+            ? placemarks.first.postalCode!
+            : '12080';
+      } else {
+        zipCode.value = '12080';
+      }
+    } catch (e) {
+      zipCode.value = '12080';
     }
   }
 

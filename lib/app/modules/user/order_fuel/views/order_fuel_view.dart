@@ -1,7 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/user/emergency_fuel/views/schedule_delivery_from_calender_view.dart';
-import 'package:gas_dash/app/modules/user/order_fuel/views/fuel_type_final_confirmation_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
@@ -13,6 +11,7 @@ import '../../../../../common/helper/location_card.dart';
 import '../../../../../common/helper/vehicle_card.dart';
 import '../../../../../common/widgets/custom_button.dart';
 import '../controllers/order_fuel_controller.dart';
+import 'map_picker_view.dart';
 
 class OrderFuelView extends StatefulWidget {
   final String? fuelName;
@@ -183,7 +182,7 @@ class _OrderFuelViewState extends State<OrderFuelView> {
                   locationText: orderFuelController.currentLocation.value,
                   buttonText: 'Change Location',
                   onButtonPressed: () {
-                    orderFuelController.fetchCurrentLocation();
+                    Get.to(() => const MapPickerView());
                   },
                 ),
               ),
@@ -242,6 +241,7 @@ class _OrderFuelViewState extends State<OrderFuelView> {
                       Get.to(
                         () => ScheduleDeliveryFromCalenderView(
                           isEmergency: widget.isEmergency!,
+                          //address: orderFuelController.currentLocation.value,
                           vehicleId:
                               orderFuelController.selectedVehicle.value?.id ??
                                   '',

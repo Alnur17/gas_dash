@@ -9,7 +9,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../../order_fuel/views/fuel_type_final_confirmation_view.dart';
 
 class ScheduleDeliveryFromCalenderView extends GetView {
   final bool isEmergency;
@@ -18,6 +17,7 @@ class ScheduleDeliveryFromCalenderView extends GetView {
   final bool customAmount;
   final double amount;
   final String fuelType;
+ // final String address;
 
   final ScheduleDeliveryFromCalenderController
       scheduleDeliveryFromCalenderController =
@@ -33,6 +33,7 @@ class ScheduleDeliveryFromCalenderView extends GetView {
     required this.presetAmount,
     required this.amount,
     required this.fuelType,
+    //required this.address,
   });
 
   String getFormattedTime(TimeOfDay time) {

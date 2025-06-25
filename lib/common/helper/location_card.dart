@@ -85,7 +85,7 @@ class LocationCard extends StatelessWidget {
                       ),
                 ),
               ),
-              sw8,
+              //sw8,
               // CustomButton(
               //   text: 'Set Zip Code',
               //   onPressed: () {

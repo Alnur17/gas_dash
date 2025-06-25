@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gas_dash/app/modules/user/emergency_fuel/views/schedule_delivery_view.dart';
-import 'package:gas_dash/common/widgets/custom_button.dart';
 
 import 'package:get/get.dart';
 
@@ -27,7 +25,7 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
         backgroundColor: AppColors.mainColor,
         scrolledUnderElevation: 0,
         title: Text(
-          'EmergencyFuelView',
+          'Emergency Fuel',
           style: titleStyle,
         ),
         centerTitle: true,

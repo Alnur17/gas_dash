@@ -209,8 +209,9 @@ import '../controllers/order_fuel_controller.dart';
 
 class FuelTypeFinalConfirmationView extends StatefulWidget {
   final String? orderId;
+  final String? address;
 
-  const FuelTypeFinalConfirmationView({super.key, this.orderId});
+  const FuelTypeFinalConfirmationView({super.key, this.orderId, this.address});
 
   @override
   State<FuelTypeFinalConfirmationView> createState() =>
@@ -297,8 +298,8 @@ class _FuelTypeFinalConfirmationViewState
                             text: 'Apply',
                             onPressed: () {
                               if (couponTextController.text.isNotEmpty) {
-                                couponController
-                                    .checkCoupon(couponTextController.text);
+                                couponController.checkCoupon(
+                                    couponTextController.text.trim());
                               } else {
                                 kSnackBar(
                                   message: 'Please enter a coupon code',
@@ -343,7 +344,11 @@ class _FuelTypeFinalConfirmationViewState
                           Text('Location',
                               style: h5.copyWith(fontWeight: FontWeight.bold)),
                           const SizedBox(height: 8),
-                          Text(controller.currentLocation.value, style: h6),
+                          Text(
+                            widget.address ?? 'Not specified',
+                            style: h6,
+                          ),
+                          //Text(controller.currentLocation.value, style: h6),
                           const SizedBox(height: 16),
                           Text('Vehicle',
                               style: h5.copyWith(fontWeight: FontWeight.bold)),
@@ -384,7 +389,7 @@ class _FuelTypeFinalConfirmationViewState
                           const SizedBox(height: 8),
                           Text(
                             couponController.couponModel.value?.data != null
-                                ? '\$${orderData.finalAmountOfPayment?.toStringAsFixed(2) ?? '0.00'} - \$${couponController.couponModel.value?.data?.discount?.toStringAsFixed(2) ?? '0.00'}'
+                                ? '\$${orderData.finalAmountOfPayment?.toStringAsFixed(2) ?? '0.00'} - \$${((couponController.couponModel.value?.data?.discount ?? 0.0) * (orderData.finalAmountOfPayment ?? 0.0) / 100).toStringAsFixed(2)}'
                                 : '\$${orderData.finalAmountOfPayment?.toStringAsFixed(2) ?? '0.00'}',
                             style: h6.copyWith(
                               color: couponController.couponModel.value?.data !=
@@ -394,7 +399,7 @@ class _FuelTypeFinalConfirmationViewState
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          sh10,
+                          sh20,
                           controller.isLoading.value
                               ? CustomLoader(color: AppColors.white)
                               : CustomButton(
@@ -405,7 +410,8 @@ class _FuelTypeFinalConfirmationViewState
                                       couponCode:
                                           couponTextController.text.trim(),
                                     );
-                                    print(";;;;;;;;;;;;;;;;;;${couponTextController.text}");
+                                    print(
+                                        ";;;;;;;;;;;;;;;;;;${couponTextController.text}");
                                   },
                                   gradientColors: AppColors.gradientColorGreen,
                                 ),
