@@ -3,6 +3,7 @@ import 'package:gas_dash/app/modules/driver/driver_history/views/driver_start_de
 import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:gas_dash/common/helper/order_history_card.dart';
+import 'package:gas_dash/common/widgets/custom_loader.dart';
 import 'package:get/get.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:intl/intl.dart'; // For date formatting
@@ -23,7 +24,9 @@ class _DriverHistoryViewState extends State<DriverHistoryView> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        backgroundColor: AppColors.background,
         appBar: AppBar(
+          backgroundColor: AppColors.white,
           title: Text(
             'Order History',
             style: titleStyle,
@@ -119,6 +122,8 @@ class OrderStatusSection extends GetView<DriverHomeController> {
                   }
                 },
                 onButton2Pressed: () {
+                  controller.isLoading.value == true ?
+                      CustomLoader(color: AppColors.white) :
                   controller.viewOrderDetails(
                     order.id ?? '', locationName,
                   );

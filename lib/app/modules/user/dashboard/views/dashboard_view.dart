@@ -114,7 +114,7 @@ class _DashboardViewState extends State<DashboardView> {
                 dashboardController.isOutsideBusinessHours.value
                     ? const SizedBox(
                   width: 50,
-                ) : SizedBox(),
+                ) : Container(),
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [

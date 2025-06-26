@@ -79,7 +79,7 @@ class HomeController extends GetxController {
             datum.fuelName ?? 'Unknown Fuel': datum.fuelPrice ?? 0.0
         });
       } else {
-        errorMessage('Failed to load fuel info');
+        errorMessage('Fuel or Service is not available in your area. Please verify your zip code in the profile section.');
       }
     } catch (e) {
       errorMessage(e.toString());

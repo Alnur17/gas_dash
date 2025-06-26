@@ -161,9 +161,17 @@ class DriverProfileController extends GetxController {
   })
   async {
     try {
+      isLoading.value = true;
       String accessToken = LocalStorage.getData(key: AppConstant.accessToken);
       if (accessToken.isEmpty) {
         kSnackBar(message: "User not authenticated", bgColor: AppColors.orange);
+        return;
+      }
+      if (zipCode.trim().length < 4 || zipCode.trim().length > 5) {
+        kSnackBar(
+          message: "Zip code must be 4 or 5 characters",
+          bgColor: AppColors.orange,
+        );
         return;
       }
 
@@ -232,6 +240,8 @@ class DriverProfileController extends GetxController {
       kSnackBar(
           message: "Error updating profile: $e", bgColor: AppColors.orange);
       debugPrint("Update Error: $e");
+    }finally {
+      isLoading(false);
     }
   }
 

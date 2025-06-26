@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/driver/driver_profile/controllers/driver_profile_controller.dart';
 
@@ -20,7 +19,8 @@ class DriverEditProfileView extends StatefulWidget {
 }
 
 class _DriverEditProfileViewState extends State<DriverEditProfileView> {
-  final DriverProfileController driverProfileController = Get.put(DriverProfileController());
+  final DriverProfileController driverProfileController =
+      Get.put(DriverProfileController());
 
   final TextEditingController nameTEController = TextEditingController();
   final TextEditingController emailTEController = TextEditingController();
@@ -37,14 +37,16 @@ class _DriverEditProfileViewState extends State<DriverEditProfileView> {
   void _loadProfileData() {
     nameTEController.text =
         driverProfileController.driverProfileData.value?.fullname ?? '';
-    emailTEController.text = driverProfileController.driverProfileData.value?.email ?? '';
+    emailTEController.text =
+        driverProfileController.driverProfileData.value?.email ?? '';
     locationTEController.text =
-    (driverProfileController.driverProfileData.value?.location ?? '');
+        (driverProfileController.driverProfileData.value?.location ?? '');
     contactTEController.text =
         driverProfileController.driverProfileData.value?.phoneNumber ?? '';
     zipCodeTEController.text =
         driverProfileController.driverProfileData.value?.zipCode ?? '';
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,25 +80,28 @@ class _DriverEditProfileViewState extends State<DriverEditProfileView> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Obx(
-                        () {
+                    () {
                       return Stack(
                         clipBehavior: Clip.none,
                         children: [
                           CircleAvatar(
                             radius: 50,
                             backgroundImage: driverProfileController
-                                .selectedImage.value !=
-                                null
-                                ? FileImage(
-                                driverProfileController.selectedImage.value!)
-                                : (driverProfileController
-                                .driverProfileData.value?.image !=
-                                null &&
-                                driverProfileController.driverProfileData.value!
-                                    .image!.isNotEmpty)
-                                ? NetworkImage(driverProfileController
-                                .driverProfileData.value!.image!)
-                                : NetworkImage(AppImages.profileImageTwo),
+                                        .selectedImage.value !=
+                                    null
+                                ? FileImage(driverProfileController
+                                    .selectedImage.value!)
+                                : (driverProfileController.driverProfileData
+                                                .value?.image !=
+                                            null &&
+                                        driverProfileController
+                                            .driverProfileData
+                                            .value!
+                                            .image!
+                                            .isNotEmpty)
+                                    ? NetworkImage(driverProfileController
+                                        .driverProfileData.value!.image!)
+                                    : NetworkImage(AppImages.profileImageTwo),
                           ),
                           Positioned(
                             bottom: 0,
@@ -121,10 +126,12 @@ class _DriverEditProfileViewState extends State<DriverEditProfileView> {
                   ),
                   sh12,
                   Obx(
-                        () => Align(
+                    () => Align(
                       alignment: Alignment.center,
                       child: Text(
-                        driverProfileController.driverProfileData.value?.fullname ?? '',
+                        driverProfileController
+                                .driverProfileData.value?.fullname ??
+                            '',
                         style: h5.copyWith(
                           fontWeight: FontWeight.w500,
                         ),
@@ -170,14 +177,15 @@ class _DriverEditProfileViewState extends State<DriverEditProfileView> {
               ),
               sh12,
               Text(
-                'Location',
+                'City and State',
                 style: h5,
               ),
               sh8,
               CustomTextField(
                 controller: locationTEController,
-                hintText: 'Your location',
-              ),sh12,
+                hintText: 'Enter your city and state',
+              ),
+              sh12,
               Text(
                 'ZIP Code',
                 style: h5,
@@ -189,24 +197,24 @@ class _DriverEditProfileViewState extends State<DriverEditProfileView> {
               ),
               sh20,
               Obx(
-                    () => driverProfileController.isLoading.value == true
+                () => driverProfileController.isLoading.value == true
                     ? CustomLoader(
-                  color: AppColors.white,
-                )
+                        color: AppColors.white,
+                      )
                     : CustomButton(
-                  text: "Save",
-                  gradientColors: AppColors.gradientColorGreen,
-                  //backgroundColor: AppColors.textColorBlue,
-                  onPressed: () {
-                    driverProfileController.updateProfile(
-                      name: nameTEController.text,
-                      email: emailTEController.text.toLowerCase(),
-                      contactNumber: contactTEController.text,
-                      location: locationTEController.text,
-                      zipCode: zipCodeTEController.text,
-                    );
-                  },
-                ),
+                        text: "Save",
+                        gradientColors: AppColors.gradientColorGreen,
+                        //backgroundColor: AppColors.textColorBlue,
+                        onPressed: () {
+                          driverProfileController.updateProfile(
+                            name: nameTEController.text,
+                            email: emailTEController.text.toLowerCase(),
+                            contactNumber: contactTEController.text,
+                            location: locationTEController.text,
+                            zipCode: zipCodeTEController.text,
+                          );
+                        },
+                      ),
               ),
               sh20,
             ],

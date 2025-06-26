@@ -26,14 +26,6 @@ class DriverEarningController extends GetxController {
     fetchEarnings();
   }
 
-  @override
-  void onClose() {
-    // Dispose controllers to prevent memory leaks
-    amountController.dispose();
-    cardHolderNameController.dispose();
-    cardNumberController.dispose();
-    super.onClose();
-  }
 
   Future<void> fetchEarnings() async {
     try {

@@ -224,54 +224,67 @@ class DriverProofOfDeliveryView
                 ),
                 sh20,
                 Obx(
-                  () => controller.isLoading.value == true
-                      ? CustomLoader(
-                          color: AppColors.white,
-                        )
+                      () => controller.isLoading.value
+                      ? CustomLoader(color: AppColors.white)
                       : CustomButton(
-                          text: 'Submit',
-                          onPressed: () async {
-                            if (selectedImage.value != null &&
-                                deliveryId != null &&
-                                orderId != null) {
-                              final accessToken = LocalStorage.getData(
-                                  key:
-                                      'accessToken'); // Adjust key as per your app
-                              final headers = {
-                                'Content-Type': 'multipart/form-data',
-                                'Authorization': 'Bearer $accessToken',
-                              };
+                    text: 'Submit',
+                    onPressed: () async {
+                      if (selectedImage.value == null ||
+                          deliveryId == null ||
+                          orderId == null) {
+                        Get.snackbar('Error',
+                            'Please select an image and ensure delivery ID and order ID are valid',
+                            backgroundColor: AppColors.orange,
+                            colorText: Colors.white);
+                        return;
+                      }
 
-                              var request = http.MultipartRequest('PATCH',
-                                  Uri.parse(Api.updateDelivery(deliveryId!)))
-                                ..fields['data'] =
-                                    jsonEncode({'status': 'delivered'})
-                                ..files.add(await http.MultipartFile.fromPath(
-                                    'proofImage', selectedImage.value!.path))
-                                ..headers.addAll(headers);
+                      // Set isLoading to true immediately
+                      controller.isLoading.value = true;
 
-                              final response = await http.Response.fromStream(
-                                  await request.send());
-                              final result =
-                                  await BaseClient.handleResponse(response);
+                      try {
+                        final accessToken = LocalStorage.getData(
+                            key: 'accessToken');
+                        final headers = {
+                          'Content-Type': 'multipart/form-data',
+                          'Authorization': 'Bearer $accessToken',
+                        };
 
-                              if (result != null &&
-                                  (result['success'] == true ||
-                                      result['message'] ==
-                                          'Delivery updated successfully')) {
-                                await controller.submitAnswers(
-                                    deliveryId!, orderId!);
-                                _showSubmissionCompletedModal(context);
-                              }
-                            } else {
-                              Get.snackbar('Error',
-                                  'Please select an image and ensure delivery ID and order ID are valid',
-                                  backgroundColor: AppColors.orange,
-                                  colorText: Colors.white);
-                            }
-                          },
-                          gradientColors: AppColors.gradientColorGreen,
-                        ),
+                        var request = http.MultipartRequest(
+                            'PATCH',
+                            Uri.parse(Api.updateDelivery(deliveryId!)))
+                          ..fields['data'] =
+                          jsonEncode({'status': 'delivered'})
+                          ..files.add(await http.MultipartFile.fromPath(
+                              'proofImage', selectedImage.value!.path))
+                          ..headers.addAll(headers);
+
+                        final response = await http.Response.fromStream(
+                            await request.send());
+                        final result =
+                        await BaseClient.handleResponse(response);
+
+                        if (result != null &&
+                            (result['success'] == true ||
+                                result['message'] ==
+                                    'Delivery updated successfully')) {
+                          await controller.submitAnswers(
+                              deliveryId!, orderId!);
+                          controller.isLoading.value = false;
+                          _showSubmissionCompletedModal(context);
+                        } else {
+                          throw Exception('Failed to update delivery');
+                        }
+                      } catch (e) {
+                        debugPrint('Error submitting proof: $e');
+                        Get.snackbar('Error', 'Failed to submit proof',
+                            backgroundColor: AppColors.orange,
+                            colorText: Colors.white);
+                        controller.isLoading.value = false;
+                      }
+                    },
+                    gradientColors: AppColors.gradientColorGreen,
+                  ),
                 ),
               ],
             ),

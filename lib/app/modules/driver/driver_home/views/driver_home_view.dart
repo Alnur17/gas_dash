@@ -132,27 +132,30 @@ class _DriverHomeViewState extends State<DriverHomeView> {
                                       !controller.locationNames
                                           .containsKey(orderId)) {
                                     controller.resolveLocation(
-                                        orderId,coords[1], coords[0] );
+                                        orderId, coords[1], coords[0]);
                                   }
 
                                   return Obx(() {
                                     final locationName =
-                                        controller.locationNames[orderId] ?? "Loading location...";
+                                        controller.locationNames[orderId] ??
+                                            "Loading location...";
 
                                     return FuelAndServiceCard(
                                       emergencyImage: AppImages.emergency,
                                       emergency: order.emergency ?? false,
                                       fuelAmount:
-                                      '${order.amount?.toStringAsFixed(2) ?? '0.00'} gallons',
+                                          '${order.amount?.toStringAsFixed(2) ?? '0.00'} gallons',
                                       fuelType: order.orderType ?? 'Unknown',
                                       location: locationName,
-                                      onAcceptPressed: () => controller.acceptOrder(order.id ?? ''),
-                                      onViewDetailsPressed: () => controller.viewOrderDetails(order.id ?? '',locationName),
+                                      onAcceptPressed: () => controller
+                                          .acceptOrder(order.id ?? ''),
+                                      onViewDetailsPressed: () =>
+                                          controller.viewOrderDetails(
+                                              order.id ?? '', locationName),
                                       fuelIconPath: AppImages.fuelFiller,
                                       locationIconPath: AppImages.locationRed,
                                     );
                                   });
-
                                 },
                               ),
 
@@ -183,13 +186,14 @@ class _DriverHomeViewState extends State<DriverHomeView> {
                               if (coords != null &&
                                   !controller.locationNames
                                       .containsKey(orderId)) {
-                                controller.resolveLocation(orderId, coords[1], coords[0]); // latitude, longitude
-
+                                controller.resolveLocation(orderId, coords[1],
+                                    coords[0]); // latitude, longitude
                               }
 
                               return Obx(() {
                                 final locationName =
-                                    controller.locationNames[orderId] ?? "Loading location...";
+                                    controller.locationNames[orderId] ??
+                                        "Loading location...";
 
                                 return ActiveOrder(
                                   emergencyImage: AppImages.emergency,
@@ -202,25 +206,27 @@ class _DriverHomeViewState extends State<DriverHomeView> {
                                   fuelType: order.orderType ?? 'Unknown',
                                   onAcceptPressed: () {
                                     Get.to(() => DriverStartDeliveryView(
-                                      orderId: order.id ?? 'Unknown',
-                                      deliveryId: order.deleveryId ?? '',
-                                      customerName: order.userId?.fullname ?? '',
-                                      customerImage: order.userId?.image,
-                                      amounts:
-                                      '${order.amount?.toStringAsFixed(2) ?? '0.00'} Gallons',
-                                      orderName: order.fuelType ?? 'Unknown',
-                                      location: locationName,
-                                      userId: order.userId!.id.toString(),
-                                    ));
+                                          orderId: order.id ?? 'Unknown',
+                                          deliveryId: order.deleveryId ?? '',
+                                          customerName:
+                                              order.userId?.fullname ?? '',
+                                          customerImage: order.userId?.image,
+                                          amounts:
+                                              '${order.amount?.toStringAsFixed(2) ?? '0.00'} Gallons',
+                                          orderName:
+                                              order.fuelType ?? 'Unknown',
+                                          location: locationName,
+                                          userId: order.userId!.id.toString(),
+                                        ));
                                   },
                                   onViewDetailsPressed: () =>
-                                      controller.viewOrderDetails(order.id ?? '', locationName),
+                                      controller.viewOrderDetails(
+                                          order.id ?? '', locationName),
                                 );
                               });
-
-
                             },
                           ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.3),
                   ],
                 ),
               ),

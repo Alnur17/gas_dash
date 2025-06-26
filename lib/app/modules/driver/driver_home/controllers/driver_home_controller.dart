@@ -127,7 +127,7 @@ class DriverHomeController extends GetxController {
 
       if (singleOrder.success == true && singleOrder.data != null) {
         // Navigate to DriverOrderDetailsView with the fetched order data
-        Get.to(() => DriverOrderDetailsView(orderData: singleOrder.data!));
+        Get.to(() => DriverOrderDetailsView(orderData: singleOrder.data!,location: location,));
       } else {
         kSnackBar(
           message: singleOrder.message ?? 'Failed to fetch order details',

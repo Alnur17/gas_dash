@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:mime/mime.dart';
 
 import '../../../../../common/app_color/app_colors.dart';
@@ -16,7 +15,10 @@ import '../../../../../common/widgets/custom_snackbar.dart';
 import '../../../../data/api.dart';
 import '../../../../data/base_client.dart';
 import '../../../auth/login/views/login_view.dart';
+import '../../subscription/views/after_subscription_view.dart';
+import '../../subscription/views/subscription_view.dart';
 import '../model/my_profile_model.dart';
+import '../views/add_family_member_household_vehicle_view.dart';
 
 class ProfileController extends GetxController {
   var isLoading = false.obs;
@@ -26,11 +28,9 @@ class ProfileController extends GetxController {
   var email = ''.obs;
   var selectedImage = Rxn<File>();
 
-
   var isPasswordVisible = false.obs;
   var isPasswordVisible1 = false.obs;
   var isPasswordVisible2 = false.obs;
-
 
   void togglePasswordVisibility() {
     isPasswordVisible.toggle();
@@ -44,11 +44,30 @@ class ProfileController extends GetxController {
     isPasswordVisible2.toggle();
   }
 
-
   @override
   void onInit() {
     super.onInit();
     getMyProfile();
+  }
+
+  // Navigation logic for Subscription tile
+  void handleSubscriptionNavigation() {
+    getMyProfile();
+    if (myProfileData.value?.title != null) {
+      Get.to(() => AfterSubscriptionView());
+    } else {
+      Get.to(() => SubscriptionView());
+    }
+  }
+
+  // Navigation logic for Family Member tile
+  void handleFamilyMemberNavigation() {
+    getMyProfile();
+    if (myProfileData.value?.freeSubscriptionAdditionalFamilyMember == false) {
+      Get.to(() => SubscriptionView());
+    } else {
+      Get.to(() => AddFamilyMemberHouseholdVehicleView());
+    }
   }
 
   ///my Profile
@@ -74,6 +93,7 @@ class ProfileController extends GetxController {
           myProfileData.value = myProfileModel.data;
           myProfileName.value = myProfileModel.data!.fullname ?? "User Name";
           email.value = myProfileModel.data!.email ?? "example@gmail.com";
+          update();
         }
       } else {
         kSnackBar(
@@ -156,6 +176,7 @@ class ProfileController extends GetxController {
   })
   async {
     try {
+      isLoading(true);
       String accessToken = LocalStorage.getData(key: AppConstant.accessToken);
       if (accessToken.isEmpty) {
         kSnackBar(message: "User not authenticated", bgColor: AppColors.orange);
@@ -189,6 +210,8 @@ class ProfileController extends GetxController {
       kSnackBar(
           message: "Error updating profile: $e", bgColor: AppColors.orange);
       debugPrint("Update Error: $e");
+    }finally {
+      isLoading(false);
     }
   }
 
@@ -201,9 +224,17 @@ class ProfileController extends GetxController {
     required String zipCode,
   }) async {
     try {
+      isLoading(true);
       String accessToken = LocalStorage.getData(key: AppConstant.accessToken);
       if (accessToken.isEmpty) {
         kSnackBar(message: "User not authenticated", bgColor: AppColors.orange);
+        return;
+      }
+      if (zipCode.trim().length < 4 || zipCode.trim().length > 5) {
+        kSnackBar(
+          message: "Zip code must be 4 or 5 characters",
+          bgColor: AppColors.orange,
+        );
         return;
       }
 
@@ -272,6 +303,8 @@ class ProfileController extends GetxController {
       kSnackBar(
           message: "Error updating profile: $e", bgColor: AppColors.orange);
       debugPrint("Update Error: $e");
+    }finally {
+      isLoading(false);
     }
   }
 

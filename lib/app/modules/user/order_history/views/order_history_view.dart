@@ -161,7 +161,7 @@ class OrderStatusSection extends StatelessWidget {
           if (coords != null &&
               !controller.locationNames.containsKey(orderId)) {
             controller.resolveLocation(
-                orderId, coords[1], coords[0]); // ✅ latitude, longitude
+                orderId, coords[1], coords[0]); // latitude, longitude
           }
 
           final locationName =

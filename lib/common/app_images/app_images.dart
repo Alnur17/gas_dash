@@ -8,6 +8,7 @@ class AppImages {
   static const arrowDown = "assets/icons/arrow down.png";
   static const arrowRightSmall = "assets/icons/arrow right small.png";
   static const checkBox = "assets/icons/checkbox.png";
+  static const checkBoxBig = "assets/icons/checkbox big.png";
   static const checkBoxCircle = "assets/icons/circle checkbox.png";
   static const checkBoxFilled = "assets/icons/checkbox filled.png";
   static const checkBoxFilledSquare = "assets/icons/Checbox filled squar.png";

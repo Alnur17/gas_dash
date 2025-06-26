@@ -4,6 +4,7 @@ import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
+import '../../../driver/driver_home/model/single_order_by_Id_model.dart';
 import '../controllers/order_history_controller.dart';
 
 class OrderDetailsView extends GetView<OrderHistoryController> {
@@ -54,6 +55,11 @@ class OrderDetailsView extends GetView<OrderHistoryController> {
 
         final orderData = order.data!;
         final displayStatus = orderData.orderStatus == 'InProgress' ? 'In Process' : 'Completed';
+        final vehicleInfo = orderData.vehicleId is VehicleId
+            ? '${(orderData.vehicleId as VehicleId).make ?? 'Unknown'} ${(orderData.vehicleId as VehicleId).model ?? ''} ${(orderData.vehicleId as VehicleId).year?.toInt() ?? ''}'
+            : orderData.vehicleId is String
+            ? orderData.vehicleId as String
+            : 'Unknown Vehicle';
 
         return SingleChildScrollView(
           child: Padding(
@@ -107,7 +113,7 @@ class OrderDetailsView extends GetView<OrderHistoryController> {
                 ),
                 sh5,
                 Text(
-                  orderData.vehicleId ?? 'Unknown Vehicle',
+                  vehicleInfo,
                   style: h6,
                 ),
                 sh12,

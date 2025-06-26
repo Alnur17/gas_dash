@@ -20,7 +20,7 @@ import '../../profile/controllers/conditions_controller.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends StatefulWidget {
-  HomeView({super.key});
+  const HomeView({super.key});
 
   @override
   State<HomeView> createState() => _HomeViewState();

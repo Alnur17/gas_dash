@@ -86,7 +86,6 @@
 //   }
 // }
 
-
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/user/subscription/controllers/subscription_controller.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
@@ -107,7 +106,7 @@ class PlanDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(SubscriptionController());
+    final subsController = Get.put(SubscriptionController());
     final features = [
       if (package.freeDeliverylimit != null)
         'Waives delivery fees for up to ${package.freeDeliverylimit} trips per month.',
@@ -133,7 +132,8 @@ class PlanDetailsView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.transparent,
         scrolledUnderElevation: 0,
-        title: Text(package.title ?? 'Plan', style: titleStyle.copyWith(color: AppColors.white)),
+        title: Text(package.title ?? 'Plan',
+            style: titleStyle.copyWith(color: AppColors.white)),
         leading: Padding(
           padding: const EdgeInsets.only(left: 12),
           child: GestureDetector(
@@ -158,33 +158,38 @@ class PlanDetailsView extends StatelessWidget {
               sh100,
               Text(
                 package.title ?? 'Unknown Plan',
-                style: h2.copyWith(color: AppColors.white, fontWeight: FontWeight.bold),
+                style: h2.copyWith(
+                    color: AppColors.white, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
               ...features.map((feature) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: Row(
-                  children: [
-                    Image.asset(AppImages.subsRight, scale: 4),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        feature,
-                        style: h3.copyWith(color: AppColors.white),
-                      ),
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: Row(
+                      children: [
+                        Image.asset(AppImages.subsRight, scale: 4),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            feature,
+                            style: h3.copyWith(color: AppColors.white),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              )),
+                  )),
               sh30,
-              controller.isLoading.value == true ? CustomLoader(color: AppColors.white) :
-              CustomButton(
-                text: 'Buy Now',
-                onPressed: () {
-                  controller.createSubscription(packageId: package.id ?? '');
-                },
-                textColor: AppColors.black,
-                backgroundColor: AppColors.white,
+              Obx(
+                () => subsController.isLoading.value == true
+                    ? CustomLoader(color: AppColors.white)
+                    : CustomButton(
+                        text: 'Buy Now',
+                        onPressed: () {
+                          subsController.createSubscription(
+                              packageId: package.id ?? '');
+                        },
+                        textColor: AppColors.black,
+                        backgroundColor: AppColors.white,
+                      ),
               ),
             ],
           ),

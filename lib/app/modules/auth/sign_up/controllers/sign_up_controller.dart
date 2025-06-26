@@ -4,8 +4,10 @@ import 'package:gas_dash/app/modules/auth/login/views/login_view.dart';
 import 'package:gas_dash/app/modules/auth/sign_up/views/sign_up_otp_verify_view.dart';
 import 'package:get/get.dart';
 
+import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_constant/app_constant.dart';
 import '../../../../../common/helper/local_store.dart';
+import '../../../../../common/widgets/custom_snackbar.dart';
 import '../../../../data/api.dart';
 import '../../../../data/base_client.dart';
 
@@ -68,6 +70,14 @@ class SignUpController extends GetxController {
         if (passwordController.text.trim() !=
             confirmPasswordController.text.trim()) {
           Get.snackbar('Error', 'Passwords do not match');
+          return;
+        }
+
+        if (zipCodeController.text.trim().length < 4 || zipCodeController.text.trim().length > 5) {
+          kSnackBar(
+            message: "Zip code must be 4 or 5 characters",
+            bgColor: AppColors.orange,
+          );
           return;
         }
 
