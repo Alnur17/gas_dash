@@ -55,11 +55,11 @@ class OrderDetailsView extends GetView<OrderHistoryController> {
 
         final orderData = order.data!;
         final displayStatus = orderData.orderStatus == 'InProgress' ? 'In Process' : 'Completed';
-        final vehicleInfo = orderData.vehicleId is VehicleId
-            ? '${(orderData.vehicleId as VehicleId).make ?? 'Unknown'} ${(orderData.vehicleId as VehicleId).model ?? ''} ${(orderData.vehicleId as VehicleId).year?.toInt() ?? ''}'
-            : orderData.vehicleId is String
-            ? orderData.vehicleId as String
-            : 'Unknown Vehicle';
+        // final vehicleInfo = orderData.vehicleId is VehicleId
+        //     ? '${(orderData.vehicleId as VehicleId).make ?? 'Unknown'} ${(orderData.vehicleId as VehicleId).model ?? ''} ${(orderData.vehicleId as VehicleId).year?.toInt() ?? ''}'
+        //     : orderData.vehicleId is String
+        //     ? orderData.vehicleId as String
+        //     : 'Unknown Vehicle';
 
         return SingleChildScrollView(
           child: Padding(
@@ -106,16 +106,16 @@ class OrderDetailsView extends GetView<OrderHistoryController> {
                     ),
                   ],
                 ),
-                sh12,
-                Text(
-                  'Vehicle',
-                  style: h5.copyWith(fontWeight: FontWeight.w600),
-                ),
-                sh5,
-                Text(
-                  vehicleInfo,
-                  style: h6,
-                ),
+                // sh12,
+                // Text(
+                //   'Vehicle',
+                //   style: h5.copyWith(fontWeight: FontWeight.w600),
+                // ),
+                // sh5,
+                // Text(
+                //   vehicleInfo,
+                //   style: h6,
+                // ),
                 sh12,
                 Text(
                   'Fuel Type',
