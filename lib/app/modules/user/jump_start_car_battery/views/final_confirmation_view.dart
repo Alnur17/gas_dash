@@ -20,21 +20,21 @@ class FinalConfirmationView extends StatefulWidget {
 }
 
 class _FinalConfirmationViewState extends State<FinalConfirmationView> {
-
   // Initialize the controller
   final OrderFuelController controller = Get.put(OrderFuelController());
   final PaymentController paymentController = Get.put(PaymentController());
- // final CouponController couponController = Get.put(CouponController());
+
+  // final CouponController couponController = Get.put(CouponController());
   final TextEditingController couponTextController = TextEditingController();
 
   // Use addPostFrameCallback to fetch order details after the frame is rendered
- @override
+  @override
   void initState() {
-   if (widget.orderId != null) {
-     WidgetsBinding.instance.addPostFrameCallback((_) {
-       controller.fuelTypeFinalConfirmation(widget.orderId!);
-     });
-   }
+    if (widget.orderId != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.fuelTypeFinalConfirmation(widget.orderId!);
+      });
+    }
     super.initState();
   }
 
@@ -126,19 +126,21 @@ class _FinalConfirmationViewState extends State<FinalConfirmationView> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Obx(() {
-                    // Check controller's state for order details
-                    if (controller.isLoading.value) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (controller.finalConfirmation.value == null ||
-                        controller.finalConfirmation.value!.data == null) {
-                      return Text(
-                        'No order details found',
-                        style: h6,
-                      );
-                    }
+                  child: Obx(
+                    () {
+                      // Check controller's state for order details
+                      if (controller.isLoading.value) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (controller.finalConfirmation.value == null ||
+                          controller.finalConfirmation.value!.data == null) {
+                        return Text(
+                          'No order details found',
+                          style: h6,
+                        );
+                      }
 
-                    final orderData = controller.finalConfirmation.value!.data!;
+                      final orderData =
+                          controller.finalConfirmation.value!.data!;
                       final vehicle = controller.confirmedVehicle.value;
 
                       return Column(
@@ -163,8 +165,7 @@ class _FinalConfirmationViewState extends State<FinalConfirmationView> {
                           Text('Delivery Fee',
                               style: h5.copyWith(fontWeight: FontWeight.bold)),
                           const SizedBox(height: 8),
-                          Text(
-                              '\$${orderData.deliveryFee?.toStringAsFixed(2)}',
+                          Text('\$${orderData.deliveryFee?.toStringAsFixed(2)}',
                               style: h6),
                           const SizedBox(height: 16),
                           Text('Service Fee',
@@ -183,7 +184,6 @@ class _FinalConfirmationViewState extends State<FinalConfirmationView> {
                           //           : AppColors.black,
                           //       fontWeight: FontWeight.bold),
                           // ),
-
                         ],
                       );
                     },
@@ -191,15 +191,17 @@ class _FinalConfirmationViewState extends State<FinalConfirmationView> {
                 ),
               ),
               sh30,
-              paymentController.isLoading.value == true
-                  ? CustomLoader(color: AppColors.white)
-                  : CustomButton(
-                text: 'Next',
-                onPressed: () {
-                  paymentController.createPaymentSession(
-                      orderId: widget.orderId!);
-                },
-                gradientColors: AppColors.gradientColorGreen,
+              Obx(
+                () => paymentController.isLoading.value == true
+                    ? CustomLoader(color: AppColors.white)
+                    : CustomButton(
+                        text: 'Next',
+                        onPressed: () {
+                          paymentController.createPaymentSession(
+                              orderId: widget.orderId!);
+                        },
+                        gradientColors: AppColors.gradientColorGreen,
+                      ),
               ),
             ],
           ),

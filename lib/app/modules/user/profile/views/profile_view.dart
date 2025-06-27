@@ -17,10 +17,21 @@ import '../../../../../common/widgets/custom_list_tile.dart';
 import '../../../auth/login/views/login_view.dart';
 import '../controllers/profile_controller.dart';
 
-class ProfileView extends GetView<ProfileController> {
-  ProfileView({super.key});
+class ProfileView extends StatefulWidget {
+  const ProfileView({super.key});
 
+  @override
+  State<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<ProfileView> {
   final ProfileController profileController = Get.put(ProfileController());
+
+  @override
+  void initState() {
+    super.initState();
+    profileController.getMyProfile();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,22 +50,18 @@ class ProfileView extends GetView<ProfileController> {
             sh20,
             // Profile section with avatar and name
             Obx(
-              () => CircleAvatar(
+                  () => CircleAvatar(
                 radius: 50,
                 backgroundColor: AppColors.white,
                 backgroundImage: NetworkImage(
-                  profileController.myProfileData.value?.image ??
-                      AppImages.profileImageTwo,
-                ),
+                    profileController.myProfileData.value?.image ??
+                        AppImages.profileImageTwo),
               ),
             ),
-
             sh8,
             Obx(
-              () => Text(
-                profileController.myProfileName.value.isNotEmpty
-                    ? profileController.myProfileName.value
-                    : 'User Name', // Fallback for empty name
+                  () => Text(
+                    profileController.myProfileName.value,
                 style: h5.copyWith(
                   fontWeight: FontWeight.w500,
                 ),

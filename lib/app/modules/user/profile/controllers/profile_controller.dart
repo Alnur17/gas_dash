@@ -46,13 +46,13 @@ class ProfileController extends GetxController {
 
   @override
   void onInit() {
-    super.onInit();
     getMyProfile();
+    super.onInit();
+
   }
 
   // Navigation logic for Subscription tile
   void handleSubscriptionNavigation() {
-    getMyProfile();
     if (myProfileData.value?.title != null) {
       Get.to(() => AfterSubscriptionView());
     } else {
@@ -62,13 +62,13 @@ class ProfileController extends GetxController {
 
   // Navigation logic for Family Member tile
   void handleFamilyMemberNavigation() {
-    getMyProfile();
     if (myProfileData.value?.freeSubscriptionAdditionalFamilyMember == false) {
       Get.to(() => SubscriptionView());
     } else {
       Get.to(() => AddFamilyMemberHouseholdVehicleView());
     }
   }
+
 
   ///my Profile
   Future<void> getMyProfile() async {
@@ -93,7 +93,6 @@ class ProfileController extends GetxController {
           myProfileData.value = myProfileModel.data;
           myProfileName.value = myProfileModel.data!.fullname ?? "User Name";
           email.value = myProfileModel.data!.email ?? "example@gmail.com";
-          update();
         }
       } else {
         kSnackBar(
@@ -157,7 +156,6 @@ class ProfileController extends GetxController {
       if (responseBody != null) {
         kSnackBar(message: responseBody["message"], bgColor: AppColors.green);
         Get.offAll(() => LoginView());
-        isLoading(false);
       } else {
         throw 'reset pass in Failed!';
       }
@@ -216,7 +214,7 @@ class ProfileController extends GetxController {
   }
 
   Future<void> updateProfile({
-    //required BuildContext context,
+    required BuildContext context, // Add context parameter
     required String name,
     required String email,
     required String contactNumber,
@@ -238,8 +236,7 @@ class ProfileController extends GetxController {
         return;
       }
 
-      var request =
-          http.MultipartRequest('PATCH', Uri.parse(Api.editMyProfile));
+      var request = http.MultipartRequest('PATCH', Uri.parse(Api.editMyProfile));
 
       request.headers.addAll({
         'Authorization': 'Bearer $accessToken',
@@ -266,7 +263,7 @@ class ProfileController extends GetxController {
           await http.MultipartFile.fromPath(
             'image',
             imagePath,
-            contentType: MediaType.parse(mimeType), //from http_parser package
+            contentType: MediaType.parse(mimeType),
           ),
         );
       }
@@ -274,39 +271,128 @@ class ProfileController extends GetxController {
       var response = await request.send();
       var responseData = await response.stream.bytesToString();
 
-      try {
-        var decodedResponse = json.decode(responseData);
+      var decodedResponse = json.decode(responseData);
 
-        if (response.statusCode == 200) {
-          kSnackBar(
-              message: "Profile updated successfully",
-              bgColor: AppColors.green);
-
-          getMyProfile();
-          update();
-          if (Get.context != null) {
-            Navigator.pop(Get.context!);
-          }
-          //Navigator.pop(context); // sometimes it get some issue
-        } else {
-          kSnackBar(
-            message: decodedResponse['message'] ?? "Failed to update profile",
-            bgColor: AppColors.orange,
-          );
+      if (response.statusCode == 200) {
+        await getMyProfile();
+        // Evict cached image if it exists
+        if (myProfileData.value?.image != null) {
+          imageCache.evict(NetworkImage(myProfileData.value!.image!));
         }
-      } catch (decodeError) {
         kSnackBar(
-            message: "Invalid response format", bgColor: AppColors.orange);
-        debugPrint("Response Error: $decodeError");
+            message: "Profile updated successfully", bgColor: AppColors.green);
+
+        // Refresh profile data
+
+        update(); // Trigger UI update
+        Navigator.pop(context); // Use passed context
+      } else {
+        kSnackBar(
+          message: decodedResponse['message'] ?? "Failed to update profile",
+          bgColor: AppColors.orange,
+        );
       }
     } catch (e) {
-      kSnackBar(
-          message: "Error updating profile: $e", bgColor: AppColors.orange);
+      kSnackBar(message: "Error updating profile: $e", bgColor: AppColors.orange);
       debugPrint("Update Error: $e");
-    }finally {
+    } finally {
       isLoading(false);
     }
   }
+
+  // Future<void> updateProfile({
+  //   //required BuildContext context,
+  //   required String name,
+  //   required String email,
+  //   required String contactNumber,
+  //   required String location,
+  //   required String zipCode,
+  // })
+  // async {
+  //   try {
+  //     isLoading(true);
+  //     String accessToken = LocalStorage.getData(key: AppConstant.accessToken);
+  //     if (accessToken.isEmpty) {
+  //       kSnackBar(message: "User not authenticated", bgColor: AppColors.orange);
+  //       return;
+  //     }
+  //     if (zipCode.trim().length < 4 || zipCode.trim().length > 5) {
+  //       kSnackBar(
+  //         message: "Zip code must be 4 or 5 characters",
+  //         bgColor: AppColors.orange,
+  //       );
+  //       return;
+  //     }
+  //
+  //     var request =
+  //         http.MultipartRequest('PATCH', Uri.parse(Api.editMyProfile));
+  //
+  //     request.headers.addAll({
+  //       'Authorization': 'Bearer $accessToken',
+  //       'Content-Type': 'multipart/form-data',
+  //     });
+  //
+  //     // Add JSON payload as text
+  //     Map<String, dynamic> data = {
+  //       "fullname": name,
+  //       "email": email,
+  //       "phoneNumber": contactNumber,
+  //       'location': location,
+  //       'zipCode': zipCode,
+  //     };
+  //
+  //     request.fields['data'] = jsonEncode(data);
+  //
+  //     // Handle Image Upload
+  //     if (selectedImage.value != null) {
+  //       String imagePath = selectedImage.value!.path;
+  //       String? mimeType = lookupMimeType(imagePath) ?? 'image/jpeg';
+  //
+  //       request.files.add(
+  //         await http.MultipartFile.fromPath(
+  //           'image',
+  //           imagePath,
+  //           contentType: MediaType.parse(mimeType), //from http_parser package
+  //         ),
+  //       );
+  //     }
+  //
+  //     var response = await request.send();
+  //     var responseData = await response.stream.bytesToString();
+  //
+  //     try {
+  //       var decodedResponse = json.decode(responseData);
+  //
+  //       if (response.statusCode == 200) {
+  //         kSnackBar(
+  //             message: "Profile updated successfully",
+  //             bgColor: AppColors.green);
+  //
+  //         getMyProfile();
+  //         update();
+  //         if (Get.context != null) {
+  //           Navigator.pop(Get.context!);
+  //         }
+  //         //Navigator.pop(context); // sometimes it get some issue
+  //       } else {
+  //         kSnackBar(
+  //           message: decodedResponse['message'] ?? "Failed to update profile",
+  //           bgColor: AppColors.orange,
+  //         );
+  //       }
+  //     } catch (decodeError) {
+  //       kSnackBar(
+  //           message: "Invalid response format", bgColor: AppColors.orange);
+  //       debugPrint("Response Error: $decodeError");
+  //     }
+  //   } catch (e) {
+  //     kSnackBar(
+  //         message: "Error updating profile: $e", bgColor: AppColors.orange);
+  //     debugPrint("Update Error: $e");
+  //   }finally {
+  //     isLoading(false);
+  //   }
+  // }
 
   Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();

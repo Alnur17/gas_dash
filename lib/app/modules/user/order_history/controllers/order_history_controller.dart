@@ -85,7 +85,7 @@ class OrderHistoryController extends GetxController {
     }
   }
 
-  Future<void> getSingleOrder(String orderId,amount,location) async {
+  Future<void> getSingleOrder(String orderId, String amount, String location) async {
     try {
       isLoading.value = true;
       errorMessage('');
@@ -104,10 +104,6 @@ class OrderHistoryController extends GetxController {
       final apiUrl = Api.singleOrderById(orderId);
       debugPrint('API URL: $apiUrl');
 
-      if (apiUrl is! String) {
-        throw Exception('Api.singleOrderById returned non-string value: $apiUrl (type: ${apiUrl.runtimeType})');
-      }
-
       final response = await BaseClient.getRequest(
         api: apiUrl,
         headers: headers,
@@ -121,7 +117,7 @@ class OrderHistoryController extends GetxController {
         final singleOrderData = SingleOrderByIdModel.fromJson(jsonResponse);
         if (singleOrderData.success == true && singleOrderData.data != null) {
           singleOrder.value = singleOrderData;
-          Get.to(() =>  OrderDetailsView(amount,location));
+          Get.to(() => OrderDetailsView(amount, location));
         } else {
           kSnackBar(
             message: singleOrderData.message ?? 'Failed to fetch order details',

@@ -1,10 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:gas_dash/common/helper/earnings_card.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
+import 'package:gas_dash/common/widgets/custom_loader.dart';
 
 import 'package:get/get.dart';
 
@@ -27,7 +27,8 @@ class JumpStartCarBatteryView extends StatefulWidget {
   });
 
   @override
-  State<JumpStartCarBatteryView> createState() => _JumpStartCarBatteryViewState();
+  State<JumpStartCarBatteryView> createState() =>
+      _JumpStartCarBatteryViewState();
 }
 
 class _JumpStartCarBatteryViewState extends State<JumpStartCarBatteryView> {
@@ -189,15 +190,21 @@ class _JumpStartCarBatteryViewState extends State<JumpStartCarBatteryView> {
                 imageAssetPath: AppImages.addCar,
               ),
               sh20,
-              CustomButton(
-                text: 'Next',
-                onPressed: () {
-                  orderFuelController.createOrderForServices(
-                      vehicleId:
-                          orderFuelController.selectedVehicle.value?.id.toString() ?? '',
-                      orderType: 'Battery');
-                },
-                gradientColors: AppColors.gradientColorGreen,
+              Obx(
+                () => orderFuelController.isLoading.value
+                    ? CustomLoader(color: AppColors.white)
+                    : CustomButton(
+                        text: 'Next',
+                        onPressed: () {
+                          orderFuelController.createOrderForServices(
+                              vehicleId: orderFuelController
+                                      .selectedVehicle.value?.id
+                                      .toString() ??
+                                  '',
+                              orderType: 'Battery');
+                        },
+                        gradientColors: AppColors.gradientColorGreen,
+                      ),
               ),
             ],
           ),

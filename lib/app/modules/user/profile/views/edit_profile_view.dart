@@ -209,6 +209,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                             contactNumber: contactTEController.text,
                             location: locationTEController.text,
                             zipCode: zipCodeTEController.text,
+                            context: context,
                           );
                         },
                       ),

@@ -400,21 +400,23 @@ class _FuelTypeFinalConfirmationViewState
                             ),
                           ),
                           sh20,
-                          controller.isLoading.value
+                          Obx(() => paymentController.isLoading.value
                               ? CustomLoader(color: AppColors.white)
                               : CustomButton(
-                                  text: 'Next',
-                                  onPressed: () {
-                                    paymentController.createPaymentSession(
-                                      orderId: widget.orderId ?? '',
-                                      couponCode:
-                                          couponTextController.text.trim(),
-                                    );
-                                    print(
-                                        ";;;;;;;;;;;;;;;;;;${couponTextController.text}");
-                                  },
-                                  gradientColors: AppColors.gradientColorGreen,
-                                ),
+                            text: 'Next',
+                            onPressed: () {
+                              paymentController.createPaymentSession(
+                                orderId: widget.orderId ?? '',
+                                couponCode:
+                                couponTextController.text.trim(),
+                              );
+                              couponTextController.clear();
+                              print(
+                                  ";;;;;;;;;;;;;;;;;;${couponTextController.text}");
+                            },
+                            gradientColors: AppColors.gradientColorGreen,
+                          ),)
+                          ,
                         ],
                       );
                     }),

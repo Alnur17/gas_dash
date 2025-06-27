@@ -43,7 +43,7 @@ class Api {
 
   static const orderHistory = "$baseUrl/orders/my-order"; //
 
-  static singleOrderById(String orderId) => "$baseUrl/orders/$orderId"; //done
+  static String singleOrderById(String orderId) => "$baseUrl/orders/$orderId"; //done
 
   static String orderDataConfirmation(String id) => "$baseUrl/orders/$id"; //
 
