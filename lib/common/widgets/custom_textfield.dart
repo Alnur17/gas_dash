@@ -15,8 +15,8 @@ class CustomTextField extends StatelessWidget {
   final Color? containerColor;
   final Color? borderColor;
   final bool obscureText;
-  final TextInputType? keyboardType; // Added to support custom keyboard types
-  final List<TextInputFormatter>? inputFormatters; // Added to support input formatters
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
 
   const CustomTextField({
     super.key,
@@ -31,8 +31,8 @@ class CustomTextField extends StatelessWidget {
     this.containerColor,
     this.borderColor,
     this.obscureText = false,
-    this.keyboardType, // New parameter
-    this.inputFormatters, // New parameter
+    this.keyboardType,
+    this.inputFormatters,
   });
 
   @override
@@ -48,10 +48,10 @@ class CustomTextField extends StatelessWidget {
         textInputAction: TextInputAction.done,
         onChanged: onChange,
         controller: controller,
-        maxLines: obscureText ? 1 : null, // Set maxLines to 1 if obscureText is true
-        keyboardType: obscureText ? TextInputType.text : (keyboardType ?? TextInputType.multiline), // Use provided keyboardType or fallback
+        maxLines: obscureText ? 1 : null,
+        keyboardType: obscureText ? TextInputType.text : (keyboardType ?? TextInputType.multiline),
         obscureText: obscureText,
-        inputFormatters: inputFormatters, // Apply input formatters
+        inputFormatters: inputFormatters,
         decoration: InputDecoration(
           hintText: hintText ?? '',
           hintStyle: hintTextStyle ?? h5.copyWith(color: AppColors.grey),

@@ -15,8 +15,13 @@ import '../../../user/dashboard/views/dashboard_view.dart';
 
 class LoginController extends GetxController {
   var isLoading = false.obs;
-  var isPasswordVisible = false.obs; // Observable for password visibility
-  var isCheckboxVisible = false.obs; // Observable for password visibility
+  var isPasswordVisible = false.obs;
+  var isCheckboxVisible = false.obs;
+
+  // Method to toggle password visibility
+  void togglePasswordVisibility() {
+    isPasswordVisible.toggle();
+  }
 
   void toggleCheckboxVisibility() {
     isCheckboxVisible.toggle();
@@ -104,8 +109,4 @@ class LoginController extends GetxController {
     }
   }
 
-  // Method to toggle password visibility
-  void togglePasswordVisibility() {
-    isPasswordVisible.toggle();
-  }
 }

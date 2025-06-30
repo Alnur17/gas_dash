@@ -15,16 +15,13 @@ import '../../forgot_password/views/forgot_password_view.dart';
 import '../controllers/login_controller.dart';
 
 class LoginView extends StatelessWidget {
-  // Changed to StatelessWidget
   const LoginView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Initialize controllers
     final LoginController loginController = Get.put(LoginController());
     final AuthController authController = Get.put(AuthController());
 
-    // Text editing controllers
     final TextEditingController emailTEController = TextEditingController();
     final TextEditingController passwordTEController = TextEditingController();
 
