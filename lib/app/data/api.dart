@@ -2,7 +2,7 @@ class Api {
   /// base url
   //static const baseUrl = "http://192.168.10.160:8000/api/v1";
   static const baseUrl = "http://172.252.13.83:8000/api/v1";
-  static const socketUrl = "http://172.252.13.83:8002";
+  static const socketUrl = "http://10.10.10.15:2001";
  // static const socketUrl = "http://115.127.156.131:1005";
 
   ///auth

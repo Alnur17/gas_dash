@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/user/order_history/controllers/order_history_controller.dart';
-import 'package:gas_dash/app/modules/user/track_order_details/views/track_order_details_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:get/get.dart';
@@ -50,7 +49,7 @@ final OrderHistoryController orderHistoryController = Get.put(OrderHistoryContro
             orderId: order.id.toString(),
             dateTime: order.createdAt.toString(),
             status: order.orderStatus.toString(),
-            fuelAmount: order.finalAmountOfPayment.toString(),
+            fuelAmount: order.amount.toString(),
             fuelType: order.fuelType.toString(),
             paidPrice: order.price.toString(),
             onTrack: () {

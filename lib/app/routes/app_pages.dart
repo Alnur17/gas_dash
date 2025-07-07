@@ -44,8 +44,6 @@ import '../modules/user/profile/bindings/profile_binding.dart';
 import '../modules/user/profile/views/profile_view.dart';
 import '../modules/user/subscription/bindings/subscription_binding.dart';
 import '../modules/user/subscription/views/subscription_view.dart';
-import '../modules/user/track_order_details/bindings/track_order_details_binding.dart';
-import '../modules/user/track_order_details/views/track_order_details_view.dart';
 
 part 'app_routes.dart';
 
@@ -144,11 +142,6 @@ class AppPages {
       name: _Paths.JUMP_START_CAR_BATTERY,
       page: () => JumpStartCarBatteryView(),
       binding: JumpStartCarBatteryBinding(),
-    ),
-    GetPage(
-      name: _Paths.TRACK_ORDER_DETAILS,
-      page: () => const TrackOrderDetailsView(),
-      binding: TrackOrderDetailsBinding(),
     ),
     GetPage(
       name: _Paths.ABOUT_DRIVER_INFORMATION,
