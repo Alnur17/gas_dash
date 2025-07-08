@@ -16,6 +16,7 @@ import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/widgets/custom_button.dart';
 import '../../../../../common/widgets/custom_snackbar.dart';
+import '../../../../../common/widgets/custom_textfield.dart';
 import '../../../../data/base_client.dart';
 import '../../jump_start_car_battery/views/final_confirmation_view.dart';
 import '../model/final_confirmation_model.dart';
@@ -27,7 +28,8 @@ class OrderFuelController extends GetxController {
   final TextEditingController makeController = TextEditingController();
   final TextEditingController modelController = TextEditingController();
   final TextEditingController yearController = TextEditingController();
-  final TextEditingController fuelLevelController = TextEditingController();
+  final TextEditingController colorTEController = TextEditingController();
+  final TextEditingController licensePlateNumberTEController = TextEditingController();
   final TextEditingController customAmountController = TextEditingController();
 
   final PaymentController paymentController = Get.put(PaymentController());
@@ -67,7 +69,6 @@ class OrderFuelController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // fetchCurrentLocation();
     selectedMake.listen((value) {
       makeController.text = value ?? '';
       if (value == null) {
@@ -86,60 +87,57 @@ class OrderFuelController extends GetxController {
     });
   }
 
-  // void promptForZipCode() {
-  //   final TextEditingController zipController = TextEditingController();
-  //   Get.dialog(
-  //     Dialog(
-  //       backgroundColor: AppColors.white,
-  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-  //       child: Padding(
-  //         padding: const EdgeInsets.all(16),
-  //         child: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: [
-  //             Align(
-  //               alignment: Alignment.center,
-  //               child: Text(
-  //                 'Enter Zip Code',
-  //                 style: h3.copyWith(fontSize: 20),
-  //                 textAlign: TextAlign.center,
-  //               ),
-  //             ),
-  //             const SizedBox(height: 16),
-  //             CustomTextField(
-  //               hintText: 'Enter zip code (e.g., 90001)',
-  //               controller: zipController,
-  //               onChange: (value) {
-  //                 zipCode.value = value;
-  //               },
-  //             ),
-  //             const SizedBox(height: 20),
-  //             CustomButton(
-  //               text: 'Confirm',
-  //               onPressed: () {
-  //                 if (zipCode.value != null &&
-  //                     zipCode.value!.isNotEmpty &&
-  //                     RegExp(r'^\d{5}$').hasMatch(zipCode.value!)) {
-  //                   Get.back();// Close dialog
-  //                   //zipController.dispose(); // Dispose controller
-  //                   //isProcessing = false;
-  //                 } else {
-  //                   Get.snackbar(
-  //                       'Error', 'Please enter a valid 5-digit zip code',
-  //                       snackPosition: SnackPosition.BOTTOM);
-  //                 }
-  //               },
-  //               gradientColors: AppColors.gradientColorGreen,
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //     barrierDismissible: true,
-  //
-  //   );
-  // }
+  void promptForZipCode() {
+    final TextEditingController zipController = TextEditingController();
+    Get.dialog(
+      Dialog(
+        backgroundColor: AppColors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  'Enter Zip Code',
+                  style: h3.copyWith(fontSize: 20),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                hintText: 'Enter zip code (e.g., 90001)',
+                controller: zipController,
+                onChange: (value) {
+                  zipCode.value = value;
+                },
+              ),
+              const SizedBox(height: 20),
+              CustomButton(
+                text: 'Confirm',
+                onPressed: () {
+                  if (zipCode.value != null &&
+                      zipCode.value!.isNotEmpty &&
+                      RegExp(r'^\d{5}$').hasMatch(zipCode.value!)) {
+                    Get.back(); // Close dialog
+                  } else {
+                    Get.snackbar(
+                        'Error', 'Please enter a valid 5-digit zip code',
+                        snackPosition: SnackPosition.BOTTOM);
+                  }
+                },
+                gradientColors: AppColors.gradientColorGreen,
+              ),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: true,
+    );
+  }
 
   double parseGallons(String amount) {
     try {
@@ -180,6 +178,10 @@ class OrderFuelController extends GetxController {
   }) async {
     isLoading.value = true;
     try {
+      if (zipCode.value == null || zipCode.value!.isEmpty) {
+        promptForZipCode();
+        return;
+      }
       final String token = LocalStorage.getData(key: AppConstant.accessToken);
       final Map<String, dynamic> orderData = {
         'location': {
@@ -194,7 +196,7 @@ class OrderFuelController extends GetxController {
         'amount': amount,
         'fuelType': fuelType,
         'orderType': 'Fuel',
-        'zipCode': zipCode.value ?? '12080',
+        'zipCode': zipCode.value,
         'emergency': isEmergency ?? false,
         'cancelReason': '',
         'cuponCode': couponCode ?? '',
@@ -227,13 +229,10 @@ class OrderFuelController extends GetxController {
           message: 'Order created successfully!',
           bgColor: AppColors.green,
         );
-        // paymentController.createPaymentSession(
-        //   orderId: orderId, couponCode: couponCode,
-        // );
         Get.to(() => FuelTypeFinalConfirmationView(
-              orderId: orderId,
-              address: currentLocation.value,
-            ));
+          orderId: orderId,
+          address: currentLocation.value,
+        ));
       }
     } catch (e) {
       Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
@@ -245,11 +244,13 @@ class OrderFuelController extends GetxController {
   Future<void> createOrderForServices({
     required String vehicleId,
     required String orderType,
-    // String? couponCode,
   }) async {
     try {
       isLoading.value = true;
-
+      if (zipCode.value == null || zipCode.value!.isEmpty) {
+        promptForZipCode();
+        return;
+      }
       final String token = LocalStorage.getData(key: AppConstant.accessToken);
       final Map<String, dynamic> orderData = {
         'location': {
@@ -260,9 +261,8 @@ class OrderFuelController extends GetxController {
         },
         'vehicleId': vehicleId,
         'orderType': orderType,
-        'zipCode': zipCode.value ?? '12080',
+        'zipCode': zipCode.value,
         'cancelReason': '',
-        //'cuponCode': couponCode ?? '',
       };
 
       String body = jsonEncode(orderData);
@@ -291,9 +291,9 @@ class OrderFuelController extends GetxController {
           bgColor: AppColors.green,
         );
         Get.to(() => FinalConfirmationView(
-              orderId: orderId,
-              address: currentLocation.value,
-            ));
+          orderId: orderId,
+          address: currentLocation.value,
+        ));
       }
     } catch (e) {
       Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
@@ -303,50 +303,21 @@ class OrderFuelController extends GetxController {
   }
 
   Future<void> cancelOrder(
-    String orderId,
-  ) async {
+      String orderId,
+      ) async {
     isLoading.value = true;
     try {
-      // final String token = LocalStorage.getData(key: AppConstant.accessToken);
-      // final Map<String, dynamic> orderData = {
-      //   'location': {
-      //     'coordinates': [
-      //       longitude.value ?? 90.4125,
-      //       latitude.value ?? 23.8103,
-      //     ],
-      //   },
-      //   'vehicleId': vehicleId,
-      //   'presetAmount': presetAmount,
-      //   'customAmount': customAmount,
-      //   'amount': amount,
-      //   'fuelType': fuelType,
-      //   'orderType': 'Fuel',
-      //   'zipCode': zipCode.value ?? '90001',
-      //   'emergency': isEmergency ?? false,
-      //   'cancelReason': '',
-      // };
-
-      //String body = jsonEncode(orderData);
       var headers = {
         'Content-Type': 'application/json',
-        //'Authorization': 'Bearer $token',
       };
 
       http.Response response = await BaseClient.deleteRequest(
         api: Api.cancelOrder(orderId),
-        //body: body,
         headers: headers,
       );
 
       var responseData = await BaseClient.handleResponse(response);
       if (responseData != null) {
-        // String? orderId = responseData['data']?['_id'];
-        // if (orderId == null) {
-        //   Get.snackbar('Error', 'Failed to retrieve order ID',
-        //       snackPosition: SnackPosition.BOTTOM);
-        //   return;
-        // }
-
         kSnackBar(
           message: 'Order cancel successfully!',
           bgColor: AppColors.green,
@@ -377,12 +348,12 @@ class OrderFuelController extends GetxController {
       var responseData = await BaseClient.handleResponse(response);
       if (responseData != null) {
         FinalConfirmationModel orderModel =
-            FinalConfirmationModel.fromJson(responseData);
+        FinalConfirmationModel.fromJson(responseData);
         if (orderModel.success == true && orderModel.data != null) {
-          finalConfirmation.value = orderModel; // Store in observable
+          finalConfirmation.value = orderModel;
           kSnackBar(
             message:
-                orderModel.message ?? 'Order details fetched successfully!',
+            orderModel.message ?? 'Order details fetched successfully!',
             bgColor: AppColors.green,
           );
           return orderModel;
@@ -439,24 +410,24 @@ class OrderFuelController extends GetxController {
                 ),
                 const SizedBox(height: 16),
                 Obx(() => Column(
-                      children: vehiclesList.map((vehicle) {
-                        return RadioListTile<VehicleListData>(
-                          value: vehicle,
-                          groupValue: selectedVehicle.value,
-                          onChanged: (VehicleListData? value) {
-                            selectedVehicle.value = value;
-                          },
-                          title: Text(
-                            '${vehicle.year} ${vehicle.make} ${vehicle.model}',
-                            style: h5,
-                          ),
-                          secondary: Image.asset(
-                            AppImages.car,
-                            scale: 4,
-                          ),
-                        );
-                      }).toList(),
-                    )),
+                  children: vehiclesList.map((vehicle) {
+                    return RadioListTile<VehicleListData>(
+                      value: vehicle,
+                      groupValue: selectedVehicle.value,
+                      onChanged: (VehicleListData? value) {
+                        selectedVehicle.value = value;
+                      },
+                      title: Text(
+                        '${vehicle.year} ${vehicle.make} ${vehicle.model}',
+                        style: h5,
+                      ),
+                      secondary: Image.asset(
+                        AppImages.car,
+                        scale: 4,
+                      ),
+                    );
+                  }).toList(),
+                )),
                 const SizedBox(height: 20),
                 CustomButton(
                   text: 'Confirm',
@@ -467,7 +438,7 @@ class OrderFuelController extends GetxController {
                         'model': selectedVehicle.value!.model!,
                         'year': selectedVehicle.value!.year.toString(),
                         'fuelLevel':
-                            selectedVehicle.value!.fuelLevel.toString(),
+                        selectedVehicle.value!.fuelLevel.toString(),
                       };
                       Get.back();
                       kSnackBar(
@@ -541,7 +512,7 @@ class OrderFuelController extends GetxController {
       if (!serviceEnabled) {
         currentLocation.value = 'Location services are disabled.';
         zipCode.value = null;
-        //promptForZipCode();
+        promptForZipCode();
         return;
       }
 
@@ -551,7 +522,7 @@ class OrderFuelController extends GetxController {
         if (permission == LocationPermission.denied) {
           currentLocation.value = 'Location permissions are denied.';
           zipCode.value = null;
-          //promptForZipCode();
+          promptForZipCode();
           return;
         }
       }
@@ -559,7 +530,7 @@ class OrderFuelController extends GetxController {
       if (permission == LocationPermission.deniedForever) {
         currentLocation.value = 'Location permissions are permanently denied.';
         zipCode.value = null;
-        //promptForZipCode();
+        promptForZipCode();
         return;
       }
 
@@ -570,43 +541,35 @@ class OrderFuelController extends GetxController {
       longitude.value = position.longitude;
 
       List<Placemark> placeMarks =
-          await placemarkFromCoordinates(position.latitude, position.longitude);
+      await placemarkFromCoordinates(position.latitude, position.longitude);
 
       if (placeMarks.isNotEmpty) {
         Placemark place = placeMarks.first;
-        currentLocation.value =
-            '${place.street}, ${place.subLocality}, ${place.locality}';
-        zipCode.value = place.postalCode?.isNotEmpty == true
-            ? place.postalCode
-            : '12080'; // ✅ set default here
+        currentLocation.value =[
+          place.street,
+          place.subLocality,
+          place.locality,
+          place.country,
+        ].where((element) => element != null && element.isNotEmpty).join(", ");
+        zipCode.value = place.postalCode?.isNotEmpty == true ? place.postalCode : null;
+        if (zipCode.value == null || zipCode.value!.isEmpty) {
+          promptForZipCode();
+        }
       } else {
         currentLocation.value = 'Address not found.';
-        zipCode.value = '12080'; // ✅ fallback zip
+        zipCode.value = null;
+        promptForZipCode();
       }
-
-      // if (placeMarks.isNotEmpty) {
-      //   Placemark place = placeMarks.first;
-      //   currentLocation.value =
-      //   '${place.street}, ${place.subLocality}, ${place.locality}';
-      //   zipCode.value = place.postalCode ?? '';
-      //   if (zipCode.value!.isEmpty) {
-      //    // promptForZipCode();
-      //   }
-      // } else {
-      //   currentLocation.value = 'Address not found.';
-      //   zipCode.value = '';
-      //   //promptForZipCode();
-      // }
     } catch (e) {
       currentLocation.value = 'Failed to get location: $e';
-      zipCode.value = '90001';
-      //promptForZipCode();
+      zipCode.value = null;
+      promptForZipCode();
     } finally {
       isLoading.value = false;
     }
   }
 
-  void updateLocation(double lat, double lng, String address) async {
+  Future<void> updateLocation(double lat, double lng, String address) async {
     latitude.value = lat;
     longitude.value = lng;
     currentLocation.value = address;
@@ -615,12 +578,17 @@ class OrderFuelController extends GetxController {
       if (placemarks.isNotEmpty) {
         zipCode.value = placemarks.first.postalCode?.isNotEmpty == true
             ? placemarks.first.postalCode!
-            : '12080';
+            : null;
+        if (zipCode.value == null || zipCode.value!.isEmpty) {
+          promptForZipCode();
+        }
       } else {
-        zipCode.value = '12080';
+        zipCode.value = null;
+        promptForZipCode();
       }
     } catch (e) {
-      zipCode.value = '12080';
+      zipCode.value = null;
+      promptForZipCode();
     }
   }
 
@@ -630,7 +598,7 @@ class OrderFuelController extends GetxController {
     makeController.dispose();
     modelController.dispose();
     yearController.dispose();
-    fuelLevelController.dispose();
+    colorTEController.dispose();
     super.onClose();
   }
 
@@ -641,7 +609,8 @@ class OrderFuelController extends GetxController {
     makeController.clear();
     modelController.clear();
     yearController.clear();
-    fuelLevelController.clear();
+    colorTEController.clear();
+    licensePlateNumberTEController.clear();
   }
 
   Future<void> confirmVehicle() async {
@@ -650,7 +619,8 @@ class OrderFuelController extends GetxController {
     if (makeController.text.isEmpty ||
         modelController.text.isEmpty ||
         yearController.text.isEmpty ||
-        fuelLevelController.text.isEmpty) {
+        colorTEController.text.isEmpty ||
+        licensePlateNumberTEController.text.isEmpty) {
       Get.snackbar('Error', 'Please fill all fields',
           snackPosition: SnackPosition.BOTTOM);
       return;
@@ -671,7 +641,8 @@ class OrderFuelController extends GetxController {
       'make': makeController.text,
       'model': modelController.text,
       'year': yearController.text,
-      'fuelLevel': fuelLevelController.text,
+      'carColor': colorTEController.text,
+      'licenseNumber': licensePlateNumberTEController.text,
       'userId': id.toString(),
     };
     String body = jsonEncode(vehicleData);

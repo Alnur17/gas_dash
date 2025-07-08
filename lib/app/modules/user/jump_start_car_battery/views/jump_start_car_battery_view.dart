@@ -108,14 +108,17 @@ class _JumpStartCarBatteryViewState extends State<JumpStartCarBatteryView> {
                   },
                 ),
                 const SizedBox(height: 12),
-
-                Text(
-                  'Fuel Level',
-                  style: h5,
-                ),
+                Text('Color', style: h5),
                 CustomTextField(
-                  hintText: 'e.g. 20%',
-                  controller: orderFuelController.fuelLevelController,
+                  hintText: 'Enter the color of your car',
+                  controller: orderFuelController.colorTEController,
+                ),
+                const SizedBox(height: 12),
+                Text('License Plate Number', style: h5),
+                CustomTextField(
+                  hintText: 'Enter the license number',
+                  controller:
+                  orderFuelController.licensePlateNumberTEController,
                 ),
                 const SizedBox(height: 20),
 

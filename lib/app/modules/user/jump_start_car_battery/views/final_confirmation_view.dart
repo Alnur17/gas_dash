@@ -20,14 +20,11 @@ class FinalConfirmationView extends StatefulWidget {
 }
 
 class _FinalConfirmationViewState extends State<FinalConfirmationView> {
-  // Initialize the controller
   final OrderFuelController controller = Get.put(OrderFuelController());
   final PaymentController paymentController = Get.put(PaymentController());
 
-  // final CouponController couponController = Get.put(CouponController());
   final TextEditingController couponTextController = TextEditingController();
 
-  // Use addPostFrameCallback to fetch order details after the frame is rendered
   @override
   void initState() {
     if (widget.orderId != null) {
@@ -61,7 +58,6 @@ class _FinalConfirmationViewState extends State<FinalConfirmationView> {
         centerTitle: true,
       ),
       body: Obx(() {
-        // Show loading indicator while fetching location
         if (controller.currentLocation.value == 'Fetching location...') {
           return const Center(child: CircularProgressIndicator());
         }
@@ -79,43 +75,6 @@ class _FinalConfirmationViewState extends State<FinalConfirmationView> {
                 ),
               ),
               sh8,
-              // Row(
-              //   children: [
-              //     Expanded(
-              //       child: CustomTextField(
-              //         controller: couponTextController,
-              //         borderColor: AppColors.orange,
-              //         preIcon: Image.asset(
-              //           AppImages.coupon,
-              //           scale: 4,
-              //         ),
-              //         hintText: 'Enter coupon code',
-              //       ),
-              //     ),
-              //     sw5,
-              //     Obx(() =>
-              //     couponController.isLoading.value
-              //         ? const CircularProgressIndicator()
-              //         : CustomButton(
-              //       borderColor: AppColors.orange,
-              //       borderRadius: 12,
-              //       text: 'Apply',
-              //       onPressed: () {
-              //         if (couponTextController.text.isNotEmpty) {
-              //           couponController
-              //               .checkCoupon(couponTextController.text);
-              //         } else {
-              //           kSnackBar(
-              //             message: 'Please enter a coupon code',
-              //             bgColor: AppColors.orange,
-              //           );
-              //         }
-              //       },
-              //       width: 100,
-              //       textColor: AppColors.orange,
-              //     )),
-              //   ],
-              // ),
               sh20,
               Container(
                 width: double.infinity,
@@ -128,7 +87,6 @@ class _FinalConfirmationViewState extends State<FinalConfirmationView> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Obx(
                     () {
-                      // Check controller's state for order details
                       if (controller.isLoading.value) {
                         return const Center(child: CircularProgressIndicator());
                       } else if (controller.finalConfirmation.value == null ||
@@ -158,7 +116,7 @@ class _FinalConfirmationViewState extends State<FinalConfirmationView> {
                           const SizedBox(height: 8),
                           Text(
                               vehicle != null
-                                  ? '${vehicle['year']} ${vehicle['make']} ${vehicle['model']}, ~${vehicle['fuelLevel']}% fuel'
+                                  ? '${vehicle['year']} ${vehicle['make']} ${vehicle['model']}'
                                   : 'N/A',
                               style: h6),
                           const SizedBox(height: 16),

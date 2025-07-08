@@ -65,7 +65,7 @@ class ActiveOrder extends StatelessWidget {
                   scale: 4,
                 ),
                 SizedBox(width: 8),
-                Text(location),
+                Expanded(child: Text(location)),
               ],
             ),
             SizedBox(height: 16),

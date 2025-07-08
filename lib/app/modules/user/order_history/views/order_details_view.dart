@@ -100,9 +100,11 @@ class OrderDetailsView extends GetView<OrderHistoryController> {
                       scale: 4,
                     ),
                     sw8,
-                    Text(
-                      locationName ?? 'Unknown',
-                      style: h6,
+                    Expanded(
+                      child: Text(
+                        locationName ?? 'Unknown',
+                        style: h6,
+                      ),
                     ),
                   ],
                 ),

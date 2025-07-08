@@ -12,11 +12,11 @@ import '../model/order_history_model.dart';
 import '../views/order_details_view.dart';
 
 class OrderHistoryController extends GetxController {
-  var orders = <OrderHistoryDatum>[].obs; // Observable list for orders
-  var inProcessOrders = <OrderHistoryDatum>[].obs; // Observable list for orders
-  var isLoading = true.obs; // Loading state
-  var errorMessage = ''.obs; // Error message for failures
-  var singleOrder = Rx<SingleOrderByIdModel?>(null); // Observable for single order
+  var orders = <OrderHistoryDatum>[].obs;
+  var inProcessOrders = <OrderHistoryDatum>[].obs;
+  var isLoading = true.obs;
+  var errorMessage = ''.obs;
+  var singleOrder = Rx<SingleOrderByIdModel?>(null);
 
   @override
   void onInit() {
@@ -34,8 +34,14 @@ class OrderHistoryController extends GetxController {
         List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
         if (placemarks.isNotEmpty) {
           final place = placemarks.first;
-          final address = "${place.locality}, ${place.country}";
-          locationNames[orderId] = address;
+          final address = [
+            place.street,
+            place.subLocality,
+            place.subAdministrativeArea,
+            place.country,
+          ].where((element) => element != null && element.isNotEmpty).join(", ");
+
+          locationNames[orderId] = address.isNotEmpty ? address : "Unknown";
         } else {
           locationNames[orderId] = "Unknown";
         }

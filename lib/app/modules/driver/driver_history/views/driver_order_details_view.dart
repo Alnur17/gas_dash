@@ -109,9 +109,11 @@ class _DriverOrderDetailsViewState extends State<DriverOrderDetailsView> {
                     scale: 4,
                   ),
                   sw8,
-                  Text(
-                   widget.location ?? 'Unknown Location',
-                    style: h6,
+                  Expanded(
+                    child: Text(
+                     widget.location ?? 'Unknown Location',
+                      style: h6,
+                    ),
                   ),
                 ],
               ),
@@ -140,7 +142,7 @@ class _DriverOrderDetailsViewState extends State<DriverOrderDetailsView> {
                     ),
                     sh5,
                     Text(
-                      widget.orderData?.orderType ?? 'Unknown',
+                      widget.orderData?.fuelType ?? 'Unknown',
                       style: h6,
                     ),
                     sh12,
@@ -150,8 +152,8 @@ class _DriverOrderDetailsViewState extends State<DriverOrderDetailsView> {
                     ),
                     sh5,
                     Text(
-                      widget.orderData?.price != null
-                          ? '${widget.orderData?.price!.toStringAsFixed(2)} gallons'
+                      widget.orderData?.amount != null
+                          ? '${widget.orderData?.amount!.toStringAsFixed(2)} gallons'
                           : 'N/A',
                       style: h6,
                     ),

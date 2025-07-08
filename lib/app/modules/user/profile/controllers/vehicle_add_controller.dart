@@ -23,8 +23,8 @@ class VehicleAddController extends GetxController{
   final TextEditingController makeController = TextEditingController();
   final TextEditingController modelController = TextEditingController();
   final TextEditingController yearController = TextEditingController();
-  final TextEditingController fuelLevelController = TextEditingController();
-  //final OrderFuelController orderFuelController = Get.put(OrderFuelController());
+  final TextEditingController colorTEController = TextEditingController();
+  final TextEditingController licensePlateNumberTEController = TextEditingController();
 
   @override
   void onInit() {
@@ -39,7 +39,8 @@ class VehicleAddController extends GetxController{
     if (makeController.text.isEmpty ||
         modelController.text.isEmpty ||
         yearController.text.isEmpty ||
-        fuelLevelController.text.isEmpty) {
+        colorTEController.text.isEmpty ||
+        licensePlateNumberTEController.text.isEmpty) {
       Get.snackbar('Error', 'Please fill all fields',
           snackPosition: SnackPosition.BOTTOM);
       return;
@@ -60,7 +61,8 @@ class VehicleAddController extends GetxController{
       'make': makeController.text,
       'model': modelController.text,
       'year': yearController.text,
-      'fuelLevel': fuelLevelController.text,
+      'carColor': colorTEController.text,
+      'licenseNumber': licensePlateNumberTEController.text,
       'userId': id.toString(),
     };
     String body = jsonEncode(vehicleData);
@@ -79,7 +81,7 @@ class VehicleAddController extends GetxController{
 
       var responseData = await BaseClient.handleResponse(response);
       if (responseData != null) {
-      await fetchMyVehicles();
+        await fetchMyVehicles();
         Get.back();
         kSnackBar(
             message: 'Vehicle added successfully!', bgColor: AppColors.green);
@@ -118,7 +120,8 @@ class VehicleAddController extends GetxController{
     makeController.dispose();
     modelController.dispose();
     yearController.dispose();
-    fuelLevelController.dispose();
+    colorTEController.dispose();
+    licensePlateNumberTEController.dispose();
     super.onClose();
   }
 }

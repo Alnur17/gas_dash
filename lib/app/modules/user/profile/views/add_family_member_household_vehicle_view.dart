@@ -86,9 +86,13 @@ class AddVehicleDetailsPopup extends StatelessWidget {
               controller: vehicleAddController.yearController,
             ),
             sh16,
-            Text('Fuel Level'),
+            Text('Color'),
             CustomTextField(
-              controller: vehicleAddController.fuelLevelController,
+              controller: vehicleAddController.colorTEController,
+            ), sh16,
+            Text('License Plate Number'),
+            CustomTextField(
+              controller: vehicleAddController.colorTEController,
             ),
             sh24,
             CustomButton(

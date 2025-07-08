@@ -91,10 +91,17 @@ class _OrderFuelViewState extends State<OrderFuelView> {
                   },
                 ),
                 const SizedBox(height: 12),
-                Text('Fuel Level', style: h5),
+                Text('Color', style: h5),
                 CustomTextField(
-                  hintText: 'e.g. 20%',
-                  controller: orderFuelController.fuelLevelController,
+                  hintText: 'Enter the color of your car',
+                  controller: orderFuelController.colorTEController,
+                ),
+                const SizedBox(height: 12),
+                Text('License Plate Number', style: h5),
+                CustomTextField(
+                  hintText: 'Enter the license number',
+                  controller:
+                      orderFuelController.licensePlateNumberTEController,
                 ),
                 const SizedBox(height: 20),
                 CustomButton(
@@ -251,16 +258,16 @@ class _OrderFuelViewState extends State<OrderFuelView> {
                           fuelType: widget.fuelName ?? '',
                         ),
                       );
-                    }else {
-                        orderFuelController.createOrder(
-                         // isEmergency: widget.isEmergency ?? false,
-                          vehicleId:
-                              orderFuelController.selectedVehicle.value?.id ?? '',
-                          presetAmount: orderFuelController.presetEnabled.value,
-                          customAmount: orderFuelController.customEnabled.value,
-                          amount: amount,
-                          fuelType: widget.fuelName ?? 'Premium',
-                        );
+                    } else {
+                      orderFuelController.createOrder(
+                        // isEmergency: widget.isEmergency ?? false,
+                        vehicleId:
+                            orderFuelController.selectedVehicle.value?.id ?? '',
+                        presetAmount: orderFuelController.presetEnabled.value,
+                        customAmount: orderFuelController.customEnabled.value,
+                        amount: amount,
+                        fuelType: widget.fuelName ?? 'Premium',
+                      );
                     }
 
                     // orderFuelController.createOrder(

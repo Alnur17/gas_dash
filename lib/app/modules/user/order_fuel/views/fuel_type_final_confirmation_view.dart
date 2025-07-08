@@ -355,7 +355,7 @@ class _FuelTypeFinalConfirmationViewState
                           const SizedBox(height: 8),
                           Text(
                             vehicle != null
-                                ? '${vehicle['year']} ${vehicle['make']} ${vehicle['model']}, ~${vehicle['fuelLevel']}% fuel'
+                                ? '${vehicle['year']} ${vehicle['make']} ${vehicle['model']}'
                                 : 'N/A',
                             style: h6,
                           ),

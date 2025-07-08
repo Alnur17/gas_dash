@@ -207,8 +207,15 @@ class DriverHomeController extends GetxController {
         List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
         if (placemarks.isNotEmpty) {
           final place = placemarks.first;
-          final address = "${place.locality}, ${place.country}";
-          locationNames[orderId] = address;
+          // Build a more detailed address
+          final address = [
+            place.street,
+            place.subLocality,
+            place.subAdministrativeArea,
+            place.country,
+          ].where((element) => element != null && element.isNotEmpty).join(", ");
+
+          locationNames[orderId] = address.isNotEmpty ? address : "Unknown";
         } else {
           locationNames[orderId] = "Unknown";
         }
