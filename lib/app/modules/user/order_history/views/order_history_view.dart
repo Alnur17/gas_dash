@@ -4,7 +4,6 @@ import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/helper/order_history_card.dart';
-import '../../payment/controllers/payment_controller.dart';
 import '../controllers/order_history_controller.dart';
 
 class OrderHistoryView extends StatefulWidget {
@@ -192,14 +191,14 @@ class OrderStatusSection extends StatelessWidget {
     });
   }
 
-  String? _getButtonText1(String apiStatus) {
-    switch (apiStatus) {
-      case 'Delivered':
-        return 'Re-book';
-      default:
-        return null; // No button for InProgress
-    }
-  }
+  // String? _getButtonText1(String apiStatus) {
+  //   switch (apiStatus) {
+  //     case 'Delivered':
+  //       return 'Re-book';
+  //     default:
+  //       return null; // No button for InProgress
+  //   }
+  // }
 
   String? _getButtonText2(String apiStatus) {
     switch (apiStatus) {
@@ -211,13 +210,13 @@ class OrderStatusSection extends StatelessWidget {
     }
   }
 
-  void _navigateButton1(String apiStatus, orderId) {
-    switch (apiStatus) {
-      case 'Delivered':
-        final PaymentController paymentController =
-            Get.put(PaymentController());
-        paymentController.createPaymentSession(orderId: orderId);
-        break;
-    }
-  }
+  // void _navigateButton1(String apiStatus, orderId) {
+  //   switch (apiStatus) {
+  //     case 'Delivered':
+  //       final PaymentController paymentController =
+  //           Get.put(PaymentController());
+  //       paymentController.createPaymentSession(orderId: orderId);
+  //       break;
+  //   }
+  // }
 }
