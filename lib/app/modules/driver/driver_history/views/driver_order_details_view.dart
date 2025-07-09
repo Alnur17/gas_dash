@@ -132,7 +132,7 @@ class _DriverOrderDetailsViewState extends State<DriverOrderDetailsView> {
               ),
               sh12,
               // Conditional Section based on orderStatus
-              if (widget.orderData?.orderStatus?.toLowerCase() == 'fuel')
+              if (widget.orderData?.orderType?.toLowerCase() == 'fuel')
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
