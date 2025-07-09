@@ -376,13 +376,13 @@ class _FuelTypeFinalConfirmationViewState
                           Text(
                               '\$${orderData.deliveryFee?.toStringAsFixed(2) ?? '0.00'}',
                               style: h6),
-                          const SizedBox(height: 16),
-                          Text('Mandatory Tip',
-                              style: h5.copyWith(fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 8),
-                          Text(
-                              '\$${orderData.tip?.toStringAsFixed(2) ?? '0.00'}',
-                              style: h6),
+                          // const SizedBox(height: 16),
+                          // Text('Mandatory Tip',
+                          //     style: h5.copyWith(fontWeight: FontWeight.bold)),
+                          // const SizedBox(height: 8),
+                          // Text(
+                          //     '\$${orderData.tip?.toStringAsFixed(2) ?? '0.00'}',
+                          //     style: h6),
                           const SizedBox(height: 16),
                           Text('Total Amount',
                               style: h5.copyWith(fontWeight: FontWeight.bold)),

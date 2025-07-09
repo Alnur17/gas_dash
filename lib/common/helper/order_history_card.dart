@@ -197,7 +197,7 @@ class OrderHistoryCard extends StatelessWidget {
                     height: 40,
                   ),
                 ),
-              sw8,
+              sw5,
               // Show button 2 only if text and onPressed are provided
               if (buttonText2 != null && onButton2Pressed != null)
                 Expanded(

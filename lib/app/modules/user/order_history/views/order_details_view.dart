@@ -4,12 +4,12 @@ import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
-import '../../../driver/driver_home/model/single_order_by_Id_model.dart';
 import '../controllers/order_history_controller.dart';
 
 class OrderDetailsView extends GetView<OrderHistoryController> {
   final String? amount;
   final String? locationName;
+
   const OrderDetailsView(this.amount, this.locationName, {super.key});
 
   @override
@@ -54,7 +54,8 @@ class OrderDetailsView extends GetView<OrderHistoryController> {
         }
 
         final orderData = order.data!;
-        final displayStatus = orderData.orderStatus == 'InProgress' ? 'In Process' : 'Completed';
+        final displayStatus =
+            orderData.orderStatus == 'InProgress' ? 'In Process' : 'Completed';
         // final vehicleInfo = orderData.vehicleId is VehicleId
         //     ? '${(orderData.vehicleId as VehicleId).make ?? 'Unknown'} ${(orderData.vehicleId as VehicleId).model ?? ''} ${(orderData.vehicleId as VehicleId).year?.toInt() ?? ''}'
         //     : orderData.vehicleId is String
@@ -135,7 +136,8 @@ class OrderDetailsView extends GetView<OrderHistoryController> {
                 ),
                 sh5,
                 Text(
-                  (orderData.presetAmount == true || orderData.customAmount == true)
+                  (orderData.presetAmount == true ||
+                          orderData.customAmount == true)
                       ? '${amount ?? '0.00'} gallons'
                       : 'Unknown',
                   style: h6,
@@ -150,16 +152,16 @@ class OrderDetailsView extends GetView<OrderHistoryController> {
                   '\$${orderData.deliveryFee?.toStringAsFixed(2) ?? '0.00'}',
                   style: h6,
                 ),
-                sh12,
-                Text(
-                  'Tips',
-                  style: h5.copyWith(fontWeight: FontWeight.w600),
-                ),
-                sh5,
-                Text(
-                  '\$${orderData.tip?.toStringAsFixed(2) ?? '0.00'}',
-                  style: h6,
-                ),
+                // sh12,
+                // Text(
+                //   'Tips',
+                //   style: h5.copyWith(fontWeight: FontWeight.w600),
+                // ),
+                // sh5,
+                // Text(
+                //   '\$${orderData.tip?.toStringAsFixed(2) ?? '0.00'}',
+                //   style: h6,
+                // ),
                 sh12,
                 Text(
                   'Total',
