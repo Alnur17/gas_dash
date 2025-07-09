@@ -1,14 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/driver/driver_home/views/notification_view.dart';
 import 'package:gas_dash/app/modules/user/profile/controllers/profile_controller.dart';
 import 'package:gas_dash/common/helper/fuel_and_service_card.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/helper/earnings_card.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 import '../../../../../common/helper/active_order.dart';
+import '../../../../../common/helper/socket_service.dart';
 import '../../driver_earning/controllers/driver_earning_controller.dart';
 import '../../driver_history/views/driver_start_delivery_view.dart';
 import '../controllers/driver_home_controller.dart';
@@ -25,6 +29,46 @@ class _DriverHomeViewState extends State<DriverHomeView> {
   final ProfileController profileController = Get.put(ProfileController());
   final DriverEarningController driverEarningController =
       Get.put(DriverEarningController());
+
+
+  final SocketService socketService = Get.put(SocketService());
+
+  Timer? _locationTimer;
+
+  // Method to stop sending location updates
+  void _stopLocationUpdates() {
+    _locationTimer?.cancel();
+    _locationTimer = null;
+  }
+
+  void disconnect() {
+    _stopLocationUpdates(); // Stop location updates before disconnecting
+    socketService.socket.disconnect();
+  }
+
+  // Method to get current location
+  Future<Position> _getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      throw Exception('Location services are disabled.');
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        throw Exception('Location permissions are denied.');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      throw Exception('Location permissions are permanently denied.');
+    }
+
+    return await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -205,6 +249,29 @@ class _DriverHomeViewState extends State<DriverHomeView> {
                                       : 0.0,
                                   fuelType: order.orderType ?? 'Unknown',
                                   onAcceptPressed: () {
+
+                                      // Cancel any existing timer to avoid duplicates
+                                      _stopLocationUpdates();
+
+                                      _locationTimer = Timer.periodic(Duration(milliseconds: 500), (timer) async {
+                                        if (socketService.socket.connected) {
+                                          try {
+                                            final position = await _getCurrentLocation();
+                                            final locationData = {
+                                              "latitude": position.latitude,
+                                              "longitude": position.longitude,
+                                              "orderId": order.id,
+                                            };
+                                            socketService.socket.emit('getLocation', locationData); // Emit location data
+                                            print('Emitted location: $locationData');
+                                          } catch (e) {
+                                            print('Error getting location: $e');
+                                          }
+                                        } else {
+                                          print('Socket not connected, skipping location emission');
+                                        }
+                                      });
+
                                     Get.to(() => DriverStartDeliveryView(
                                           orderId: order.id ?? 'Unknown',
                                           deliveryId: order.deleveryId ?? '',

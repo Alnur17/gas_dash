@@ -174,18 +174,18 @@ class LoginView extends StatelessWidget {
                   },
                 ),
               ),
-              sh12,
-              Obx(
-                () => GoogleButton(
-                  assetPath: AppImages.apple,
-                  label: authController.isLoadingApple.value
-                      ? 'Loading...'
-                      : 'Continue with Apple',
-                  onTap: () {
-                    authController.loginWithApple();
-                  },
-                ),
-              ),
+              // sh12,
+              // Obx(
+              //   () => GoogleButton(
+              //     assetPath: AppImages.apple,
+              //     label: authController.isLoadingApple.value
+              //         ? 'Loading...'
+              //         : 'Continue with Apple',
+              //     onTap: () {
+              //       authController.loginWithApple();
+              //     },
+              //   ),
+              // ),
               sh10,
               GestureDetector(
                 onTap: () {

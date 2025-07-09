@@ -151,16 +151,16 @@ class OrderDetailsView extends GetView<OrderHistoryController> {
                   style: h6,
                 ),
                 sh12,
-                Text(
-                  'Tips',
-                  style: h5.copyWith(fontWeight: FontWeight.w600),
-                ),
-                sh5,
-                Text(
-                  '\$${orderData.tip?.toStringAsFixed(2) ?? '0.00'}',
-                  style: h6,
-                ),
-                sh12,
+                // Text(
+                //   'Tips',
+                //   style: h5.copyWith(fontWeight: FontWeight.w600),
+                // ),
+                // sh5,
+                // Text(
+                //   '\$${orderData.tip?.toStringAsFixed(2) ?? '0.00'}',
+                //   style: h6,
+                // ),
+                // sh12,
                 Text(
                   'Total',
                   style: h5.copyWith(fontWeight: FontWeight.w600),
