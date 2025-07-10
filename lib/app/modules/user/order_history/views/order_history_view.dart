@@ -4,7 +4,6 @@ import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/helper/order_history_card.dart';
-import '../../payment/controllers/payment_controller.dart';
 import '../controllers/order_history_controller.dart';
 
 class OrderHistoryView extends StatefulWidget {
@@ -135,14 +134,14 @@ class OrderStatusSection extends StatelessWidget {
       // Filter orders based on status with null safety
       final filteredOrders = status == 'All'
           ? controller.orders.where((order) {
-        final s = order.orderStatus ?? '';
-        return s == 'InProgress' || s == 'Delivered';
-      }).toList()
+              final s = order.orderStatus ?? '';
+              return s == 'InProgress' || s == 'Delivered';
+            }).toList()
           : controller.orders.where((order) {
-        final apiStatus = status == 'In Process' ? 'InProgress' : 'Delivered';
-        return (order.orderStatus ?? '') == apiStatus;
-      }).toList();
-
+              final apiStatus =
+                  status == 'In Process' ? 'InProgress' : 'Delivered';
+              return (order.orderStatus ?? '') == apiStatus;
+            }).toList();
 
       if (filteredOrders.isEmpty) {
         return const Center(child: Text('No orders found'));
@@ -153,11 +152,12 @@ class OrderStatusSection extends StatelessWidget {
         itemBuilder: (context, index) {
           final order = filteredOrders[index];
           debugPrint('Rendering order status: ${order.orderStatus}');
-          final displayStatus = order.orderStatus == 'InProgress' ? 'In Process' : 'Completed';
+          final displayStatus =
+              order.orderStatus == 'InProgress' ? 'In Process' : 'Completed';
           final orderId = order.id ?? 'unknown';
           final coords = order.location?.coordinates;
 
-          // Start resolving location if not already done
+
           if (coords != null &&
               !controller.locationNames.containsKey(orderId)) {
             controller.resolveLocation(
@@ -168,36 +168,37 @@ class OrderStatusSection extends StatelessWidget {
               controller.locationNames[orderId] ?? "Loading location...";
 
           return OrderHistoryCard(
-            emergency: order.emergency ?? false,
-            emergencyImage: AppImages.emergency,
-            orderId: order.id ?? 'N/A',
-            orderDate: order.createdAt?.toString() ?? 'Unknown',
-            fuelQuantity: '${order.amount ?? 0} gallons',
-            fuelType: order.fuelType ?? 'Unknown',
-            price: (order.finalAmountOfPayment ?? 0.0).toStringAsFixed(2),
-            status: displayStatus,
-            buttonText1: _getButtonText1(order.orderStatus ?? ''),
-            buttonText2: _getButtonText2(order.orderStatus ?? ''),
-            onButton1Pressed: () {
-              _navigateButton1(order.orderStatus ?? '', order.id);
-            },
-            onButton2Pressed: () {
-              controller.getSingleOrder(order.id ?? 'N/A',order.amount.toString(),locationName);
-            },
+              emergency: order.emergency ?? false,
+              emergencyImage: AppImages.emergency,
+              orderId: order.id ?? 'N/A',
+              orderDate: order.createdAt?.toString() ?? 'Unknown',
+              fuelQuantity: '${order.amount ?? 0} gallons',
+              fuelType: order.fuelType ?? 'Unknown',
+              price: (order.finalAmountOfPayment ?? 0.0).toStringAsFixed(2),
+              status: displayStatus,
+              //buttonText1: _getButtonText1(order.orderStatus ?? ''),
+              buttonText2: _getButtonText2(order.orderStatus ?? ''),
+              // onButton1Pressed: () {
+              //   _navigateButton1(order.orderStatus ?? '', order.id);
+              // },
+              onButton2Pressed: () {
+                controller.getSingleOrder(
+                    order.id ?? 'N/A', order.amount.toString(), locationName);
+              },
           );
         },
       );
     });
   }
 
-  String? _getButtonText1(String apiStatus) {
-    switch (apiStatus) {
-      case 'Delivered':
-        return 'Re-book';
-      default:
-        return null; // No button for InProgress
-    }
-  }
+  // String? _getButtonText1(String apiStatus) {
+  //   switch (apiStatus) {
+  //     case 'Delivered':
+  //       return 'Re-book';
+  //     default:
+  //       return null; // No button for InProgress
+  //   }
+  // }
 
   String? _getButtonText2(String apiStatus) {
     switch (apiStatus) {
@@ -209,12 +210,13 @@ class OrderStatusSection extends StatelessWidget {
     }
   }
 
-  void _navigateButton1(String apiStatus, orderId) {
-    switch (apiStatus) {
-      case 'Delivered':
-        final PaymentController paymentController = Get.put(PaymentController());
-        paymentController.createPaymentSession(orderId: orderId);
-        break;
-    }
-  }
+  // void _navigateButton1(String apiStatus, orderId) {
+  //   switch (apiStatus) {
+  //     case 'Delivered':
+  //       final PaymentController paymentController =
+  //           Get.put(PaymentController());
+  //       paymentController.createPaymentSession(orderId: orderId);
+  //       break;
+  //   }
+  // }
 }

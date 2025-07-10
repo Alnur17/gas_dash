@@ -4,7 +4,6 @@ import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
-import '../../../driver/driver_home/model/single_order_by_Id_model.dart';
 import '../controllers/order_history_controller.dart';
 
 class OrderDetailsView extends GetView<OrderHistoryController> {
