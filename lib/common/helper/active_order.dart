@@ -30,6 +30,7 @@ class ActiveOrder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Card(
       color: Colors.teal[50],
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -65,7 +66,7 @@ class ActiveOrder extends StatelessWidget {
                   scale: 4,
                 ),
                 SizedBox(width: 8),
-                Text(location),
+                Expanded(child: Text(location)),
               ],
             ),
             SizedBox(height: 16),

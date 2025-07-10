@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/user/payment/views/payment_success_view.dart';
+import 'package:gas_dash/app/modules/user/profile/controllers/profile_controller.dart';
 import 'package:get/get.dart';
 
 import '../../../../../common/app_color/app_colors.dart';
@@ -14,10 +15,13 @@ import '../views/payment_view.dart';
 
 class PaymentController extends GetxController {
 
+  final ProfileController profileController = Get.find<ProfileController>();
+
   var isLoading = false.obs;
 
   Future<void> createPaymentSession({
     required String orderId,
+    String? couponCode,
   })
   async {
     isLoading.value = true;
@@ -34,7 +38,7 @@ class PaymentController extends GetxController {
       'Content-Type': 'application/json',
     };
 
-    var map = {"orderFuelId": orderId};
+    var map = {"orderFuelId": orderId,"couponCode": couponCode};
 
     dynamic responseBody = await BaseClient.handleResponse(
       await BaseClient.postRequest(
@@ -70,8 +74,11 @@ class PaymentController extends GetxController {
         // LocalStorage.saveData(key: AppConstant.paymentId, data: paymentId);
         // String id = LocalStorage.getData(key: AppConstant.paymentId);
         //debugPrint('::::::::::::::::: $id :::::::::::::::::');
+        await profileController.getMyProfile();
         Get.offAll(() => PaymentSuccessView());
       } else {
+        kSnackBar(message: "${responseBody['message']}", bgColor: AppColors.red);
+
         debugPrint("Error on Payment Result: $responseBody['message'] ");
       }
     } catch (e) {

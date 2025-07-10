@@ -6,13 +6,13 @@ import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/helper/fuel_card.dart';
-import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../home/controllers/home_controller.dart';
 import '../../order_fuel/views/order_fuel_view.dart';
 import '../controllers/emergency_fuel_controller.dart';
 
 class EmergencyFuelView extends GetView<EmergencyFuelController> {
-   EmergencyFuelView({super.key});
+
+  EmergencyFuelView( {super.key});
 
   final homeController = Get.put(HomeController());
 
@@ -24,7 +24,7 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
         backgroundColor: AppColors.mainColor,
         scrolledUnderElevation: 0,
         title: Text(
-          'EmergencyFuelView',
+          'Emergency Fuel',
           style: titleStyle,
         ),
         centerTitle: true,
@@ -38,75 +38,112 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
           ),
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          sh12,
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Text(
-              'Choose Your Fuel Type',
-              style: h3.copyWith(
-                fontSize: 18,
+      body:  Obx(
+            () => ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: homeController.fuelInfo.value?.data.length ?? 0,
+          itemBuilder: (context, index) {
+            final fuelData = homeController.fuelInfo.value?.data[index];
+            return Padding(
+              padding: EdgeInsets.only(
+                  bottom: index ==
+                      (homeController.fuelInfo.value?.data.length ??
+                          1) -
+                          1
+                      ? 0
+                      : 16),
+              child: FuelCard(
+                title: fuelData?.fuelName ?? 'Unknown',
+                buttonText: 'Order\nNow',
+                gradientColors: AppColors.gradientColorBlue,
+                onTap: () {
+                  Get.to(() => OrderFuelView(
+                    fuelName: fuelData?.fuelName,
+                    fuelPrice: fuelData?.fuelPrice,
+                    isEmergency: true,
+                  ));
+                },
               ),
-            ),
-          ),
-          sh16,
-          FuelCard(
-            title: 'UNLEADED',
-           // number: '87',
-            buttonText: 'Order\nNow',
-            gradientColors: AppColors.gradientColorBlue,
-            onTap: () {
-              final price =
-                  homeController.fuelPricesPerGallon['Unleaded'] ?? 0.0;
-              print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
-              Get.to(() => OrderFuelView(
-                fuelName: 'Unleaded',
-               // number: '87',
-                fuelPrice: price,
-                isEmergency: true,
-              ));
-            },
-          ),
-          sh16,
-          FuelCard(
-            title: 'PREMIUM',
-            //number: '91',
-            buttonText: 'Order\nNow',
-            gradientColors: AppColors.gradientColorGrey,
-            onTap: () {
-              final price =
-                  homeController.fuelPricesPerGallon['Premium'] ?? 0.0;
-              print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
-              Get.to(() => OrderFuelView(
-                fuelName: 'Premium',
-                //number: '91',
-                fuelPrice: price,
-                isEmergency: true,
-              ));
-            },
-          ),
-          sh16,
-          FuelCard(
-            title: 'DIESEL',
-            //number: '71',
-            buttonText: 'Order\nNow',
-            gradientColors: AppColors.gradientColorGreen,
-            onTap: () {
-              final price =
-                  homeController.fuelPricesPerGallon['Diesel'] ?? 0.0;
-              print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
-              Get.to(() => OrderFuelView(
-                fuelName: 'Diesel',
-                //number: '71',
-                fuelPrice: price,
-                isEmergency: true,
-              ));
-            },
-          ),
-        ],
+            );
+          },
+        ),
       ),
+
+    //         ?.then((result) {
+    //   if (result == true) {
+    //     oHController.fetchOrderHistory();
+    //   }
+    // })
+
+      // body: Column(
+      //   crossAxisAlignment: CrossAxisAlignment.start,
+      //   children: [
+      //     sh12,
+      //     Padding(
+      //       padding: const EdgeInsets.symmetric(horizontal: 20),
+      //       child: Text(
+      //         'Choose Your Fuel Type',
+      //         style: h3.copyWith(
+      //           fontSize: 18,
+      //         ),
+      //       ),
+      //     ),
+      //     sh16,
+      //     FuelCard(
+      //       title: 'UNLEADED',
+      //       // number: '87',
+      //       buttonText: 'Order\nNow',
+      //       gradientColors: AppColors.gradientColorBlue,
+      //       onTap: () {
+      //         final price =
+      //             homeController.fuelPricesPerGallon['Unleaded'] ?? 0.0;
+      //         print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
+      //         Get.to(() => OrderFuelView(
+      //               fuelName: 'Unleaded',
+      //               // number: '87',
+      //               fuelPrice: price,
+      //               isEmergency: true,
+      //             ));
+      //       },
+      //     ),
+      //     sh16,
+      //     FuelCard(
+      //       title: 'PREMIUM',
+      //       //number: '91',
+      //       buttonText: 'Order\nNow',
+      //       gradientColors: AppColors.gradientColorGrey,
+      //       onTap: () {
+      //         final price =
+      //             homeController.fuelPricesPerGallon['Premium'] ?? 0.0;
+      //         print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
+      //         Get.to(() => OrderFuelView(
+      //               fuelName: 'Premium',
+      //               //number: '91',
+      //               fuelPrice: price,
+      //               isEmergency: true,
+      //             ));
+      //       },
+      //     ),
+      //     sh16,
+      //     FuelCard(
+      //       title: 'DIESEL',
+      //       //number: '71',
+      //       buttonText: 'Order\nNow',
+      //       gradientColors: AppColors.gradientColorGreen,
+      //       onTap: () {
+      //         final price = homeController.fuelPricesPerGallon['Diesel'] ?? 0.0;
+      //         print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
+      //         Get.to(() => OrderFuelView(
+      //               fuelName: 'Diesel',
+      //               //number: '71',
+      //               fuelPrice: price,
+      //               isEmergency: true,
+      //             ));
+      //       },
+      //     ),
+      //   ],
+      // ),
     );
   }
 }

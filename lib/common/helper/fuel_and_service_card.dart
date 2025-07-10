@@ -46,41 +46,46 @@ class FuelAndServiceCard extends StatelessWidget {
                 scale: 4,
               ),
               sw8,
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                       // '$fuelAmount, $fuelType',
-                        fuelType,
-                        style: h5.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      if (emergency) ...[
-                        sw5,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                         // '$fuelAmount, $fuelType',
+                          fuelType,
+                          style: h5.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        if (emergency) ...[
+                          sw5,
+                          Image.asset(
+                            emergencyImage,
+                            scale: 4,
+                          ),
+                        ],
+                      ],
+                    ),
+                    sh5,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
                         Image.asset(
-                          emergencyImage,
+                          locationIconPath,
                           scale: 4,
                         ),
+                        sw8,
+                        Expanded(
+                          child: Text(
+                            location,
+                            style: h6,
+                          ),
+                        ),
                       ],
-                    ],
-                  ),
-                  sh5,
-                  Row(
-                    children: [
-                      Image.asset(
-                        locationIconPath,
-                        scale: 4,
-                      ),
-                      sw8,
-                      Text(
-                        location,
-                        style: h6,
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

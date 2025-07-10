@@ -2,17 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
-import 'package:gas_dash/common/widgets/custom_button.dart';
 import 'package:get/get.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:intl/intl.dart';
 
+import '../../driver_home/controllers/driver_home_controller.dart';
 import '../../driver_home/model/single_order_by_Id_model.dart';
 
-class DriverOrderDetailsView extends GetView {
+class DriverOrderDetailsView extends StatefulWidget {
   final SingleOrderData? orderData;
+  final String? location;
 
-  const DriverOrderDetailsView({super.key, this.orderData});
+  const DriverOrderDetailsView( {super.key, this.orderData,this.location,});
+
+  @override
+  State<DriverOrderDetailsView> createState() => _DriverOrderDetailsViewState();
+}
+
+class _DriverOrderDetailsViewState extends State<DriverOrderDetailsView> {
+  final DriverHomeController homeController = Get.put(DriverHomeController());
 
   @override
   Widget build(BuildContext context) {
@@ -53,12 +61,12 @@ class DriverOrderDetailsView extends GetView {
                   CircleAvatar(
                     radius: 20,
                     backgroundImage: NetworkImage(
-                      orderData?.userId?.image ?? AppImages.profileImageTwo,
+                      widget.orderData?.userId?.image ?? AppImages.profileImageTwo,
                     ),
                   ),
                   sw8,
                   Text(
-                    orderData?.userId?.fullname ?? 'Unknown',
+                    widget.orderData?.userId?.fullname ?? 'Unknown',
                     style: h6,
                   ),
                 ],
@@ -71,7 +79,7 @@ class DriverOrderDetailsView extends GetView {
               ),
               sh5,
               Text(
-                orderData?.id ?? 'N/A',
+                widget.orderData?.id ?? 'N/A',
                 style: h6,
               ),
               sh12,
@@ -82,8 +90,8 @@ class DriverOrderDetailsView extends GetView {
               ),
               sh5,
               Text(
-                orderData?.createdAt != null
-                    ? DateFormat('dd MMM, yyyy').format(orderData!.createdAt!)
+                widget.orderData?.createdAt != null
+                    ? DateFormat('dd MMM, yyyy').format(widget.orderData!.createdAt!)
                     : 'N/A',
                 style: h6,
               ),
@@ -101,9 +109,11 @@ class DriverOrderDetailsView extends GetView {
                     scale: 4,
                   ),
                   sw8,
-                  Text(
-                    orderData?.zipCode ?? 'Unknown Location',
-                    style: h6,
+                  Expanded(
+                    child: Text(
+                     widget.location ?? 'Unknown Location',
+                      style: h6,
+                    ),
                   ),
                 ],
               ),
@@ -115,12 +125,14 @@ class DriverOrderDetailsView extends GetView {
               ),
               sh5,
               Text(
-                orderData?.vehicleId ?? 'Unknown Vehicle',
+                widget.orderData?.vehicleId != null
+                    ? '${widget.orderData!.vehicleId!.make ?? 'Unknown'} ${widget.orderData!.vehicleId!.model ?? 'Unknown'} (${widget.orderData!.vehicleId!.year?.toInt() ?? 'N/A'})'
+                    : 'Unknown Vehicle',
                 style: h6,
               ),
               sh12,
               // Conditional Section based on orderStatus
-              if (orderData?.orderStatus?.toLowerCase() == 'fuel')
+              if (widget.orderData?.orderType?.toLowerCase() == 'fuel')
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -130,7 +142,7 @@ class DriverOrderDetailsView extends GetView {
                     ),
                     sh5,
                     Text(
-                      orderData?.orderType ?? 'Unknown',
+                      widget.orderData?.fuelType ?? 'Unknown',
                       style: h6,
                     ),
                     sh12,
@@ -140,8 +152,8 @@ class DriverOrderDetailsView extends GetView {
                     ),
                     sh5,
                     Text(
-                      orderData?.price != null
-                          ? '${orderData?.price!.toStringAsFixed(2)} gallons'
+                      widget.orderData?.amount != null
+                          ? '${widget.orderData?.amount!.toStringAsFixed(2)} gallons'
                           : 'N/A',
                       style: h6,
                     ),
@@ -157,18 +169,20 @@ class DriverOrderDetailsView extends GetView {
                     ),
                     sh5,
                     Text(
-                      orderData?.orderType ?? 'Unknown Service',
+                      widget.orderData?.orderType ?? 'Unknown Service',
                       style: h6,
                     ),
                   ],
                 ),
               sh20,
               // Common Start Delivery Button
-              CustomButton(
-                text: 'Start Delivery',
-                onPressed: () {},
-                gradientColors: AppColors.gradientColor,
-              ),
+              // CustomButton(
+              //   text: 'Start Delivery',
+              //   onPressed: () {
+              //     homeController.viewOrderDetails(widget.orderData?.id ?? '', widget.orderData?.location ?? 'Unknown');
+              //   },
+              //   gradientColors: AppColors.gradientColor,
+              // ),
             ],
           ),
         ),

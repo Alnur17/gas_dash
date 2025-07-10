@@ -12,13 +12,9 @@ import '../../../../data/base_client.dart';
 import '../model/questions_model.dart';
 
 class DriverCompletionChecklistController extends GetxController {
-  // Reactive list to store questions from API
   var questions = <Datum>[].obs;
-
-  // Reactive map to store user answers (question ID -> answer)
   var answers = <String, bool>{}.obs;
-
-  // Loading state
+  var explanations = <String, String>{}.obs; // New map for explanations
   var isLoading = true.obs;
 
   @override
@@ -27,7 +23,6 @@ class DriverCompletionChecklistController extends GetxController {
     fetchQuestions();
   }
 
-  // Fetch questions from API
   Future<void> fetchQuestions() async {
     try {
       isLoading(true);
@@ -39,49 +34,48 @@ class DriverCompletionChecklistController extends GetxController {
       final questionsModel = QuestionsModel.fromJson(result);
       if (questionsModel.success == true && questionsModel.data != null) {
         questions.assignAll(questionsModel.data!.data);
-        // Initialize answers map with default values (false for "No")
         for (var question in questions) {
           answers[question.id!] = false;
+          explanations[question.id!] = ''; // Initialize empty explanation
         }
       }
     } catch (e) {
-      kSnackBar(
-        message: e.toString(),
-        bgColor: AppColors.orange,
-      );
+      kSnackBar(message: e.toString(), bgColor: AppColors.orange);
     } finally {
       isLoading(false);
     }
   }
 
-  // Toggle answer for a question
   void toggleAnswer(String questionId, bool value) {
     answers[questionId] = value;
-    debugPrint('Toggled answer for $questionId to $value'); // Debug to confirm update
-    answers.refresh(); // Ensure UI updates
+    if (value == false && explanations[questionId]!.isEmpty) {
+      explanations[questionId] = ''; // Ensure explanation is initialized
+    }
+    debugPrint('Toggled answer for $questionId to $value');
+    answers.refresh();
+    explanations.refresh();
   }
 
-  // Submit answers to API
+  void updateExplanation(String questionId, String explanation) {
+    explanations[questionId] = explanation;
+    explanations.refresh();
+  }
+
   Future<void> submitAnswers(String deliveryId, String orderId) async {
     try {
       isLoading(true);
-      // Prepare the body according to the API structure
-      String accessToken = LocalStorage.getData(key: AppConstant.accessToken);
       final body = json.encode({
         'orderId': orderId,
-        'questions': questions
-            .map((q) => {
+        'questions': questions.map((q) => {
           'question': q.text,
-          'answer': answers[q.id!], // Use boolean directly as per your current setup
-          'explanation': answers[q.id!], // Adjust if explanation needs a string
-        })
-            .toList(),
+          'answer': answers[q.id!],
+          'explanation': explanations[q.id!] ?? '', // Include explanation
+        }).toList(),
       });
       debugPrint('Submitting with orderId: $orderId, body: $body');
-      // Include Authorization token in headers
       final headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken',
+        'Authorization': 'Bearer ${LocalStorage.getData(key: AppConstant.accessToken)}',
       };
 
       final response = await BaseClient.postRequest(
@@ -92,13 +86,10 @@ class DriverCompletionChecklistController extends GetxController {
       final result = await BaseClient.handleResponse(response);
       if (result['success'] == true ||
           result['message'] == 'Checklist created successfully') {
-        Get.to(() => DriverProofOfDeliveryView(deliveryId,orderId));
+        Get.to(() => DriverProofOfDeliveryView(deliveryId, orderId));
       }
     } catch (e) {
-      kSnackBar(
-        message: e.toString(),
-        bgColor: AppColors.orange,
-      );
+      kSnackBar(message: e.toString(), bgColor: AppColors.orange);
     } finally {
       isLoading(false);
     }

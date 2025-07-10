@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 
 import '../../../../../common/app_constant/app_constant.dart';
@@ -51,10 +53,11 @@ class DriverHomeController extends GetxController {
         filterOrders(); // Filter orders after fetching
         showPendingOrders(); // Default to showing pending orders
       } else {
-        kSnackBar(
-          message: assignedOrder.message ?? 'Failed to fetch orders',
-          bgColor: AppColors.orange,
-        );
+        debugPrint(assignedOrder.message ?? 'Failed to fetch orders',);
+        // kSnackBar(
+        //   message: assignedOrder.message ?? 'Failed to fetch orders',
+        //   bgColor: AppColors.orange,
+        // );
         // Clear all lists on failure
         assignedOrders.clear();
         pendingOrders.clear();
@@ -63,10 +66,8 @@ class DriverHomeController extends GetxController {
         displayedOrders.clear();
       }
     } catch (e) {
-      kSnackBar(
-        message: e.toString(),
-        bgColor: AppColors.orange,
-      );
+
+       debugPrint(e.toString());
       // Clear all lists on error
       assignedOrders.clear();
       pendingOrders.clear();
@@ -104,7 +105,7 @@ class DriverHomeController extends GetxController {
     displayedOrders.value = deliveredOrders;
   }
 
-  Future<void> fetchSingleOrder(String orderId) async {
+  Future<void> fetchSingleOrder(String orderId,location) async {
     try {
       isLoading.value = true;
 
@@ -126,7 +127,7 @@ class DriverHomeController extends GetxController {
 
       if (singleOrder.success == true && singleOrder.data != null) {
         // Navigate to DriverOrderDetailsView with the fetched order data
-        Get.to(() => DriverOrderDetailsView(orderData: singleOrder.data!));
+        Get.to(() => DriverOrderDetailsView(orderData: singleOrder.data!,location: location,));
       } else {
         kSnackBar(
           message: singleOrder.message ?? 'Failed to fetch order details',
@@ -172,6 +173,8 @@ class DriverHomeController extends GetxController {
           bgColor: AppColors.primaryColor,
         );
         fetchAssignedOrders(); // Refresh orders after acceptance
+        pendingOrders.refresh();
+        displayedOrders.refresh();
       } else {
         kSnackBar(
           message: result['message'] ?? 'Failed to accept order',
@@ -196,8 +199,35 @@ class DriverHomeController extends GetxController {
   //   );
   // }
 
+  var locationNames = <String, String>{}.obs;
+
+  Future<void> resolveLocation(String orderId, double lat, double lng) async {
+    if (!locationNames.containsKey(orderId)) {
+      try {
+        List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+        if (placemarks.isNotEmpty) {
+          final place = placemarks.first;
+          // Build a more detailed address
+          final address = [
+            place.street,
+            place.subLocality,
+            place.subAdministrativeArea,
+            place.country,
+          ].where((element) => element != null && element.isNotEmpty).join(", ");
+
+          locationNames[orderId] = address.isNotEmpty ? address : "Unknown";
+        } else {
+          locationNames[orderId] = "Unknown";
+        }
+      } catch (e) {
+        locationNames[orderId] = "Unknown";
+      }
+    }
+  }
+
+
   // Placeholder for view details action
-  void viewOrderDetails(String orderId) {
-    fetchSingleOrder(orderId); // Call fetchSingleOrder to get details and navigate
+  void viewOrderDetails(String orderId,location) {
+    fetchSingleOrder(orderId,location); // Call fetchSingleOrder to get details and navigate
   }
 }

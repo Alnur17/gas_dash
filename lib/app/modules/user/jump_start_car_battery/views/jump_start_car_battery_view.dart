@@ -1,10 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:gas_dash/common/helper/earnings_card.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
+import 'package:gas_dash/common/widgets/custom_loader.dart';
 
 import 'package:get/get.dart';
 
@@ -14,20 +14,32 @@ import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
 import '../../../../../common/widgets/custom_textfield.dart';
 import '../../order_fuel/controllers/order_fuel_controller.dart';
-import '../controllers/jump_start_car_battery_controller.dart';
+import '../../order_fuel/views/map_picker_view.dart';
 
-class JumpStartCarBatteryView extends GetView<JumpStartCarBatteryController> {
+class JumpStartCarBatteryView extends StatefulWidget {
   final String? title;
   final String? price;
 
-  JumpStartCarBatteryView({
+  const JumpStartCarBatteryView({
     super.key,
     this.title,
     this.price,
   });
 
+  @override
+  State<JumpStartCarBatteryView> createState() =>
+      _JumpStartCarBatteryViewState();
+}
+
+class _JumpStartCarBatteryViewState extends State<JumpStartCarBatteryView> {
   final OrderFuelController orderFuelController =
       Get.put(OrderFuelController());
+
+  @override
+  void initState() {
+    super.initState();
+    orderFuelController.fetchCurrentLocation();
+  }
 
   void _showAddVehicleDialog() {
     orderFuelController.resetForm();
@@ -96,14 +108,17 @@ class JumpStartCarBatteryView extends GetView<JumpStartCarBatteryController> {
                   },
                 ),
                 const SizedBox(height: 12),
-
-                Text(
-                  'Fuel Level',
-                  style: h5,
-                ),
+                Text('Color', style: h5),
                 CustomTextField(
-                  hintText: 'e.g. 20%',
-                  controller: orderFuelController.fuelLevelController,
+                  hintText: 'Enter the color of your car',
+                  controller: orderFuelController.colorTEController,
+                ),
+                const SizedBox(height: 12),
+                Text('License Plate Number', style: h5),
+                CustomTextField(
+                  hintText: 'Enter the license number',
+                  controller:
+                  orderFuelController.licensePlateNumberTEController,
                 ),
                 const SizedBox(height: 20),
 
@@ -153,8 +168,8 @@ class JumpStartCarBatteryView extends GetView<JumpStartCarBatteryController> {
             children: [
               sh16,
               EarningsCard(
-                title: title ?? 'N/A',
-                amount: price ?? 'N/A',
+                title: widget.title ?? 'N/A',
+                amount: widget.price ?? 'N/A',
                 gradientColor: AppColors.gradientColorBlue,
               ),
               sh20,
@@ -162,7 +177,9 @@ class JumpStartCarBatteryView extends GetView<JumpStartCarBatteryController> {
                 () => LocationCard(
                   locationText: orderFuelController.currentLocation.value,
                   buttonText: 'Change Location',
-                  onButtonPressed: () {},
+                  onButtonPressed: () {
+                    Get.to(() => const MapPickerView());
+                  },
                 ),
               ),
               sh20,
@@ -176,15 +193,21 @@ class JumpStartCarBatteryView extends GetView<JumpStartCarBatteryController> {
                 imageAssetPath: AppImages.addCar,
               ),
               sh20,
-              CustomButton(
-                text: 'Next',
-                onPressed: () {
-                  orderFuelController.createOrderForServices(
-                      vehicleId:
-                          orderFuelController.selectedVehicle.value?.id.toString() ?? '',
-                      orderType: 'Battery');
-                },
-                gradientColors: AppColors.gradientColorGreen,
+              Obx(
+                () => orderFuelController.isLoading.value
+                    ? CustomLoader(color: AppColors.white)
+                    : CustomButton(
+                        text: 'Next',
+                        onPressed: () {
+                          orderFuelController.createOrderForServices(
+                              vehicleId: orderFuelController
+                                      .selectedVehicle.value?.id
+                                      .toString() ??
+                                  '',
+                              orderType: 'Battery');
+                        },
+                        gradientColors: AppColors.gradientColorGreen,
+                      ),
               ),
             ],
           ),

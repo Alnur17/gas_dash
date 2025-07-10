@@ -27,7 +27,6 @@ class LocationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrderFuelController controller = Get.find<OrderFuelController>();
     print("location>>>>>> $locationText");
 
     return Container(
@@ -62,10 +61,10 @@ class LocationCard extends StatelessWidget {
             style: locationTextStyle ?? h6,
           ),
           sh12,
-          Obx(() => Text(
-            'Zip Code: ${controller.zipCode.value?.isNotEmpty == true ? controller.zipCode.value : 'Not set'}',
-            style: h6,
-          )),
+          // Obx(() => Text(
+          //   'Zip Code: ${controller.zipCode.value?.isNotEmpty == true ? controller.zipCode.value : 'Not set'}',
+          //   style: h6,
+          // )),
           sh12,
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -85,22 +84,22 @@ class LocationCard extends StatelessWidget {
                       ),
                 ),
               ),
-              sw8,
-              CustomButton(
-                text: 'Set Zip Code',
-                onPressed: () {
-                  controller.promptForZipCode();
-                },
-                height: 40,
-                width: 120,
-                borderRadius: 8,
-                backgroundColor: Colors.blue[50],
-                //imageAssetPath: AppImages.edit,
-                iconColor: AppColors.blueLight,
-                textStyle: h5.copyWith(
-                  color: AppColors.blueLight,
-                ),
-              ),
+              //sw8,
+              // CustomButton(
+              //   text: 'Set Zip Code',
+              //   onPressed: () {
+              //     controller.promptForZipCode();
+              //   },
+              //   height: 40,
+              //   width: 120,
+              //   borderRadius: 8,
+              //   backgroundColor: Colors.blue[50],
+              //   //imageAssetPath: AppImages.edit,
+              //   iconColor: AppColors.blueLight,
+              //   textStyle: h5.copyWith(
+              //     color: AppColors.blueLight,
+              //   ),
+              // ),
             ],
           ),
         ],

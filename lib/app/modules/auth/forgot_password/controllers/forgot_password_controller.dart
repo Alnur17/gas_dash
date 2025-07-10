@@ -20,10 +20,21 @@ class ForgotPasswordController extends GetxController {
 
   Rx<int> countdown = 59.obs;
 
+  var isPasswordVisible = false.obs;
+  var isPasswordVisible2 = false.obs;
+
   @override
   void onInit() {
     super.onInit();
     startCountdown();
+  }
+
+  void togglePasswordVisibility() {
+    isPasswordVisible.toggle();
+  }
+
+  void togglePasswordVisibility2() {
+    isPasswordVisible2.toggle();
   }
 
   // Countdown timer logic
@@ -174,12 +185,22 @@ class ForgotPasswordController extends GetxController {
     required String confirmPassword,
   }) async {
     try {
+      isLoading(true);
+      if (newPassword.trim().length < 6) {
+        Get.snackbar('Error', ' New Password must be at least 6 characters');
+        return;
+      }
+
+      if (confirmPassword.trim().length < 6) {
+        Get.snackbar('Error', ' Re-type New Password must be at least 6 characters');
+        return;
+      }
       String otpToken = LocalStorage.getData(key: AppConstant.resetToken);
 
       debugPrint(
           "============================> $otpToken <==================================");
 
-      isLoading(true);
+
       var map = <String, dynamic>{};
       map['newPassword'] = newPassword;
       map['confirmPassword'] = confirmPassword;

@@ -1,8 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/emergency_fuel/views/schedule_delivery_from_calender_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
+import 'package:gas_dash/common/widgets/custom_loader.dart';
 import 'package:gas_dash/common/widgets/custom_textfield.dart';
 import 'package:get/get.dart';
 import '../../../../../common/app_images/app_images.dart';
@@ -10,20 +11,33 @@ import '../../../../../common/helper/location_card.dart';
 import '../../../../../common/helper/vehicle_card.dart';
 import '../../../../../common/widgets/custom_button.dart';
 import '../controllers/order_fuel_controller.dart';
+import 'map_picker_view.dart';
 
-class OrderFuelView extends GetView<OrderFuelController> {
+class OrderFuelView extends StatefulWidget {
   final String? fuelName;
   final double? fuelPrice;
   final bool? isEmergency;
 
-  OrderFuelView({
+  const OrderFuelView({
     super.key,
     this.fuelName,
     this.isEmergency,
     this.fuelPrice,
   });
 
-  final OrderFuelController orderFuelController = Get.put(OrderFuelController());
+  @override
+  State<OrderFuelView> createState() => _OrderFuelViewState();
+}
+
+class _OrderFuelViewState extends State<OrderFuelView> {
+  final OrderFuelController orderFuelController =
+      Get.put(OrderFuelController());
+
+  @override
+  void initState() {
+    super.initState();
+    orderFuelController.fetchCurrentLocation();
+  }
 
   void _showAddVehicleDialog() {
     orderFuelController.resetForm();
@@ -77,10 +91,17 @@ class OrderFuelView extends GetView<OrderFuelController> {
                   },
                 ),
                 const SizedBox(height: 12),
-                Text('Fuel Level', style: h5),
+                Text('Color', style: h5),
                 CustomTextField(
-                  hintText: 'e.g. 20%',
-                  controller: orderFuelController.fuelLevelController,
+                  hintText: 'Enter the color of your car',
+                  controller: orderFuelController.colorTEController,
+                ),
+                const SizedBox(height: 12),
+                Text('License Plate Number', style: h5),
+                CustomTextField(
+                  hintText: 'Enter the license number',
+                  controller:
+                      orderFuelController.licensePlateNumberTEController,
                 ),
                 const SizedBox(height: 20),
                 CustomButton(
@@ -144,11 +165,11 @@ class OrderFuelView extends GetView<OrderFuelController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '\$${fuelPrice ?? 0.0}',
+                            '\$${widget.fuelPrice ?? 0.0}',
                             style: h1.copyWith(color: AppColors.white),
                           ),
                           Text(
-                            '$fuelName / gallons',
+                            '${widget.fuelName} / gallons',
                             style: h2.copyWith(
                               fontSize: 20,
                               color: AppColors.white,
@@ -161,14 +182,14 @@ class OrderFuelView extends GetView<OrderFuelController> {
                 ),
               ),
               sh20,
-              AmountToggleSection(fuelPrice: fuelPrice),
+              AmountToggleSection(fuelPrice: widget.fuelPrice),
               sh20,
               Obx(
-                    () => LocationCard(
+                () => LocationCard(
                   locationText: orderFuelController.currentLocation.value,
                   buttonText: 'Change Location',
                   onButtonPressed: () {
-                    orderFuelController.fetchCurrentLocation();
+                    Get.to(() => const MapPickerView());
                   },
                 ),
               ),
@@ -190,49 +211,80 @@ class OrderFuelView extends GetView<OrderFuelController> {
       bottomSheet: Container(
         padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
         color: AppColors.background,
-        child: CustomButton(
-          text: 'Next',
-          onPressed: () {
-            if (orderFuelController.confirmedVehicle.value == null) {
-              Get.snackbar('Error', 'Please select or add a vehicle',
-                  snackPosition: SnackPosition.BOTTOM);
-              return;
-            }
-            if (orderFuelController.latitude.value == null ||
-                orderFuelController.longitude.value == null) {
-              Get.snackbar('Error', 'Location not available',
-                  snackPosition: SnackPosition.BOTTOM);
-              return;
-            }
+        child: Obx(
+          () => orderFuelController.isLoading.value == true
+              ? CustomLoader(color: AppColors.white)
+              : CustomButton(
+                  text: 'Next',
+                  onPressed: () {
+                    if (orderFuelController.confirmedVehicle.value == null) {
+                      Get.snackbar('Error', 'Please select or add a vehicle',
+                          snackPosition: SnackPosition.BOTTOM);
+                      return;
+                    }
+                    if (orderFuelController.latitude.value == null ||
+                        orderFuelController.longitude.value == null) {
+                      Get.snackbar('Error', 'Location not available',
+                          snackPosition: SnackPosition.BOTTOM);
+                      return;
+                    }
 
-            double amount = 0.0;
-            if (orderFuelController.presetEnabled.value) {
-              amount = orderFuelController
-                  .parseGallons(orderFuelController.selectedPresetAmount.value);
-            } else if (orderFuelController.customEnabled.value) {
-              amount = orderFuelController.parseGallons(
-                  orderFuelController.customAmountController.text.isEmpty
-                      ? '0 gallons'
-                      : '${orderFuelController.customAmountController.text} gallons');
-            } else {
-              Get.snackbar('Error', 'Please select an amount',
-                  snackPosition: SnackPosition.BOTTOM);
-              return;
-            }
+                    double amount = 0.0;
+                    if (orderFuelController.presetEnabled.value) {
+                      amount = orderFuelController.parseGallons(
+                          orderFuelController.selectedPresetAmount.value);
+                    } else if (orderFuelController.customEnabled.value) {
+                      amount = orderFuelController.parseGallons(orderFuelController
+                              .customAmountController.text.isEmpty
+                          ? '0 gallons'
+                          : '${orderFuelController.customAmountController.text} gallons');
+                    } else {
+                      Get.snackbar('Error', 'Please select an amount',
+                          snackPosition: SnackPosition.BOTTOM);
+                      return;
+                    }
 
-            orderFuelController.createOrder(
-              isEmergency: isEmergency ?? false,
-              vehicleId: orderFuelController.selectedVehicle.value?.id ?? '',
-              presetAmount: orderFuelController.presetEnabled.value,
-              customAmount: orderFuelController.customEnabled.value,
-              amount: amount,
-              fuelType: fuelName ?? 'Premium',
-            );
-            if (kDebugMode) {
-              print(';;;;;;;;;;$isEmergency;;;;;;;;;;');
-            }
-          },
-          gradientColors: AppColors.gradientColorGreen,
+                    if (widget.isEmergency == true) {
+                      Get.to(
+                        () => ScheduleDeliveryFromCalenderView(
+                          isEmergency: widget.isEmergency!,
+                          //address: orderFuelController.currentLocation.value,
+                          vehicleId:
+                              orderFuelController.selectedVehicle.value?.id ??
+                                  '',
+                          customAmount: orderFuelController.customEnabled.value,
+                          presetAmount: orderFuelController.presetEnabled.value,
+                          amount: amount,
+                          fuelType: widget.fuelName ?? '',
+                        ),
+                      );
+                    } else {
+                      orderFuelController.createOrder(
+                        // isEmergency: widget.isEmergency ?? false,
+                        vehicleId:
+                            orderFuelController.selectedVehicle.value?.id ?? '',
+                        presetAmount: orderFuelController.presetEnabled.value,
+                        customAmount: orderFuelController.customEnabled.value,
+                        amount: amount,
+                        fuelType: widget.fuelName ?? 'Premium',
+                      );
+                    }
+
+                    // orderFuelController.createOrder(
+                    //   isEmergency: isEmergency ?? false,
+                    //   vehicleId:
+                    //       orderFuelController.selectedVehicle.value?.id ?? '',
+                    //   presetAmount: orderFuelController.presetEnabled.value,
+                    //   customAmount: orderFuelController.customEnabled.value,
+                    //   amount: amount,
+                    //   fuelType: fuelName ?? 'Premium',
+                    // ) ;
+                    // if (kDebugMode) {
+                    //   print(';;;;;;;;;;$isEmergency;;;;;;;;;;');
+                    // }
+                  },
+                  gradientColors: AppColors.gradientColorGreen,
+                ),
         ),
       ),
     );
@@ -255,28 +307,27 @@ class AmountToggleSection extends StatelessWidget {
     );
 
     const inputTextStyle = TextStyle(
-      fontSize: 14,
-      color: Color(0xFF9CA3AF),
-    );
+        fontSize: 14, color: AppColors.black100, fontWeight: FontWeight.w600);
 
     InputDecoration inputDecoration(String hint) => InputDecoration(
-      filled: true,
-      fillColor: Colors.white,
-      hintText: hint,
-      hintStyle: const TextStyle(
-        color: Color(0xFFD1D5DB),
-        fontSize: 14,
-      ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(24),
-        borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(24),
-        borderSide: const BorderSide(color: Color(0xFF22D3EE)),
-      ),
-    );
+          filled: true,
+          fillColor: Colors.white,
+          hintText: hint,
+          hintStyle: TextStyle(
+            color: AppColors.black100,
+            fontSize: 12,
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(24),
+            borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(24),
+            borderSide: const BorderSide(color: Color(0xFF22D3EE)),
+          ),
+        );
 
     Widget buildToggle({
       required String label,
@@ -311,24 +362,25 @@ class AmountToggleSection extends StatelessWidget {
         ),
         padding: const EdgeInsets.symmetric(horizontal: 14),
         child: Obx(() => DropdownButtonHideUnderline(
-          child: DropdownButton<String>(
-            value: controller.selectedPresetAmount.value,
-            isExpanded: true,
-            icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF9CA3AF)),
-            style: inputTextStyle,
-            items: controller.presetAmounts.map((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value, style: inputTextStyle),
-              );
-            }).toList(),
-            onChanged: (val) {
-              if (val != null) {
-                controller.selectedPresetAmount.value = val;
-              }
-            },
-          ),
-        )),
+              child: DropdownButton<String>(
+                value: controller.selectedPresetAmount.value,
+                isExpanded: true,
+                icon: const Icon(Icons.keyboard_arrow_down,
+                    color: Color(0xFF9CA3AF)),
+                style: inputTextStyle,
+                items: controller.presetAmounts.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value, style: inputTextStyle),
+                  );
+                }).toList(),
+                onChanged: (val) {
+                  if (val != null) {
+                    controller.selectedPresetAmount.value = val;
+                  }
+                },
+              ),
+            )),
       );
     }
 
@@ -339,8 +391,9 @@ class AmountToggleSection extends StatelessWidget {
           filled: true,
           fillColor: Colors.white,
           hintText: price,
-          hintStyle: const TextStyle(color: Color(0xFFD1D5DB), fontSize: 14),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          hintStyle: const TextStyle(color: AppColors.black100, fontSize: 14),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(24),
             borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
@@ -368,55 +421,56 @@ class AmountToggleSection extends StatelessWidget {
     }
 
     return Obx(() => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        buildToggle(
-          label: 'Preset Amounts',
-          enabled: controller.presetEnabled.value,
-          onTap: controller.togglePreset,
-        ),
-        const SizedBox(height: 8),
-        if (controller.presetEnabled.value) ...[
-          Text('Amounts', style: labelStyle),
-          const SizedBox(height: 6),
-          buildAmountDropdown(),
-          const SizedBox(height: 12),
-          Text('Price', style: labelStyle),
-          const SizedBox(height: 6),
-          buildReadOnlyPrice(
-            controller.calculatePrice(
-              controller.parseGallons(controller.selectedPresetAmount.value),
-              fuelPrice,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            buildToggle(
+              label: 'Preset Amounts',
+              enabled: controller.presetEnabled.value,
+              onTap: controller.togglePreset,
             ),
-          ),
-        ],
-        const SizedBox(height: 24),
-        buildToggle(
-          label: 'Custom Amounts',
-          enabled: controller.customEnabled.value,
-          onTap: controller.toggleCustom,
-        ),
-        const SizedBox(height: 8),
-        if (controller.customEnabled.value) ...[
-          Text('Amounts', style: labelStyle),
-          const SizedBox(height: 6),
-          buildAmountInput(),
-          const SizedBox(height: 12),
-          Text('Price', style: labelStyle),
-          const SizedBox(height: 6),
-          // Ensure price updates reactively by referencing customAmountText
-          buildReadOnlyPrice(
-            controller.calculatePrice(
-              controller.parseGallons(
-                controller.customAmountText.value.isEmpty
-                    ? '0 gallons'
-                    : '${controller.customAmountText.value} gallons',
+            const SizedBox(height: 8),
+            if (controller.presetEnabled.value) ...[
+              Text('Amounts', style: labelStyle),
+              const SizedBox(height: 6),
+              buildAmountDropdown(),
+              const SizedBox(height: 12),
+              Text('Price', style: labelStyle),
+              const SizedBox(height: 6),
+              buildReadOnlyPrice(
+                controller.calculatePrice(
+                  controller
+                      .parseGallons(controller.selectedPresetAmount.value),
+                  fuelPrice,
+                ),
               ),
-              fuelPrice,
+            ],
+            const SizedBox(height: 24),
+            buildToggle(
+              label: 'Custom Amounts',
+              enabled: controller.customEnabled.value,
+              onTap: controller.toggleCustom,
             ),
-          ),
-        ],
-      ],
-    ));
+            const SizedBox(height: 8),
+            if (controller.customEnabled.value) ...[
+              Text('Amounts', style: labelStyle),
+              const SizedBox(height: 6),
+              buildAmountInput(),
+              const SizedBox(height: 12),
+              Text('Price', style: labelStyle),
+              const SizedBox(height: 6),
+              // Ensure price updates reactively by referencing customAmountText
+              buildReadOnlyPrice(
+                controller.calculatePrice(
+                  controller.parseGallons(
+                    controller.customAmountText.value.isEmpty
+                        ? '0 gallons'
+                        : '${controller.customAmountText.value} gallons',
+                  ),
+                  fuelPrice,
+                ),
+              ),
+            ],
+          ],
+        ));
   }
 }

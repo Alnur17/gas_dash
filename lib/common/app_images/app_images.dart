@@ -8,11 +8,14 @@ class AppImages {
   static const arrowDown = "assets/icons/arrow down.png";
   static const arrowRightSmall = "assets/icons/arrow right small.png";
   static const checkBox = "assets/icons/checkbox.png";
+  static const checkBoxBig = "assets/icons/checkbox big.png";
   static const checkBoxCircle = "assets/icons/circle checkbox.png";
   static const checkBoxFilled = "assets/icons/checkbox filled.png";
   static const checkBoxFilledSquare = "assets/icons/Checbox filled squar.png";
   static const eyeClose = "assets/icons/eye close.png";
+  static const eyeOpen = "assets/icons/eye.png";
   static const emergency = "assets/icons/emergency.png";
+  static const coupon = "assets/icons/coupon.png";
 
   static const addFloating = "assets/icons/float add.png";
   static const message = "assets/icons/message.png";
@@ -80,6 +83,8 @@ class AppImages {
   static const send = "assets/icons/send.png";
   static const attachFile = "assets/icons/attach file.png";
   static const account = "assets/icons/account.png";
+  static const family = "assets/icons/family.png";
+  static const deliveryCar = "assets/icons/delivery car.png";
   static const aboutUs = "assets/icons/about us.png";
   static const termsAndConditions = "assets/icons/terms and conditions.png";
   static const myOrder = "assets/icons/my order.png";

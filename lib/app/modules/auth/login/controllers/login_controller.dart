@@ -15,6 +15,18 @@ import '../../../user/dashboard/views/dashboard_view.dart';
 
 class LoginController extends GetxController {
   var isLoading = false.obs;
+  var isPasswordVisible = false.obs;
+  var isCheckboxVisible = false.obs;
+
+  // Method to toggle password visibility
+  void togglePasswordVisibility() {
+    isPasswordVisible.toggle();
+  }
+
+  void toggleCheckboxVisibility() {
+    isCheckboxVisible.toggle();
+
+  }
 
   Future userLogin({
     required String email,
@@ -23,7 +35,7 @@ class LoginController extends GetxController {
     try {
       isLoading(true);
       var map = {
-        "email": email.toLowerCase(),
+        "email": email.toLowerCase().trim(),
         "password": password,
       };
 
@@ -67,13 +79,15 @@ class LoginController extends GetxController {
           );
 
           String role =
-              responseBody['data']['user']['role'].toString().toLowerCase();
+          responseBody['data']['user']['role'].toString().toLowerCase();
           LocalStorage.saveData(key: AppConstant.role, data: role);
           kSnackBar(message: message, bgColor: AppColors.green);
 
           if (role == 'user') {
+            //await profileController.getMyProfile();
             Get.offAll(() => DashboardView());
           } else if (role == 'driver') {
+            //await driverProfileController.getDriverProfile();
             Get.offAll(() => DriverDashboardView());
           } else {
             kSnackBar(message: 'Unknown role', bgColor: AppColors.red);
@@ -88,9 +102,11 @@ class LoginController extends GetxController {
       }
     } catch (e) {
       debugPrint("Catch Error:::::: $e");
+      kSnackBar(message: '$e', bgColor: AppColors.red);
       isLoading(false);
     } finally {
       isLoading(false);
     }
   }
+
 }

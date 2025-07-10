@@ -3,6 +3,7 @@ import 'package:gas_dash/app/modules/driver/driver_history/views/driver_start_de
 import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:gas_dash/common/helper/order_history_card.dart';
+import 'package:gas_dash/common/widgets/custom_loader.dart';
 import 'package:get/get.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:intl/intl.dart'; // For date formatting
@@ -23,7 +24,9 @@ class _DriverHistoryViewState extends State<DriverHistoryView> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        backgroundColor: AppColors.background,
         appBar: AppBar(
+          backgroundColor: AppColors.white,
           title: Text(
             'Order History',
             style: titleStyle,
@@ -76,6 +79,19 @@ class OrderStatusSection extends GetView<DriverHomeController> {
             itemCount: orders.length,
             itemBuilder: (context, index) {
               final order = orders[index];
+              final orderId = order.id ?? 'unknown';
+              final coords = order.location?.coordinates;
+
+              // Start resolving location if not already done
+              if (coords != null &&
+                  !controller.locationNames.containsKey(orderId)) {
+                controller.resolveLocation(
+                    orderId, coords[1], coords[0]); // ✅ latitude, longitude
+              }
+
+              final locationName =
+                  controller.locationNames[orderId] ?? "Loading location...";
+
               return OrderHistoryCard(
                 emergency: order.emergency ?? false,
                 emergencyImage: AppImages.emergency,
@@ -98,16 +114,21 @@ class OrderStatusSection extends GetView<DriverHomeController> {
                           amounts:
                               '${order.amount?.toStringAsFixed(2) ?? '0.00'} Gallons',
                           orderName: order.fuelType ?? 'Unknown',
-                          location: order.location?.coordinates != null
-                              ? '[${order.location!.coordinates[0]}, ${order.location!.coordinates[1]}]'
-                              : 'Unknown',
+                          lat: order.location?.coordinates[1].toString(),
+                          long: order.location?.coordinates[0].toString(),
+                          location: locationName,
+                          userId: order.userId!.id.toString(),
                         ));
                   } else if (status == 'Pending') {
                     controller.acceptOrder(order.id ?? '');
                   }
                 },
                 onButton2Pressed: () {
-                  controller.viewOrderDetails(order.id ?? '');
+                  controller.isLoading.value == true ?
+                      CustomLoader(color: AppColors.white) :
+                  controller.viewOrderDetails(
+                    order.id ?? '', locationName,
+                  );
                 },
               );
             },

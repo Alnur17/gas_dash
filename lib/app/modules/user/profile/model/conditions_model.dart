@@ -24,16 +24,24 @@ class Datum {
     required this.id,
     required this.v,
     required this.createdAt,
-    required this.privacyPolicy,
+    required this.discountBanner,
+    required this.emergencyFuelBanner,
     required this.updatedAt,
+    required this.orderHistoryBanner,
+    required this.fuelTypeBanner,
+    required this.privacyPolicy,
     required this.termsConditions,
   });
 
   final String? id;
   final int? v;
   final DateTime? createdAt;
-  final String? privacyPolicy;
+  final String? discountBanner;
+  final String? emergencyFuelBanner;
   final DateTime? updatedAt;
+  final String? orderHistoryBanner;
+  final String? fuelTypeBanner;
+  final String? privacyPolicy;
   final String? termsConditions;
 
   factory Datum.fromJson(Map<String, dynamic> json){
@@ -41,8 +49,12 @@ class Datum {
       id: json["_id"],
       v: json["__v"],
       createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
-      privacyPolicy: json["privacy_policy"],
+      discountBanner: json["discountBanner"],
+      emergencyFuelBanner: json["emergencyFuelBanner"],
       updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
+      orderHistoryBanner: json["orderHistoryBanner"],
+      fuelTypeBanner: json["fuelTypeBanner"],
+      privacyPolicy: json["privacy_policy"],
       termsConditions: json["terms_conditions"],
     );
   }

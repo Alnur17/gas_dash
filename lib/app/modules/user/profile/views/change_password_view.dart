@@ -51,12 +51,20 @@ class ChangePasswordView extends GetView {
               style: h5,
             ),
             sh8,
-            CustomTextField(
-              controller: currentPassTEController,
-              hintText: '***********',
-              sufIcon: Image.asset(
-                AppImages.eyeClose,
-                scale: 4,
+            Obx(
+              () => CustomTextField(
+                controller: currentPassTEController,
+                hintText: '***********',
+                sufIcon: GestureDetector(
+                    onTap: () {
+                      profileController.togglePasswordVisibility();
+                    },
+                    child: Image.asset(
+                        profileController.isPasswordVisible.value
+                            ? AppImages.eyeOpen
+                            : AppImages.eyeClose,
+                        scale: 4)),
+                obscureText: !profileController.isPasswordVisible.value,
               ),
             ),
             sh16,
@@ -65,12 +73,20 @@ class ChangePasswordView extends GetView {
               style: h5,
             ),
             sh8,
-            CustomTextField(
-              controller: newPassTEController,
-              hintText: '***********',
-              sufIcon: Image.asset(
-                AppImages.eyeClose,
-                scale: 4,
+            Obx(
+              () => CustomTextField(
+                controller: newPassTEController,
+                hintText: '***********',
+                sufIcon: GestureDetector(
+                    onTap: () {
+                      profileController.togglePasswordVisibility1();
+                    },
+                    child: Image.asset(
+                        profileController.isPasswordVisible1.value
+                            ? AppImages.eyeOpen
+                            : AppImages.eyeClose,
+                        scale: 4)),
+                obscureText: !profileController.isPasswordVisible1.value,
               ),
             ),
             sh16,
@@ -79,12 +95,20 @@ class ChangePasswordView extends GetView {
               style: h5,
             ),
             sh8,
-            CustomTextField(
-              controller: confirmPassTEController,
-              hintText: '***********',
-              sufIcon: Image.asset(
-                AppImages.eyeClose,
-                scale: 4,
+            Obx(
+              () => CustomTextField(
+                controller: confirmPassTEController,
+                hintText: '***********',
+                sufIcon: GestureDetector(
+                    onTap: () {
+                      profileController.togglePasswordVisibility2();
+                    },
+                    child: Image.asset(
+                        profileController.isPasswordVisible2.value
+                            ? AppImages.eyeOpen
+                            : AppImages.eyeClose,
+                        scale: 4)),
+                obscureText: !profileController.isPasswordVisible2.value,
               ),
             ),
             sh30,

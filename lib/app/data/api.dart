@@ -2,7 +2,9 @@ class Api {
   /// base url
   //static const baseUrl = "http://192.168.10.160:8000/api/v1";
   static const baseUrl = "http://172.252.13.83:8000/api/v1";
-  static const socketUrl = "http://172.252.13.83:8002";
+  //static const baseUrl = "http://10.10.10.15:6000/api/v1";
+  static const socketUrl = "http://10.10.10.15:6001";
+ // static const socketUrl = "http://115.127.156.131:1005";
 
   ///auth
   static const register = "$baseUrl/users/create"; //done
@@ -14,7 +16,10 @@ class Api {
   static const changePassword = "$baseUrl/auth/change-password"; //done
 
   ///Gas Prices
-  static const fuelInfo = "$baseUrl/fuelInfo"; //done
+  static const fuelInfo = "$baseUrl/fuelInfo/userzipprise"; //done
+
+  ///Business Hour
+  static const businessHour = "$baseUrl/business-ours"; //done
 
   ///Services
   static const service = "$baseUrl/services/"; //done
@@ -31,15 +36,20 @@ class Api {
   static const addVehicle = "$baseUrl/vehicles/create"; //done
 
   static const getMyVehicle = "$baseUrl/vehicles/my-vehicles"; //done
+  static const getMySubscriptionVehicle = "$baseUrl/vehicles/subscription-vehicles"; //done
 
   ///Order
   static const createOrder = "$baseUrl/orders/create-orderFuel"; //done
+  static cancelOrder(String orderId) => "$baseUrl/orders/$orderId"; //done
 
   static const orderHistory = "$baseUrl/orders/my-order"; //
 
-  static singleOrderById(String orderId) => "$baseUrl/orders/$orderId"; //done
+  static String singleOrderById(String orderId) => "$baseUrl/orders/$orderId"; //done
 
   static String orderDataConfirmation(String id) => "$baseUrl/orders/$id"; //
+
+  ///Coupon
+  static String coupon(String couponValue) => "$baseUrl/cupons/check/$couponValue"; //
 
   ///driver assigned order
   static const assignedOrder = "$baseUrl/orders/driver"; //
@@ -88,4 +98,12 @@ class Api {
   static  String createReview(String driverId) => "$baseUrl/reviews/create";
 
   static  String getReviews(String driverId) => "$baseUrl/reviews/driver/$driverId";
+
+  ///tips
+  static const String optionalTipCreate = "$baseUrl/optionalTip/create";
+  static const String optionalTipCheckout = "$baseUrl/payments/optional-tip/checkout";
+
+  ///Banner
+  static const String emergencyBanner = "$baseUrl/discountBanner";
+  static const String discountBanner = "$baseUrl/emergencyFuelBanner";
 }

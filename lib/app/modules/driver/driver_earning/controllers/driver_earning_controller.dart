@@ -26,14 +26,6 @@ class DriverEarningController extends GetxController {
     fetchEarnings();
   }
 
-  @override
-  void onClose() {
-    // Dispose controllers to prevent memory leaks
-    amountController.dispose();
-    cardHolderNameController.dispose();
-    cardNumberController.dispose();
-    super.onClose();
-  }
 
   Future<void> fetchEarnings() async {
     try {
@@ -80,10 +72,33 @@ class DriverEarningController extends GetxController {
         'Authorization': 'Bearer $token',
       };
 
+      // Validate amount
+      final amountText = amountController.text.replaceAll('\$', '').trim();
+      final amount = double.tryParse(amountText) ?? 0.0;
+      if (amount <= 0.0) {
+        kSnackBar(
+          message: 'Withdraw amount must be greater than \$0',
+          bgColor: AppColors.orange,
+        );
+        isLoading.value = false;
+        return;
+      }
+
+      // Validate card number
+      final cardNumber = cardNumberController.text.trim().replaceAll(' ', '');
+      if (cardNumber.length != 16 || !RegExp(r'^\d{16}$').hasMatch(cardNumber)) {
+        kSnackBar(
+          message: 'Card number must be exactly 16 digits',
+          bgColor: AppColors.orange,
+        );
+        isLoading.value = false;
+        return;
+      }
+
       final body = {
-        'withdrawAmount': amountController.text.replaceAll('\$', '').trim(),
-        'cardHolderName': cardHolderNameController.text.trim(), // Uncomment if needed
-        'cardNumber': cardNumberController.text.trim(), // Uncomment if needed
+        'withdrawAmount': amountText,
+        'cardHolderName': cardHolderNameController.text.trim(),
+        'cardNumber': cardNumber,
       };
 
       final response = await BaseClient.postRequest(

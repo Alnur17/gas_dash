@@ -1,13 +1,13 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/auth/forgot_password/controllers/forgot_password_controller.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 
 import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 import '../../../../../common/app_color/app_colors.dart';
-import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_button.dart';
 import '../../../../../common/widgets/custom_loader.dart';
@@ -22,6 +22,7 @@ class SignUpOtpVerifyView extends GetView {
   });
 
   final SignUpController signUpController = Get.find<SignUpController>();
+  final ForgotPasswordController forgotPasswordController = Get.put(ForgotPasswordController());
   final TextEditingController otpController = TextEditingController();
 
   @override
@@ -35,15 +36,16 @@ class SignUpOtpVerifyView extends GetView {
           style: titleStyle,
         ),
         centerTitle: true,
-        leading: GestureDetector(
-          onTap: () {
-            Get.back();
-          },
-          child: Image.asset(
-            AppImages.back,
-            scale: 4,
-          ),
-        ),
+        automaticallyImplyLeading: false,
+        // leading: GestureDetector(
+        //   onTap: () {
+        //     Get.back();
+        //   },
+        //   child: Image.asset(
+        //     AppImages.back,
+        //     scale: 4,
+        //   ),
+        // ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -103,20 +105,26 @@ class SignUpOtpVerifyView extends GetView {
               },
             ),
             sh30,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Haven’t got the code yet?',
-                  style: h5,
+            Obx(() {
+              return forgotPasswordController.isResendLoading.value == true
+                  ? CircularProgressIndicator(color: AppColors.primaryColor,)
+                  : forgotPasswordController.countdown.value > 0
+                  ? Text(
+                'Haven’t got the code yet? ${forgotPasswordController.countdown.value}',
+                style: h3,
+              )
+                  : GestureDetector(
+                onTap: forgotPasswordController.countdown.value == 0
+                    ? () {
+                  forgotPasswordController.reSendOtp(email: email);
+                }
+                    : null,
+                child:  Text(
+                  'Resend code',
+                  style: h3.copyWith(color: AppColors.primaryColor),
                 ),
-                sw5,
-                Text(
-                  'Resent Code',
-                  style: h4.copyWith(color: Colors.cyan),
-                )
-              ],
-            ),
+              );
+            }),
           ],
         ),
       ),

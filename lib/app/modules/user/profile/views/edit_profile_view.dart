@@ -174,7 +174,7 @@ class _EditProfileViewState extends State<EditProfileView> {
               ),
               sh12,
               Text(
-                'Location',
+                'City and State',
                 style: h5,
               ),
               sh8,
@@ -209,6 +209,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                             contactNumber: contactTEController.text,
                             location: locationTEController.text,
                             zipCode: zipCodeTEController.text,
+                            context: context,
                           );
                         },
                       ),

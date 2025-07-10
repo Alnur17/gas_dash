@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/user/payment/controllers/payment_controller.dart';
+import 'package:gas_dash/app/modules/user/subscription/model/my_subscription_vehicle_model.dart';
 import 'package:get/get.dart';
 
 import '../../../../../common/app_constant/app_constant.dart';
@@ -9,19 +10,22 @@ import '../../../../../common/helper/local_store.dart';
 import '../../../../data/api.dart';
 import '../../../../data/base_client.dart';
 import '../../payment/views/payment_view.dart';
+import '../../profile/controllers/profile_controller.dart';
 import '../model/subscription_package_model.dart';
 
 class SubscriptionController extends GetxController {
   final RxBool isLoading = true.obs;
   final RxList<Datum> packages = <Datum>[].obs;
+  var subscriptionVehicleList = <SubscriptionVehicleDatum>[].obs;
   final RxString errorMessage = ''.obs;
   final paymentController = Get.put(PaymentController());
-
+  final ProfileController profileController = Get.find<ProfileController>();
 
   @override
   void onInit() {
     super.onInit();
     fetchSubscriptionPackages();
+    fetchMySubscriptionVehicles();
   }
 
   Future<void> fetchSubscriptionPackages() async {
@@ -79,7 +83,8 @@ class SubscriptionController extends GetxController {
         LocalStorage.saveData(key: AppConstant.subscriptionId, data: subscriptionId);
         String? subsId = LocalStorage.getData(key: AppConstant.subscriptionId);
         if (subsId != null) {
-          createSubscriptionPayment(subscriptionId: subsId);
+          await createSubscriptionPayment(subscriptionId: subsId);
+          await profileController.getMyProfile();
           debugPrint(';;;;;;;;;;;;;;;;;; $subsId ;;;;;;;;;;;;;;;;;;;');
         } else {
           debugPrint('Failed to retrieve subscription ID from LocalStorage');
@@ -121,10 +126,44 @@ class SubscriptionController extends GetxController {
     );
 
     if (responseBody != null) {
+      await profileController.getMyProfile();
       Get.to(() => PaymentView(paymentUrl: responseBody["data"]));
       isLoading.value = false;
     } else {
       Get.snackbar("Error", "Failed to create payment session");
     }
   }
+
+  Future<void> fetchMySubscriptionVehicles() async {
+    try {
+      isLoading.value = true;
+
+      final String token = LocalStorage.getData(key: AppConstant.accessToken);
+      var headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      };
+      final response = await BaseClient.getRequest(
+        api: Api.getMySubscriptionVehicle,
+        headers: headers,
+      );
+      final jsonBody = await BaseClient.handleResponse(response);
+
+      MySubscriptionVehicleModel subscriptionVehicleModel = MySubscriptionVehicleModel.fromJson(jsonBody);
+
+      if (subscriptionVehicleModel.success == true) {
+        subscriptionVehicleList.value = subscriptionVehicleModel.data;
+      } else {
+        subscriptionVehicleList.clear();
+        Get.snackbar(
+            'Error', 'Failed to load subscription vehicles');
+      }
+    } catch (e) {
+      subscriptionVehicleList.clear();
+      Get.snackbar('Error', e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/profile/controllers/profile_controller.dart';
 
 import 'package:get/get.dart';
 
@@ -13,6 +14,7 @@ class PaymentSuccessView extends GetView {
   const PaymentSuccessView({super.key});
   @override
   Widget build(BuildContext context) {
+    final ProfileController profileController = Get.put(ProfileController());
     return Scaffold(
       backgroundColor: AppColors.mainColor,
       appBar: AppBar(
@@ -47,6 +49,7 @@ class PaymentSuccessView extends GetView {
             CustomButton(
               text: 'Back to Homepage',
               onPressed: () {
+                profileController.getMyProfile();
                 Get.offAll(()=> DashboardView());
               },
               gradientColors: AppColors.gradientColor,

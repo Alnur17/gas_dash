@@ -26,7 +26,9 @@ class _OrderHistoryViewState extends State<OrderHistoryView> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        backgroundColor: AppColors.background,
         appBar: AppBar(
+          backgroundColor: AppColors.white,
           title: Text('Order History', style: titleStyle),
           centerTitle: true,
           bottom: TabBar(
@@ -152,6 +154,19 @@ class OrderStatusSection extends StatelessWidget {
           final order = filteredOrders[index];
           debugPrint('Rendering order status: ${order.orderStatus}');
           final displayStatus = order.orderStatus == 'InProgress' ? 'In Process' : 'Completed';
+          final orderId = order.id ?? 'unknown';
+          final coords = order.location?.coordinates;
+
+          // Start resolving location if not already done
+          if (coords != null &&
+              !controller.locationNames.containsKey(orderId)) {
+            controller.resolveLocation(
+                orderId, coords[1], coords[0]); // latitude, longitude
+          }
+
+          final locationName =
+              controller.locationNames[orderId] ?? "Loading location...";
+
           return OrderHistoryCard(
             emergency: order.emergency ?? false,
             emergencyImage: AppImages.emergency,
@@ -167,7 +182,7 @@ class OrderStatusSection extends StatelessWidget {
               _navigateButton1(order.orderStatus ?? '', order.id);
             },
             onButton2Pressed: () {
-              controller.getSingleOrder(order.id ?? 'N/A',order.amount.toString());
+              controller.getSingleOrder(order.id ?? 'N/A',order.amount.toString(),locationName);
             },
           );
         },

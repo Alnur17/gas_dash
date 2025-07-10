@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_constant/app_constant.dart';
@@ -11,15 +12,43 @@ import '../model/order_history_model.dart';
 import '../views/order_details_view.dart';
 
 class OrderHistoryController extends GetxController {
-  var orders = <OrderHistoryDatum>[].obs; // Observable list for orders
-  var isLoading = true.obs; // Loading state
-  var errorMessage = ''.obs; // Error message for failures
-  var singleOrder = Rx<SingleOrderByIdModel?>(null); // Observable for single order
+  var orders = <OrderHistoryDatum>[].obs;
+  var inProcessOrders = <OrderHistoryDatum>[].obs;
+  var isLoading = true.obs;
+  var errorMessage = ''.obs;
+  var singleOrder = Rx<SingleOrderByIdModel?>(null);
 
   @override
   void onInit() {
-    super.onInit();
     fetchOrderHistory();
+    super.onInit();
+
+  }
+
+
+  var locationNames = <String, String>{}.obs;
+
+  Future<void> resolveLocation(String orderId, double lat, double lng) async {
+    if (!locationNames.containsKey(orderId)) {
+      try {
+        List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+        if (placemarks.isNotEmpty) {
+          final place = placemarks.first;
+          final address = [
+            place.street,
+            place.subLocality,
+            place.subAdministrativeArea,
+            place.country,
+          ].where((element) => element != null && element.isNotEmpty).join(", ");
+
+          locationNames[orderId] = address.isNotEmpty ? address : "Unknown";
+        } else {
+          locationNames[orderId] = "Unknown";
+        }
+      } catch (e) {
+        locationNames[orderId] = "Unknown";
+      }
+    }
   }
 
   Future<void> fetchOrderHistory() async {
@@ -45,6 +74,10 @@ class OrderHistoryController extends GetxController {
         final orderHistory = OrderHistoryModel.fromJson(jsonResponse);
         if (orderHistory.success == true && orderHistory.data?.data != null) {
           orders.assignAll(orderHistory.data!.data);
+          inProcessOrders.assignAll(
+              orderHistory.data!.data.where((e) => e.orderStatus.toString() == "InProgress").toList()
+          );
+
         } else {
           errorMessage('No orders found');
         }
@@ -58,7 +91,7 @@ class OrderHistoryController extends GetxController {
     }
   }
 
-  Future<void> getSingleOrder(String orderId,amount) async {
+  Future<void> getSingleOrder(String orderId, String amount, String location) async {
     try {
       isLoading.value = true;
       errorMessage('');
@@ -77,10 +110,6 @@ class OrderHistoryController extends GetxController {
       final apiUrl = Api.singleOrderById(orderId);
       debugPrint('API URL: $apiUrl');
 
-      if (apiUrl is! String) {
-        throw Exception('Api.singleOrderById returned non-string value: $apiUrl (type: ${apiUrl.runtimeType})');
-      }
-
       final response = await BaseClient.getRequest(
         api: apiUrl,
         headers: headers,
@@ -94,7 +123,7 @@ class OrderHistoryController extends GetxController {
         final singleOrderData = SingleOrderByIdModel.fromJson(jsonResponse);
         if (singleOrderData.success == true && singleOrderData.data != null) {
           singleOrder.value = singleOrderData;
-          Get.to(() =>  OrderDetailsView(amount));
+          Get.to(() => OrderDetailsView(amount, location));
         } else {
           kSnackBar(
             message: singleOrderData.message ?? 'Failed to fetch order details',

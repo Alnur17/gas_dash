@@ -10,6 +10,9 @@ import 'package:get/get.dart';
 
 import '../../../../../common/app_text_style/styles.dart';
 import '../../home/views/home_view.dart';
+import '../../profile/controllers/conditions_controller.dart';
+import '../../profile/controllers/profile_controller.dart';
+import '../../subscription/views/subscription_view.dart';
 import '../controllers/dashboard_controller.dart';
 
 class DashboardView extends StatefulWidget {
@@ -22,6 +25,9 @@ class DashboardView extends StatefulWidget {
 class _DashboardViewState extends State<DashboardView> {
   final DashboardController dashboardController =
       Get.put(DashboardController());
+  final profileController = Get.put(ProfileController());
+  final settingsController = Get.put(ConditionsController());
+
 
   static final List<Widget> _views = [
     HomeView(),
@@ -35,14 +41,18 @@ class _DashboardViewState extends State<DashboardView> {
     return Scaffold(
       body: Obx(() => _views[dashboardController.selectedIndex.value]),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Get.to(()=> EmergencyFuelView());
-        },
-        backgroundColor: AppColors.textColor,
-        shape: const CircleBorder(),
-        child: Image.asset(AppImages.addFloating,scale: 4,),
-      ),
+      floatingActionButton: Obx(() => dashboardController.isOutsideBusinessHours.value
+        ? FloatingActionButton(
+      onPressed: () {
+        profileController.myProfileData.value?.noExtraChargeForEmergencyFuelServiceLimit == true
+            ? Get.to(() => EmergencyFuelView())
+            : Get.to(() => SubscriptionView());
+      },
+      backgroundColor: AppColors.textColor,
+      shape: const CircleBorder(),
+      child: Image.asset(AppImages.addFloating, scale: 4),
+    )
+        : const SizedBox.shrink()), // Hide FAB when inside business hours
       bottomNavigationBar: BottomAppBar(
         color: AppColors.mainColor,
         padding: EdgeInsets.zero,
@@ -101,9 +111,10 @@ class _DashboardViewState extends State<DashboardView> {
                       ),
                   ],
                 ),
-                const SizedBox(
+                dashboardController.isOutsideBusinessHours.value
+                    ? const SizedBox(
                   width: 50,
-                ),
+                ) : Container(),
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [

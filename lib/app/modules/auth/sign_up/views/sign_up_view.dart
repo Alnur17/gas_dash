@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/auth/login/views/login_view.dart';
+import 'package:gas_dash/app/modules/user/profile/views/terms_and_conditions_view.dart';
 
 import 'package:get/get.dart';
 
@@ -53,9 +54,18 @@ class SignUpView extends GetView<SignUpController> {
               //sh16,
               Row(
                 children: [
-                  Image.asset(
-                    AppImages.checkBoxFilledSquare,
-                    scale: 4,
+                  Obx(
+                    () => GestureDetector(
+                      onTap: () {
+                        signupController.toggleCheckboxVisibility();
+                      },
+                      child: Image.asset(
+                        signupController.isCheckboxVisible.value
+                            ? AppImages.checkBoxFilledSquare
+                            : AppImages.checkBox,
+                        scale: 4,
+                      ),
+                    ),
                   ),
                   sw12,
                   Expanded(
@@ -64,7 +74,10 @@ class SignUpView extends GetView<SignUpController> {
                         children: [
                           TextSpan(text: 'By agreeing to the ', style: h4),
                           TextSpan(
-                            recognizer: TapGestureRecognizer()..onTap = () {},
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Get.to(() => TermsAndConditionsView());
+                              },
                             text: 'Terms & Condition',
                             style: h4.copyWith(color: AppColors.textColor),
                           ),
@@ -76,16 +89,16 @@ class SignUpView extends GetView<SignUpController> {
               ),
               sh24,
               Obx(
-                    () {
+                () {
                   return signupController.isLoading.value == true
                       ? CustomLoader(color: AppColors.white)
                       : CustomButton(
-                    text: 'Sign Up',
-                    onPressed: () async {
-                      await signupController.registerUser();
-                    },
-                    gradientColors: AppColors.gradientColor,
-                  );
+                          text: 'Sign Up',
+                          onPressed: () async {
+                            await signupController.registerUser();
+                          },
+                          gradientColors: AppColors.gradientColor,
+                        );
                 },
               ),
               sh10,

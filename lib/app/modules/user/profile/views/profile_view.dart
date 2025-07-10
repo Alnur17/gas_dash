@@ -4,7 +4,6 @@ import 'package:gas_dash/app/modules/user/profile/views/edit_profile_view.dart';
 import 'package:gas_dash/app/modules/user/profile/views/policies_view.dart';
 import 'package:gas_dash/app/modules/user/profile/views/terms_and_conditions_view.dart';
 import 'package:gas_dash/app/modules/user/profile/views/track_your_order_view.dart';
-import 'package:gas_dash/app/modules/user/subscription/views/subscription_view.dart';
 
 import 'package:get/get.dart';
 
@@ -18,10 +17,21 @@ import '../../../../../common/widgets/custom_list_tile.dart';
 import '../../../auth/login/views/login_view.dart';
 import '../controllers/profile_controller.dart';
 
-class ProfileView extends GetView<ProfileController> {
-  ProfileView({super.key});
+class ProfileView extends StatefulWidget {
+  const ProfileView({super.key});
 
+  @override
+  State<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<ProfileView> {
   final ProfileController profileController = Get.put(ProfileController());
+
+  @override
+  void initState() {
+    super.initState();
+    profileController.getMyProfile();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +48,9 @@ class ProfileView extends GetView<ProfileController> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             sh20,
+            // Profile section with avatar and name
             Obx(
-              () => CircleAvatar(
+                  () => CircleAvatar(
                 radius: 50,
                 backgroundColor: AppColors.white,
                 backgroundImage: NetworkImage(
@@ -49,13 +60,14 @@ class ProfileView extends GetView<ProfileController> {
             ),
             sh8,
             Obx(
-              () => Text(
-                profileController.myProfileName.value,
+                  () => Text(
+                    profileController.myProfileName.value,
                 style: h5.copyWith(
                   fontWeight: FontWeight.w500,
                 ),
               ),
             ),
+
             sh20,
             CustomListTile(
               onTap: () {
@@ -71,7 +83,7 @@ class ProfileView extends GetView<ProfileController> {
                 Get.to(() => ChangePasswordView());
               },
               leadingImage: AppImages.changePass,
-              title: 'Change  Password ',
+              title: 'Change Password',
               trailingImage: AppImages.arrowRightSmall,
             ),
             sh12,
@@ -84,12 +96,23 @@ class ProfileView extends GetView<ProfileController> {
               trailingImage: AppImages.arrowRightSmall,
             ),
             sh12,
+            // Subscription tile
             CustomListTile(
               onTap: () {
-                Get.to(() => SubscriptionView());
+                profileController.handleSubscriptionNavigation();
               },
               leadingImage: AppImages.subscription,
               title: 'Subscription',
+              trailingImage: AppImages.arrowRightSmall,
+            ),
+            sh12,
+            // Family member or household vehicle tile
+            CustomListTile(
+              onTap: () {
+                profileController.handleFamilyMemberNavigation();
+              },
+              leadingImage: AppImages.family,
+              title: 'Family member or\nhousehold vehicle',
               trailingImage: AppImages.arrowRightSmall,
             ),
             sh12,
@@ -112,10 +135,10 @@ class ProfileView extends GetView<ProfileController> {
             ),
             sh12,
             CustomListTile(
-              onTap: () async {
-                await LocalStorage.removeData(key: AppConstant.accessToken);
-                await LocalStorage.removeData(key: AppConstant.refreshToken);
-                await LocalStorage.removeData(key: AppConstant.role);
+              onTap: () {
+                LocalStorage.removeData(key: AppConstant.accessToken);
+                LocalStorage.removeData(key: AppConstant.refreshToken);
+                LocalStorage.removeData(key: AppConstant.role);
                 Get.offAll(() => LoginView());
               },
               leadingImage: AppImages.logout,
