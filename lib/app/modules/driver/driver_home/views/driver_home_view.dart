@@ -250,27 +250,27 @@ class _DriverHomeViewState extends State<DriverHomeView> {
                                   fuelType: order.orderType ?? 'Unknown',
                                   onAcceptPressed: () {
 
-                                      // Cancel any existing timer to avoid duplicates
-                                      _stopLocationUpdates();
-
-                                      _locationTimer = Timer.periodic(Duration(milliseconds: 500), (timer) async {
-                                        if (socketService.socket.connected) {
-                                          try {
-                                            final position = await _getCurrentLocation();
-                                            final locationData = {
-                                              "latitude": position.latitude,
-                                              "longitude": position.longitude,
-                                              "orderId": order.id,
-                                            };
-                                            socketService.socket.emit('getLocation', locationData); // Emit location data
-                                            print('Emitted location: $locationData');
-                                          } catch (e) {
-                                            print('Error getting location: $e');
-                                          }
-                                        } else {
-                                          print('Socket not connected, skipping location emission');
-                                        }
-                                      });
+                                      // // Cancel any existing timer to avoid duplicates
+                                      // _stopLocationUpdates();
+                                      //
+                                      // _locationTimer = Timer.periodic(Duration(milliseconds: 500), (timer) async {
+                                      //   if (socketService.socket.connected) {
+                                      //     try {
+                                      //       final position = await _getCurrentLocation();
+                                      //       final locationData = {
+                                      //         "latitude": position.latitude,
+                                      //         "longitude": position.longitude,
+                                      //         "orderId": order.id,
+                                      //       };
+                                      //       socketService.socket.emit('getLocation', locationData); // Emit location data
+                                      //       print('Emitted location: $locationData');
+                                      //     } catch (e) {
+                                      //       print('Error getting location: $e');
+                                      //     }
+                                      //   } else {
+                                      //     print('Socket not connected, skipping location emission');
+                                      //   }
+                                      // });
 
                                     Get.to(() => DriverStartDeliveryView(
                                           orderId: order.id ?? 'Unknown',
@@ -283,6 +283,8 @@ class _DriverHomeViewState extends State<DriverHomeView> {
                                           orderName:
                                               order.fuelType ?? 'Unknown',
                                           location: locationName,
+                                      lat: order.location?.coordinates[1].toString(),
+                                      long: order.location?.coordinates[0].toString(),
                                           userId: order.userId!.id.toString(),
                                         ));
                                   },

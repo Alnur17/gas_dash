@@ -114,6 +114,8 @@ class OrderStatusSection extends GetView<DriverHomeController> {
                           amounts:
                               '${order.amount?.toStringAsFixed(2) ?? '0.00'} Gallons',
                           orderName: order.fuelType ?? 'Unknown',
+                          lat: order.location?.coordinates[1].toString(),
+                          long: order.location?.coordinates[0].toString(),
                           location: locationName,
                           userId: order.userId!.id.toString(),
                         ));

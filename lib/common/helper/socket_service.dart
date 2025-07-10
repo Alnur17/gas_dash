@@ -21,7 +21,7 @@ class SocketService {
 
   Future<SocketService> init() async {
     String? token = LocalStorage.getData(key: AppConstant.accessToken);
-    String? userId = LocalStorage.getData(key: AppConstant.userId);
+    String? userId = LocalStorage.getData(key: AppConstant.accessToken);
 
     _socket = IO.io(Api.socketUrl, <String, dynamic>{
       'transports': ['websocket'],
@@ -32,16 +32,16 @@ class SocketService {
     });
 
     _socket.on('connect', (data) {
-      print('🟢Connected to the server');
+      print('🟢 Socket connected');
       print('My user ID: $userId');
 
       _socket.emit("connection", userId);
       // Start sending location every 3 seconds after connection
-
+      _startLocationUpdates();
     });
 
     _socket.onConnect((_) {
-      print('🟢 Connected to socket server');
+      print('🟢 Socket connected');
     });
 
     _socket.on('onlineUser', (data) {
@@ -57,7 +57,7 @@ class SocketService {
 
     _socket.onDisconnect((_) {
       init();
-      print('🔴 Disconnected from socket server');
+      print('🔴 Socket disconnected');
       // Cancel location updates on disconnect
       _stopLocationUpdates();
     });
@@ -91,7 +91,35 @@ class SocketService {
   }
 
   // Method to start sending location updates every 3 seconds
+  void _startLocationUpdates() {
+    // Cancel any existing timer to avoid duplicates
+    _stopLocationUpdates();
 
+    print(">>>>>>>>> ${LocalStorage.getData(key: AppConstant.role)}");
+
+    if(LocalStorage.getData(key: AppConstant.role) == "driver"){
+      _locationTimer = Timer.periodic(Duration(seconds: 5), (timer) async {
+        if (_socket.connected) {
+          try {
+            final position = await _getCurrentLocation();
+            final locationData = {
+              "latitude": position.latitude,
+              "longitude": position.longitude,
+              "orderId": LocalStorage.getData(key: AppConstant.userId),
+            };
+            _socket.emit('getLocation', locationData); // Emit location data
+            print('Emitted location: $locationData');
+          } catch (e) {
+            print('Error getting location: $e');
+          }
+        } else {
+          print('Socket not connected, skipping location emission');
+        }
+      } );
+    }
+
+
+  }
 
   // Method to stop sending location updates
   void _stopLocationUpdates() {

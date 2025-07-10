@@ -41,10 +41,10 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
   String? _errorMessage;
 
   LatLng? _userLocation;
-  LatLng _driverLocation = const LatLng(23.752844, 90.420082);
+  LatLng? _driverLocation; // Removed default value
 
   final OrderHistoryController orderHistoryController =
-      Get.put(OrderHistoryController());
+  Get.put(OrderHistoryController());
 
   final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
@@ -56,7 +56,7 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
   String? _orderId;
   String? _driverName;
 
-  String _estimatedTime = '25 Minutes';
+  String? _estimatedTime; // Changed to nullable, no default value
 
   @override
   void initState() {
@@ -75,8 +75,10 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
           orderHistoryController.inProcessOrders[0].driverId!.fullname ??
               'Driver';
     }
-    print("$_driverId ddd"+ "${orderHistoryController.inProcessOrders[0].driverId!.id}" + "eeeeeeeeeee");
-    print("$_orderId"+ "order ID>>>>>>>>>>>>>>");
+    print("$_driverId ddd" +
+        "${orderHistoryController.inProcessOrders[0].driverId!.id}" +
+        "eeeeeeeeeee");
+    print("$_orderId" + "order ID>>>>>>>>>>>>>>");
     // Timeout to prevent infinite loading
     Future.delayed(const Duration(seconds: 10), () {
       if (mounted && _isLoading) {
@@ -97,6 +99,7 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
 
   Future<BitmapDescriptor> createCircularDotMarker(
       {required Color color, double radius = 10.0}) async {
+    // Unchanged
     final recorder = ui.PictureRecorder();
     final canvas = ui.Canvas(recorder);
     final paint = ui.Paint()
@@ -107,7 +110,7 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
 
     final picture = recorder.endRecording();
     final img =
-        await picture.toImage((radius * 2).toInt(), (radius * 2).toInt());
+    await picture.toImage((radius * 2).toInt(), (radius * 2).toInt());
     final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
     final uint8List = byteData!.buffer.asUint8List();
 
@@ -121,69 +124,102 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
       if (_driverId != null) {
         _socketService!.socket.on('orderDelivery::$_orderId', (data) {
           print('orderDeleverd event received: $data');
-          Get.dialog(Dialog(
-            child: Container(
-              height: 300,
-              width: 500,
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.check_circle,
-                      size: 50,
-                      color: AppColors.green,
-                    ),
-                    sh10,
-                    Text(
-                      "Your delivery is complete! How was your experience? A quick review can make their day!",
-                      style: h4,
-                      textAlign: TextAlign.center,
-                    ),
-                    sh10,
-                    CustomButton(backgroundColor: AppColors.green,text: "Give Rating", gradientColors: AppColors.gradientColorGreen ,onPressed: (){
-                      Get.to(() => WriteReviewView(_driverId));
-                    }),
-                    sh10,
-                    CustomButton(backgroundColor: AppColors.green,text: "Give Tips", gradientColors: AppColors.gradientColorGreen, onPressed: (){
-                     Get.dialog(Dialog(
-                       child: Container(
-                         height: 250,
-                         width: 500,
-                         child: Padding(
-                           padding: const EdgeInsets.all(16.0),
-                           child: Column(
-                             crossAxisAlignment: CrossAxisAlignment.center,
-                           mainAxisAlignment: MainAxisAlignment.center,
-                           children: [
-                             CustomTextField(
-                               height: 48,
-                               hintText: 'Enter you tips',
-                               controller: tipsAmount,
-                             ),
-                             sh10,
-                           Obx(() => tripsController.isLoading.value == true? CustomLoader(color: AppColors.white) :  CustomButton(backgroundColor: AppColors.green,text: "Send",  gradientColors: AppColors.gradientColorGreen , onPressed: (){
-                             tripsController.createTrips(driverId: _driverId.toString(), amount: tipsAmount.text.trim());
-                           }),)
-                           ],
-                                                  ),
-                         ),),
-                     ));
-                    }),
-                  ],
+          Get.dialog(
+            Dialog(
+              child: Container(
+                height: 300,
+                width: 500,
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.check_circle,
+                        size: 50,
+                        color: AppColors.green,
+                      ),
+                      sh10,
+                      Text(
+                        "Your delivery is complete! How was your experience? A quick review can make their day!",
+                        style: h4,
+                        textAlign: TextAlign.center,
+                      ),
+                      sh10,
+                      CustomButton(
+                        backgroundColor: AppColors.green,
+                        text: "Give Rating",
+                        gradientColors: AppColors.gradientColorGreen,
+                        onPressed: () {
+                          Get.to(() => WriteReviewView(_driverId));
+                        },
+                      ),
+                      sh10,
+                      CustomButton(
+                        backgroundColor: AppColors.green,
+                        text: "Give Tips",
+                        gradientColors: AppColors.gradientColorGreen,
+                        onPressed: () {
+                          Get.dialog(
+                            Dialog(
+                              child: Container(
+                                height: 250,
+                                width: 500,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CustomTextField(
+                                        height: 48,
+                                        hintText: 'Enter you tips',
+                                        controller: tipsAmount,
+                                      ),
+                                      sh10,
+                                      Obx(
+                                            () => tripsController.isLoading.value
+                                            ? CustomLoader(
+                                            color: AppColors.white)
+                                            : CustomButton(
+                                          backgroundColor:
+                                          AppColors.green,
+                                          text: "Send",
+                                          gradientColors:
+                                          AppColors.gradientColorGreen,
+                                          onPressed: () {
+                                            tripsController.createTrips(
+                                              driverId: _driverId
+                                                  .toString(),
+                                              amount:
+                                              tipsAmount.text.trim(),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ));
+          );
         });
 
-        _socketService!.socket.on('serverToSendLocation::$_driverId', (data) {
+        _socketService!.socket.on('locationUpdate', (data) {
           print('Socket event received: $data');
           if (data is Map<String, dynamic> &&
               data.containsKey('latitude') &&
@@ -207,13 +243,14 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
   }
 
   Future<void> _updateDriverMarker() async {
+    if (_driverLocation == null) return; // Add check for null
     final driverIcon =
-        await createCircularDotMarker(color: Colors.red, radius: 30.0);
+    await createCircularDotMarker(color: Colors.red, radius: 30.0);
     _markers.removeWhere((m) => m.markerId.value == 'Driver');
     _markers.add(
       Marker(
         markerId: const MarkerId('Driver'),
-        position: _driverLocation,
+        position: _driverLocation!,
         infoWindow: const InfoWindow(title: 'Driver Location'),
         icon: driverIcon,
       ),
@@ -228,7 +265,7 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
         _mapCreated = true;
         _isLoading = false;
       });
-      if (_userLocation != null) {
+      if (_userLocation != null && _driverLocation != null) {
         _updateCameraPosition();
       }
     }
@@ -244,7 +281,7 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
           setState(() {
             _isLoading = false;
             _errorMessage =
-                'Location services are disabled. Please enable them.';
+            'Location services are disabled. Please enable them.';
           });
         }
         return;
@@ -282,25 +319,27 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
           desiredAccuracy: LocationAccuracy.high);
       if (mounted) {
         final userIcon =
-            await createCircularDotMarker(color: Colors.blue, radius: 30.0);
+        await createCircularDotMarker(color: Colors.blue, radius: 30.0);
         setState(() {
           _userLocation = LatLng(position.latitude, position.longitude);
           _markers.add(
-            Marker(
-              markerId: const MarkerId('Me'),
-              position: _userLocation!,
-              infoWindow: const InfoWindow(title: 'Your Location'),
-              icon: userIcon,
-            ),
-          );
-          _isLoading = false;
-        });
+              Marker(
+                markerId: const MarkerId('Me'),
+                position: _userLocation!,
+                infoWindow: const InfoWindow(title: 'Your Location'),
+                icon: userIcon,
+                ),
+              );
+              _isLoading = false;
+          });
         print('User location set: $_userLocation');
 
-        await _updateDriverMarker();
-        await _fetchRoute();
-        if (_mapCreated) {
-          _updateCameraPosition();
+        if (_driverLocation != null) {
+          await _updateDriverMarker();
+          await _fetchRoute();
+          if (_mapCreated) {
+            _updateCameraPosition();
+          }
         }
       }
     } catch (e) {
@@ -315,10 +354,13 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
   }
 
   Future<void> _fetchRoute() async {
-    if (_userLocation == null) return;
+    if (_userLocation == null || _driverLocation == null) {
+      print('Cannot fetch route: user or driver location missing');
+      return;
+    }
 
     final String url =
-        'https://maps.googleapis.com/maps/api/directions/json?origin=${_userLocation!.latitude},${_userLocation!.longitude}&destination=${_driverLocation.latitude},${_driverLocation.longitude}&key=$_googleApiKey';
+        'https://maps.googleapis.com/maps/api/directions/json?origin=${_userLocation!.latitude},${_userLocation!.longitude}&destination=${_driverLocation!.latitude},${_driverLocation!.longitude}&key=$_googleApiKey';
 
     try {
       print('Fetching route from API...');
@@ -347,7 +389,7 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
                   points: polylineCoordinates,
                 ),
               );
-              _estimatedTime = duration;
+              _estimatedTime = duration; // Set dynamically from API
             });
             print('Route fetched, estimated time: $_estimatedTime');
           }
@@ -363,25 +405,31 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
   }
 
   void _updateCameraPosition() {
-    if (_userLocation == null || !_mapCreated || _mapController == null) return;
+    if (_userLocation == null ||
+        _driverLocation == null ||
+        !_mapCreated ||
+        _mapController == null) {
+      print('Cannot update camera: missing location or map not created');
+      return;
+    }
 
     print('Updating camera position...');
     final bounds = LatLngBounds(
       southwest: LatLng(
-        _userLocation!.latitude < _driverLocation.latitude
+        _userLocation!.latitude < _driverLocation!.latitude
             ? _userLocation!.latitude
-            : _driverLocation.latitude,
-        _userLocation!.longitude < _driverLocation.longitude
+            : _driverLocation!.latitude,
+        _userLocation!.longitude < _driverLocation!.longitude
             ? _userLocation!.longitude
-            : _driverLocation.longitude,
+            : _driverLocation!.longitude,
       ),
       northeast: LatLng(
-        _userLocation!.latitude > _driverLocation.latitude
-            ? _userLocation!.latitude
-            : _driverLocation.latitude,
-        _userLocation!.longitude > _driverLocation.longitude
+        _userLocation!.latitude > _driverLocation!.latitude
+            ? _driverLocation!.latitude
+            : _driverLocation!.latitude,
+        _userLocation!.longitude > _driverLocation!.longitude
             ? _userLocation!.longitude
-            : _driverLocation.longitude,
+            : _driverLocation!.longitude,
       ),
     );
 
@@ -391,6 +439,7 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
   }
 
   @override
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -427,20 +476,42 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
                 ),
               ),
             )
-          else
-            GoogleMap(
-              key: const ValueKey('live_tracking_map'),
-              onMapCreated: _onMapCreated,
-              initialCameraPosition: CameraPosition(
-                target: _userLocation ?? const LatLng(23.8103, 90.4125),
-                zoom: 14,
-              ),
-              markers: _markers,
-              polylines: _polylines,
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              zoomControlsEnabled: false,
-            ),
+          else if (_userLocation == null)
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Text(
+                    'Waiting for your location...',
+                    style: TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              )
+            else if (_driverLocation == null)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Text(
+                      'The delivery boy is not available now.',
+                      style: TextStyle(fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                )
+              else
+                GoogleMap(
+                  key: const ValueKey('live_tracking_map'),
+                  onMapCreated: _onMapCreated,
+                  initialCameraPosition: CameraPosition(
+                    target: _userLocation ?? const LatLng(0, 0),
+                    zoom: 14,
+                  ),
+                  markers: _markers,
+                  polylines: _polylines,
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: true,
+                  zoomControlsEnabled: false,
+                ),
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -467,7 +538,9 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              _estimatedTime,
+                              _driverLocation == null
+                                  ? 'The delivery boy is not available now.'
+                                  : _estimatedTime ?? 'Calculating...',
                               style: h6.copyWith(height: 1.4),
                             ),
                           ],
@@ -479,16 +552,15 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
                       contentPadding: EdgeInsets.zero,
                       onTap: () {
                         Get.to(() => AboutDriverInformationView(
-                              driver: orderHistoryController
-                                  .inProcessOrders[widget.index].driverId!,
-                              userId: orderHistoryController
-                                  .inProcessOrders[widget.index].userId!,
-                            ));
+                          driver: orderHistoryController
+                              .inProcessOrders[widget.index].driverId!,
+                          userId: orderHistoryController
+                              .inProcessOrders[widget.index].userId!,
+                        ));
                       },
                       leading: const CircleAvatar(
                         radius: 25,
-                        backgroundImage:
-                            NetworkImage(AppImages.profileImageTwo),
+                        backgroundImage: NetworkImage(AppImages.profileImageTwo),
                       ),
                       title: Text(
                         _driverName ?? 'Unknown Driver',
@@ -509,14 +581,13 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
                           final Uri phoneUri = Uri(
                               scheme: 'tel',
                               path:
-                                  '${orderHistoryController.inProcessOrders[widget.index].driverId!.phoneNumber ?? 0}');
+                              '${orderHistoryController.inProcessOrders[widget.index].driverId!.phoneNumber ?? 0}');
                           if (await canLaunchUrl(phoneUri)) {
                             await launchUrl(phoneUri);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                  content:
-                                      Text('Could not launch phone dialer')),
+                                  content: Text('Could not launch phone dialer')),
                             );
                           }
                         },

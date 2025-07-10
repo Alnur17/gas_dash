@@ -16,11 +16,15 @@ class StationNearYouView extends StatefulWidget {
   final String deliveryId;
   final String orderId;
   final String userId;
+  final String lat;
+  final String long;
   const StationNearYouView({
     super.key,
     required this.deliveryId,
     required this.orderId,
     required this.userId,
+    required this.lat,
+    required this.long,
   });
 
   @override
@@ -470,7 +474,7 @@ class _StationNearYouViewState extends State<StationNearYouView> {
                       Get.off(() => DriverLiveTrackView(
                         deliveryId: widget.deliveryId,
                         orderId: widget.orderId,
-                        userId: widget.userId,
+                        userId: widget.userId, lat: widget.lat, long: widget.long,
                       ))?.then((_) => setState(() => _isLoading = false));
                     }
                   },

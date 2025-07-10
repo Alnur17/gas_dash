@@ -20,6 +20,9 @@ class DriverStartDeliveryView extends StatefulWidget {
   final String amounts;
   final String orderName;
   final String? location;
+  final String? lat;
+  final String? long;
+
 
   const DriverStartDeliveryView(
       {super.key,
@@ -30,6 +33,9 @@ class DriverStartDeliveryView extends StatefulWidget {
       required this.customerImage,
       required this.amounts,
       required this.orderName,
+      required this.lat,
+      required this.long,
+
       required this.location});
 
   @override
@@ -317,6 +323,8 @@ class _DriverStartDeliveryViewState extends State<DriverStartDeliveryView> {
                               deliveryId: widget.deliveryId,
                               orderId: widget.orderId,
                               userId: widget.userId,
+                          lat: widget.lat.toString(),
+                          long: widget.long.toString(),
                             ));
                       },
                       gradientColors: AppColors.gradientColorGreen,
@@ -335,6 +343,8 @@ class _DriverStartDeliveryViewState extends State<DriverStartDeliveryView> {
                         Get.to(() => DriverLiveTrackView(
                             deliveryId: widget.deliveryId,
                             orderId: widget.orderId,
+                            lat: widget.lat.toString(),
+                            long: widget.long.toString(),
                             userId: widget.userId));
                       },
                       backgroundColor: AppColors.silver,

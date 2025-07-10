@@ -21,12 +21,16 @@ class DriverLiveTrackView extends StatefulWidget {
   final String deliveryId;
   final String orderId;
   final String userId;
+  final String lat;
+  final String long;
 
   const DriverLiveTrackView({
     super.key,
     required this.deliveryId,
     required this.orderId,
     required this.userId,
+    required this.lat,
+    required this.long,
   });
 
   @override
@@ -54,6 +58,26 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
   @override
   void initState() {
     super.initState();
+    print(">>>>>>>${widget.lat}");
+    print(">>>>>>>${widget.long}");
+    // Set customer location from constructor
+    try {
+      final lat = double.parse(widget.lat);
+      final long = double.parse(widget.long);
+      // Validate coordinates
+      if (lat < -90 || lat > 90 || long < -180 || long > 180) {
+        throw Exception('Invalid latitude or longitude values');
+      }
+      _userLocation = LatLng(lat, long);
+      _fetchAddressFromLatLng(_userLocation!);
+      _updateUserMarker();
+    } catch (e) {
+      print('Error parsing customer location: $e');
+      setState(() {
+        _errorMessage = 'Invalid customer location data: $e';
+        _isLoading = false;
+      });
+    }
     _initSocketService();
     _getDriverLocation();
     // Timeout to prevent infinite loading
@@ -105,8 +129,22 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
         final data = jsonDecode(response.body);
         if (data['status'] == 'OK' && data['results'].isNotEmpty) {
           if (mounted) {
+            // Prioritize human-readable address
+            String address = 'Address not available';
+            for (var result in data['results']) {
+              if (result['types'].contains('street_address') ||
+                  result['types'].contains('premise') ||
+                  result['types'].contains('route')) {
+                address = result['formatted_address'];
+                break;
+              }
+            }
+            // Fallback to first result if no specific types found, but avoid Plus Codes
+            if (address == 'Address not available' && !data['results'][0]['formatted_address'].contains('+')) {
+              address = data['results'][0]['formatted_address'];
+            }
             setState(() {
-              _customerAddress = data['results'][0]['formatted_address'] ?? 'Unknown Address';
+              _customerAddress = address;
             });
             print('Customer address fetched: $_customerAddress');
           }
@@ -145,28 +183,6 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
         print('orderDeleverd event received: $data');
         if (mounted) {
           Get.to(() => DriverCompletionChecklistView(widget.deliveryId, widget.orderId));
-        }
-      });
-
-      _socketService!.socket.on('serverToSendLocation::${widget.userId}', (data) {
-        print('User location event received: $data');
-        if (data is Map<String, dynamic> &&
-            data.containsKey('latitude') &&
-            data.containsKey('longitude')) {
-          if (mounted) {
-            final newLatLng = LatLng(data['latitude'], data['longitude']);
-            setState(() {
-              _userLocation = newLatLng;
-            });
-            _updateUserMarker();
-            _fetchAddressFromLatLng(newLatLng);
-            _fetchRoute();
-            if (_mapCreated) {
-              _updateCameraPosition();
-            }
-          }
-        } else {
-          print('Invalid user location data: $data');
         }
       });
 
@@ -213,6 +229,8 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
         icon: userIcon,
       ),
     );
+    // Fetch route after updating user marker
+    await _fetchRoute();
   }
 
   Future<void> _updateDriverMarker() async {
@@ -228,6 +246,8 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
         icon: driverIcon,
       ),
     );
+    // Fetch route after updating driver marker
+    await _fetchRoute();
   }
 
   void _onMapCreated(GoogleMapController controller) {
@@ -322,11 +342,28 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
       return;
     }
 
+    // Validate coordinates
+    if (_driverLocation!.latitude < -90 || _driverLocation!.latitude > 90 ||
+        _driverLocation!.longitude < -180 || _driverLocation!.longitude > 180 ||
+        _userLocation!.latitude < -90 || _userLocation!.latitude > 90 ||
+        _userLocation!.longitude < -180 || _userLocation!.longitude > 180) {
+      print('Invalid coordinates: driver=$_driverLocation, user=$_userLocation');
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Invalid location coordinates. Please check the provided locations.';
+        });
+      }
+      return;
+    }
+
     final String url =
         'https://maps.googleapis.com/maps/api/directions/json?origin=${_driverLocation!.latitude},${_driverLocation!.longitude}&destination=${_userLocation!.latitude},${_userLocation!.longitude}&key=$_googleApiKey';
 
     try {
       print('Fetching route from API: $url');
+      setState(() {
+        _errorMessage = null; // Clear previous error
+      });
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -356,12 +393,15 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
               _estimatedTime = duration;
             });
             print('Route fetched, estimated time: $_estimatedTime');
+            _updateCameraPosition(); // Update camera to show the route
           }
         } else {
           print('Directions API error: ${data['status']} - ${data['error_message'] ?? 'No error message'}');
           if (mounted) {
             setState(() {
-              _errorMessage = 'Failed to fetch route: ${data['status']}';
+              _errorMessage = data['status'] == 'ZERO define ZERO_RESULTS'
+                  ? 'No route found. Please check the locations or network connection.'
+                  : 'Failed to fetch route: ${data['status']}';
             });
           }
         }
@@ -474,10 +514,33 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(16),
-                child: Text(
-                  _errorMessage!,
-                  style: const TextStyle(color: Colors.red, fontSize: 16),
-                  textAlign: TextAlign.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      _errorMessage!,
+                      style: const TextStyle(color: Colors.red, fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
+                    if (_errorMessage!.contains('No route found'))
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: CustomButton(
+                          text: 'Retry Route',
+                          onPressed: () async {
+                            setState(() {
+                              _errorMessage = null;
+                              _isLoading = true;
+                            });
+                            await _fetchRoute();
+                            setState(() {
+                              _isLoading = false;
+                            });
+                          },
+                          gradientColors: AppColors.gradientColorGreen,
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ),

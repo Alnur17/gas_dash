@@ -5,6 +5,7 @@ import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:get/get.dart';
 
 import '../../../../../common/app_images/app_images.dart';
+import '../../../../../common/helper/socket_service.dart';
 import '../../../../../common/helper/track_order_card.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
 import '../../track_order_details/views/live_tracking_view.dart';
@@ -18,6 +19,8 @@ class TrackYourOrderView extends StatefulWidget {
 
 class _TrackYourOrderViewState extends State<TrackYourOrderView> {
 final OrderHistoryController orderHistoryController = Get.put(OrderHistoryController());
+
+final SocketService socketService = Get.put(SocketService());
 
   @override
   Widget build(BuildContext context) {
@@ -53,9 +56,13 @@ final OrderHistoryController orderHistoryController = Get.put(OrderHistoryContro
             fuelType: order.fuelType.toString(),
             paidPrice: order.price.toString(),
             onTrack: () {
+              socketService.socket.emit('joinOrderRoom', "${order.driverId?.id}"); // Emit location data
            //   Get.to(() => TrackOrderDetailsView());
               Get.to(()=> LiveTrackingView(index: index,));
-            },
+              // socket emit
+
+          }
+
           );
         },
       )),
