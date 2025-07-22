@@ -2,9 +2,10 @@ class Api {
   /// base url
   //static const baseUrl = "http://192.168.10.160:8000/api/v1";
   //static const baseUrl = "http://172.252.13.83:8000/api/v1";
-  static const baseUrl = "http://10.10.10.15:6000/api/v1";
+  static const baseUrl = "https://api.gasdash.io/api/v1";
   //static const baseUrl = "http://10.10.10.15:6000/api/v1";
   static const socketUrl = "http://10.10.10.15:6001";
+  //static const socketUrl = "https://socket.gasdash.io";
  // static const socketUrl = "http://115.127.156.131:1005";
 
   ///auth
@@ -43,7 +44,7 @@ class Api {
   static const createOrder = "$baseUrl/orders/create-orderFuel"; //done
   static cancelOrder(String orderId) => "$baseUrl/orders/$orderId"; //done
 
-  static const orderHistory = "$baseUrl/orders/my-order"; //
+  static const orderHistory = "$baseUrl/orders/my-order"; //done
 
   static String singleOrderById(String orderId) => "$baseUrl/orders/$orderId"; //done
 

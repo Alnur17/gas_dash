@@ -21,7 +21,7 @@ class SocketService {
 
   Future<SocketService> init() async {
     String? token = LocalStorage.getData(key: AppConstant.accessToken);
-    String? userId = LocalStorage.getData(key: AppConstant.accessToken);
+    String? userId = LocalStorage.getData(key: AppConstant.userId);
 
     _socket = IO.io(Api.socketUrl, <String, dynamic>{
       'transports': ['websocket'],
@@ -29,6 +29,7 @@ class SocketService {
       'extraHeaders': {
         'token': token != null ? token : ""
       },
+
     });
 
     _socket.on('connect', (data) {
@@ -37,6 +38,11 @@ class SocketService {
 
       _socket.emit("connection", userId);
       // Start sending location every 3 seconds after connection
+
+      _socket.on('newOrder', (data) {
+        print('newOrder event received: $data');
+      });
+
       _startLocationUpdates();
     });
 

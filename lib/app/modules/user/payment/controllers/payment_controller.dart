@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:gas_dash/app/modules/user/payment/views/payment_success_view.dart';
+import 'package:gas_dash/app/modules/user/payment/views/assigning_to_driver_view.dart';
 import 'package:gas_dash/app/modules/user/profile/controllers/profile_controller.dart';
 import 'package:get/get.dart';
 
@@ -75,7 +75,7 @@ class PaymentController extends GetxController {
         // String id = LocalStorage.getData(key: AppConstant.paymentId);
         //debugPrint('::::::::::::::::: $id :::::::::::::::::');
         await profileController.getMyProfile();
-        Get.offAll(() => PaymentSuccessView());
+        Get.offAll(() => AssigningToDriverView());
       } else {
         kSnackBar(message: "${responseBody['message']}", bgColor: AppColors.red);
 
