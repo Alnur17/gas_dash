@@ -9,8 +9,9 @@ import '../controllers/payment_controller.dart';
 
 class PaymentView extends StatefulWidget {
   final String? paymentUrl;
+  final String? orderId;
 
-  const PaymentView({super.key, this.paymentUrl});
+  const PaymentView({super.key, this.paymentUrl, this.orderId});
 
   @override
   State<PaymentView> createState() => _PaymentViewState();
@@ -47,7 +48,7 @@ class _PaymentViewState extends State<PaymentView> {
         onPageFinished: (String url) {
           debugPrint('Page finished loading: $url');
           if (url.contains("confirm-payment")) {
-            paymentController.paymentResults(paymentLink: url);
+            paymentController.paymentResults(paymentLink: url, orderId: widget.orderId );
             debugPrint('::::::::::::: if condition ::::::::::::::::');
           }
         },

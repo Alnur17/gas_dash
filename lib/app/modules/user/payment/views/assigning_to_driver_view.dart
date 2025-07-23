@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/order_fuel/controllers/order_fuel_controller.dart';
 import 'package:gas_dash/app/modules/user/payment/views/payment_success_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/helper/socket_service.dart';
@@ -8,7 +9,8 @@ import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 
 class AssigningToDriverView extends StatefulWidget {
-  const AssigningToDriverView({super.key});
+  final String orderId;
+  const AssigningToDriverView({super.key, required this.orderId});
 
   @override
   State<AssigningToDriverView> createState() => _AssigningToDriverViewState();
@@ -17,7 +19,8 @@ class AssigningToDriverView extends StatefulWidget {
 class _AssigningToDriverViewState extends State<AssigningToDriverView>
     with SingleTickerProviderStateMixin {
   final SocketService socketService = Get.put(SocketService());
-  bool reAssign = false;
+  final OrderFuelController orderFuelController = Get.put(OrderFuelController());
+
   AnimationController? _controller;
   Animation<double>? _animation;
 
@@ -52,7 +55,7 @@ class _AssigningToDriverViewState extends State<AssigningToDriverView>
         socketService.socket.on('orderAssigned', (data) {
           print('>>>>>>>> orderAssigned $data');
           if (data["success"] == true) {
-            _controller?.stop(); // Stop animation before navigating
+           // _controller?.stop(); // Stop animation before navigating
             Get.offAll(() => const PaymentSuccessView());
           }
         });
@@ -61,10 +64,10 @@ class _AssigningToDriverViewState extends State<AssigningToDriverView>
         });
         socketService.socket.on('reassignEnable', (data) {
           print('>>>>>>>> reassignEnable $data');
-          if (data["success"] == true) {
+          if (data["status"] == true) {
             if (mounted) {
               setState(() {
-                reAssign = true; // Update reAssign only if mounted
+                orderFuelController.reAssign.value = true; // Update reAssign only if mounted
               });
             }
           }
@@ -111,15 +114,20 @@ class _AssigningToDriverViewState extends State<AssigningToDriverView>
               ),
             ),
             sh16,
-            if (reAssign)
-              CustomButton(
-                text: 'Re-Assign',
-                onPressed: () {
-                  _controller?.stop();
-
-                },
-                gradientColors: AppColors.gradientColorGreen,
-              ),
+            Obx(() => orderFuelController.reAssign.value == true
+                ? CustomButton(
+              text: orderFuelController.isLoading.value == true ? "Assigning..." : 'Re-Assign',
+              onPressed: () {
+                // Stop, reset, and restart the animation
+                _controller?.stop();
+                _controller?.reset();
+                _controller?.forward();
+                // Call the reassign method
+                orderFuelController.orderReAssign(widget.orderId);
+              },
+              gradientColors: AppColors.gradientColorGreen,
+            )
+                : SizedBox())
           ],
         ),
       ),

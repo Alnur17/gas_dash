@@ -49,6 +49,7 @@ class Api {
   static String singleOrderById(String orderId) => "$baseUrl/orders/$orderId"; //done
 
   static String orderDataConfirmation(String id) => "$baseUrl/orders/$id"; //
+  static String orderReAssign(String id) => "$baseUrl/orders/reassign/$id"; //
 
   ///Coupon
   static String coupon(String couponValue) => "$baseUrl/cupons/check/$couponValue"; //
