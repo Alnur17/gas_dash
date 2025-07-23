@@ -19,7 +19,7 @@ void main() async {
   runApp(
     GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "Gash Dash",
+      title: "Gas Dash",
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
     ),

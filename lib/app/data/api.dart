@@ -1,12 +1,7 @@
 class Api {
   /// base url
-  //static const baseUrl = "http://192.168.10.160:8000/api/v1";
-  //static const baseUrl = "http://172.252.13.83:8000/api/v1";
   static const baseUrl = "https://api.gasdash.io/api/v1";
-  //static const baseUrl = "http://10.10.10.15:6000/api/v1";
   static const socketUrl = "https://socket.gasdash.io";
-  //static const socketUrl = "https://socket.gasdash.io";
- // static const socketUrl = "http://115.127.156.131:1005";
 
   ///auth
   static const register = "$baseUrl/users/create"; //done
@@ -27,11 +22,11 @@ class Api {
   static const service = "$baseUrl/services/"; //done
 
   ///message
-  static const String allFriends = "$baseUrl/chats/my-chat-list";
-  static const String createChat = "$baseUrl/chats";
-  static const String sendMessage = "$baseUrl/messages/send-messages";
+  static const String allFriends = "$baseUrl/chats/my-chat-list";//done
+  static const String createChat = "$baseUrl/chats";//done
+  static const String sendMessage = "$baseUrl/messages/send-messages";//done
   static chatDetails(chatId) =>
-      "$baseUrl/messages/?chat=$chatId&sort=createdAt";
+      "$baseUrl/messages/?chat=$chatId&sort=createdAt";//done
 
   ///Add Vehicle
 
@@ -48,14 +43,14 @@ class Api {
 
   static String singleOrderById(String orderId) => "$baseUrl/orders/$orderId"; //done
 
-  static String orderDataConfirmation(String id) => "$baseUrl/orders/$id"; //
-  static String orderReAssign(String id) => "$baseUrl/orders/reassign/$id"; //
+  static String orderDataConfirmation(String id) => "$baseUrl/orders/$id"; //done
+  static String orderReAssign(String id) => "$baseUrl/orders/reassign/$id"; //done
 
   ///Coupon
-  static String coupon(String couponValue) => "$baseUrl/cupons/check/$couponValue"; //
+  static String coupon(String couponValue) => "$baseUrl/cupons/check/$couponValue"; //done
 
   ///driver assigned order
-  static const assignedOrder = "$baseUrl/orders/driver"; //
+  static const assignedOrder = "$baseUrl/orders/driver"; //done
 
   ///profile
   static const String myProfile = "$baseUrl/users/my-profile"; //done
