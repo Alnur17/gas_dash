@@ -49,14 +49,14 @@ class PaymentController extends GetxController {
     );
 
     if (responseBody != null) {
-     Get.to(() => PaymentView(paymentUrl: responseBody["data"]));
+     Get.to(() => PaymentView(paymentUrl: responseBody["data"], orderId: orderId,));
       isLoading.value = false;
     } else {
       Get.snackbar("Error", "Failed to create payment session");
     }
   }
 
-  Future<void> paymentResults({required String paymentLink}) async {
+  Future<void> paymentResults({required String paymentLink, orderId}) async {
     try {
       isLoading.value = true;
 
@@ -75,7 +75,7 @@ class PaymentController extends GetxController {
         // String id = LocalStorage.getData(key: AppConstant.paymentId);
         //debugPrint('::::::::::::::::: $id :::::::::::::::::');
         await profileController.getMyProfile();
-        Get.offAll(() => AssigningToDriverView());
+        Get.offAll(() => AssigningToDriverView(orderId: orderId,));
       } else {
         kSnackBar(message: "${responseBody['message']}", bgColor: AppColors.red);
 

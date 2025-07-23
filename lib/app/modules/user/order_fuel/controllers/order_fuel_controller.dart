@@ -35,6 +35,7 @@ class OrderFuelController extends GetxController {
   final PaymentController paymentController = Get.put(PaymentController());
 
   final isLoading = false.obs;
+  RxBool reAssign = false.obs;
 
   // Observable for final confirmation data
   final finalConfirmation = Rxn<FinalConfirmationModel>();
@@ -370,6 +371,33 @@ class OrderFuelController extends GetxController {
             snackPosition: SnackPosition.BOTTOM);
         return null;
       }
+    } catch (e) {
+      finalConfirmation.value = null;
+      Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+      return null;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+   orderReAssign(String id) async {
+    try {
+      isLoading.value = true;
+      final String token = LocalStorage.getData(key: AppConstant.accessToken);
+      var headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+
+      http.Response response = await BaseClient.postRequest(
+        api: Api.orderReAssign(id),
+        headers: headers,
+      );
+
+      var responseData = await BaseClient.handleResponse(response);
+      if (responseData != null) {
+        reAssign.value = false;
+      }
+
     } catch (e) {
       finalConfirmation.value = null;
       Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);

@@ -105,7 +105,7 @@ class FuelAndServiceCard extends StatelessWidget {
               Expanded(
                 child: CustomButton(
                   height: 40,
-                  text: 'View Details',
+                  text: 'Reject',
                   onPressed: onViewDetailsPressed,
                   gradientColors: AppColors.gradientColorGreen,
                 ),

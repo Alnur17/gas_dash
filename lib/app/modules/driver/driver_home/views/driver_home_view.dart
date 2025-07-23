@@ -28,10 +28,9 @@ class _DriverHomeViewState extends State<DriverHomeView> {
   final DriverHomeController controller = Get.put(DriverHomeController());
   final ProfileController profileController = Get.put(ProfileController());
   final DriverEarningController driverEarningController =
-      Get.put(DriverEarningController());
-
+  Get.put(DriverEarningController());
   final SocketService socketService = Get.put(SocketService());
-
+  List<Map<String, dynamic>> autoAssignList = [];
   Timer? _locationTimer;
 
   @override
@@ -41,6 +40,39 @@ class _DriverHomeViewState extends State<DriverHomeView> {
       if (socketService.socket.connected) {
         socketService.socket.on('newOrder', (data) {
           print('newOrder event received in DriverHomeView: $data');
+
+          // Ensure orderId is a string for consistent comparison
+          String orderId = data['orderId'].toString();
+          bool orderExists = autoAssignList.any((order) => order['orderId'].toString() == orderId);
+
+          if (!orderExists) {
+            setState(() {
+              autoAssignList.add({...data, 'orderId': orderId});
+            });
+            print('Added to Autoassign list: $autoAssignList');
+          } else {
+            print('Order with ID $orderId already exists in Autoassign list');
+          }
+        });
+
+        socketService.socket.on('deliveryRejectionResponse', (data) {
+          debugPrint(">>>>>>>>>>>>>>>== Order Reject Done: $data");
+          // Ensure orderId is a string
+          String orderId = data['orderId'].toString();
+          setState(() {
+            autoAssignList.removeWhere((order) => order['orderId'].toString() == orderId);
+          });
+          print('Removed order ID $orderId from Autoassign list: $autoAssignList');
+        });
+
+        socketService.socket.on('orderResponse', (data) {
+          debugPrint(">>>>>>>>>>>>>>>== Order Accept Done: $data");
+          // Ensure orderId is a string
+          String orderId = data['orderId'].toString();
+          setState(() {
+            autoAssignList.removeWhere((order) => order['orderId'].toString() == orderId);
+          });
+          print('Removed order ID $orderId from Autoassign list after orderResponse: $autoAssignList');
         });
       } else {
         print('not connected');
@@ -55,11 +87,10 @@ class _DriverHomeViewState extends State<DriverHomeView> {
   }
 
   void disconnect() {
-    _stopLocationUpdates(); // Stop location updates before disconnecting
+    _stopLocationUpdates();
     socketService.socket.disconnect();
   }
 
-  // Method to get current location
   Future<Position> _getCurrentLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
@@ -128,192 +159,184 @@ class _DriverHomeViewState extends State<DriverHomeView> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Obx(() => RefreshIndicator(
-              onRefresh: () async {
-                await controller.fetchAssignedOrders();
-                await profileController.getMyProfile();
-              },
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          onRefresh: () async {
+            await controller.fetchAssignedOrders();
+            await profileController.getMyProfile();
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                sh20,
+                Text(
+                  'Earning Overview',
+                  style: h3,
+                ),
+                sh12,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    sh20,
-                    Text(
-                      'Earning Overview',
-                      style: h3,
+                    Expanded(
+                      child: EarningsCard(
+                        gradientColor: AppColors.gradientColorBlue,
+                        title: 'Total Earnings',
+                        amount: driverEarningController.totalEarnings.value
+                            .toStringAsFixed(2),
+                      ),
                     ),
-                    sh12,
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: EarningsCard(
-                            gradientColor: AppColors.gradientColorBlue,
-                            title: 'Total Earnings',
-                            amount: driverEarningController.totalEarnings.value
-                                .toStringAsFixed(2),
-                          ),
-                        ),
-                        sw8,
-                        EarningsCard(
-                          backgroundColor: AppColors.primaryColor,
-                          title: 'Today',
-                          amount: driverEarningController.todayEarnings.value
-                              .toStringAsFixed(2),
-                        ),
-                      ],
+                    sw8,
+                    EarningsCard(
+                      backgroundColor: AppColors.primaryColor,
+                      title: 'Today',
+                      amount: driverEarningController.todayEarnings.value
+                          .toStringAsFixed(2),
                     ),
-                    sh20,
-                    Text(
-                      'Recent Request',
-                      style: h3,
-                    ),
-                    sh12,
-                    controller.isLoading.value
-                        ? Center(child: CircularProgressIndicator())
-                        : controller.pendingOrders.isEmpty
-                            ? Center(
-                                child: Text('No pending orders available',
-                                    style: h5))
-                            : ListView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: controller.pendingOrders.length,
-                                itemBuilder: (context, index) {
-                                  final order = controller.pendingOrders[index];
-                                  final orderId = order.id ?? 'unknown';
-                                  final coords = order.location?.coordinates;
-
-                                  // Start resolving location if not already done
-                                  if (coords != null &&
-                                      !controller.locationNames
-                                          .containsKey(orderId)) {
-                                    controller.resolveLocation(
-                                        orderId, coords[1], coords[0]);
-                                  }
-
-                                  return Obx(() {
-                                    final locationName =
-                                        controller.locationNames[orderId] ??
-                                            "Loading location...";
-
-                                    return FuelAndServiceCard(
-                                      emergencyImage: AppImages.emergency,
-                                      emergency: order.emergency ?? false,
-                                      fuelAmount:
-                                          '${order.amount?.toStringAsFixed(2) ?? '0.00'} gallons',
-                                      fuelType: order.orderType ?? 'Unknown',
-                                      location: locationName,
-                                      onAcceptPressed: () => controller
-                                          .acceptOrder(order.id ?? ''),
-                                      onViewDetailsPressed: () =>
-                                          controller.viewOrderDetails(
-                                              order.id ?? '', locationName),
-                                      fuelIconPath: AppImages.fuelFiller,
-                                      locationIconPath: AppImages.locationRed,
-                                    );
-                                  });
-                                },
-                              ),
-
-                    sh20,
-                    Text(
-                      'Active Order',
-                      style: h3,
-                    ),
-                    // CustomRowHeader(
-                    //   title: 'Active Order',
-                    //   onTap: () {},
-                    // ),
-                    sh8,
-                    controller.inProgressOrders.isEmpty
-                        ? Center(
-                            child:
-                                Text('No active orders available', style: h5))
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: controller.inProgressOrders.length,
-                            itemBuilder: (context, index) {
-                              final order = controller.inProgressOrders[index];
-                              final orderId = order.id ?? 'unknown';
-                              final coords = order.location?.coordinates;
-
-                              // Start resolving location if not already done
-                              if (coords != null &&
-                                  !controller.locationNames
-                                      .containsKey(orderId)) {
-                                controller.resolveLocation(orderId, coords[1],
-                                    coords[0]); // latitude, longitude
-                              }
-
-                              return Obx(() {
-                                final locationName =
-                                    controller.locationNames[orderId] ??
-                                        "Loading location...";
-
-                                return ActiveOrder(
-                                  emergencyImage: AppImages.emergency,
-                                  emergency: order.emergency ?? false,
-                                  orderId: order.id ?? 'Unknown',
-                                  location: locationName,
-                                  fuelAmount: order.amount != null
-                                      ? double.parse(order.amount.toString())
-                                      : 0.0,
-                                  fuelType: order.orderType ?? 'Unknown',
-                                  onAcceptPressed: () {
-                                    // // Cancel any existing timer to avoid duplicates
-                                    // _stopLocationUpdates();
-                                    //
-                                    // _locationTimer = Timer.periodic(Duration(milliseconds: 500), (timer) async {
-                                    //   if (socketService.socket.connected) {
-                                    //     try {
-                                    //       final position = await _getCurrentLocation();
-                                    //       final locationData = {
-                                    //         "latitude": position.latitude,
-                                    //         "longitude": position.longitude,
-                                    //         "orderId": order.id,
-                                    //       };
-                                    //       socketService.socket.emit('getLocation', locationData); // Emit location data
-                                    //       print('Emitted location: $locationData');
-                                    //     } catch (e) {
-                                    //       print('Error getting location: $e');
-                                    //     }
-                                    //   } else {
-                                    //     print('Socket not connected, skipping location emission');
-                                    //   }
-                                    // });
-
-                                    Get.to(() => DriverStartDeliveryView(
-                                          orderId: order.id ?? 'Unknown',
-                                          deliveryId: order.deleveryId ?? '',
-                                          customerName:
-                                              order.userId?.fullname ?? '',
-                                          customerImage: order.userId?.image,
-                                          amounts:
-                                              '${order.amount?.toStringAsFixed(2) ?? '0.00'} Gallons',
-                                          orderName:
-                                              order.fuelType ?? 'Unknown',
-                                          location: locationName,
-                                          lat: order.location?.coordinates[1]
-                                              .toString(),
-                                          long: order.location?.coordinates[0]
-                                              .toString(),
-                                          userId: order.userId!.id.toString(),
-                                        ));
-                                  },
-                                  onViewDetailsPressed: () =>
-                                      controller.viewOrderDetails(
-                                          order.id ?? '', locationName),
-                                );
-                              });
-                            },
-                          ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.3),
                   ],
                 ),
-              ),
-            )),
+                sh20,
+                Text(
+                  'Recent Request',
+                  style: h3,
+                ),
+                sh12,
+                // Autoassign list display
+                autoAssignList.isEmpty
+                    ? Center(
+                    child: Text('No auto-assigned orders available',
+                        style: h5))
+                    : ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: autoAssignList.length,
+                  itemBuilder: (context, index) {
+                    final order = autoAssignList[index];
+                    final orderId = order['orderId']?.toString() ?? 'unknown';
+                    final coords = order['location']?['coordinates'];
+
+                    // Start resolving location if not already done
+                    if (coords != null &&
+                        !controller.locationNames
+                            .containsKey(orderId)) {
+                      controller.resolveLocation(
+                          orderId, coords[1], coords[0]);
+                    }
+
+                    return Obx(() {
+                      final locationName =
+                          controller.locationNames[orderId] ??
+                              "Loading location...";
+
+                      return FuelAndServiceCard(
+                        emergencyImage: AppImages.emergency,
+                        emergency: false, // Adjust based on your data
+                        fuelAmount:
+                        '${order['amount']?.toStringAsFixed(2) ?? '0.00'} gallons',
+                        fuelType: 'Order ID \n$orderId',
+                        location: locationName,
+                        onAcceptPressed: () {
+                          final orderData = {
+                            "orderId": orderId,
+                          };
+                          // Emit accept order event
+                          socketService.socket.emit('acceptOrder', orderData);
+                          // Immediate removal as fallback
+                          setState(() {
+                            autoAssignList.removeWhere((order) => order['orderId'].toString() == orderId);
+                          });
+                          print('Fallback: Removed order ID $orderId from Autoassign list: $autoAssignList');
+                          controller.fetchAssignedOrders();
+                        },
+                        onViewDetailsPressed: () {
+                          final orderData = {
+                            "orderId": orderId,
+                          };
+                          // Emit reject order event
+                          socketService.socket.emit('rejectOrder', orderData);
+                          // Immediate removal as fallback
+                          setState(() {
+                            autoAssignList.removeWhere((order) => order['orderId'].toString() == orderId);
+                          });
+                          print('Fallback: Removed order ID $orderId from Autoassign list: $autoAssignList');
+                        },
+                        fuelIconPath: AppImages.fuelFiller,
+                        locationIconPath: AppImages.locationRed,
+                      );
+                    });
+                  },
+                ),
+
+                sh20,
+                Text(
+                  'Active Order',
+                  style: h3,
+                ),
+                sh8,
+                controller.inProgressOrders.isEmpty
+                    ? Center(
+                    child:
+                    Text('No active orders available', style: h5))
+                    : ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: controller.inProgressOrders.length,
+                  itemBuilder: (context, index) {
+                    final order = controller.inProgressOrders[index];
+                    final orderId = order.id ?? 'unknown';
+                    final coords = order.location?.coordinates;
+
+                    if (coords != null &&
+                        !controller.locationNames
+                            .containsKey(orderId)) {
+                      controller.resolveLocation(
+                          orderId, coords[1], coords[0]);
+                    }
+
+                    return Obx(() {
+                      final locationName =
+                          controller.locationNames[orderId] ??
+                              "Loading location...";
+
+                      return ActiveOrder(
+                        emergencyImage: AppImages.emergency,
+                        emergency: order.emergency ?? false,
+                        orderId: order.id ?? 'Unknown',
+                        location: locationName,
+                        fuelAmount: order.amount != null
+                            ? double.parse(order.amount.toString())
+                            : 0.0,
+                        fuelType: order.orderType ?? 'Unknown',
+                        onAcceptPressed: () {
+                          Get.to(() => DriverStartDeliveryView(
+                            orderId: order.id ?? 'Unknown',
+                            deliveryId: order.deleveryId ?? '',
+                            customerName:
+                            order.userId?.fullname ?? '',
+                            customerImage: order.userId?.image,
+                            amounts:
+                            '${order.amount?.toStringAsFixed(2) ?? '0.00'} Gallons',
+                            orderName:
+                            order.fuelType ?? 'Unknown',
+                            location: locationName,
+                            lat: order.location?.coordinates[1]
+                                .toString(),
+                            long: order.location?.coordinates[0]
+                                .toString(),
+                            userId: order.userId!.id.toString(),
+                          ));
+                        },
+                        onViewDetailsPressed: () =>
+                            controller.viewOrderDetails(
+                                order.id ?? '', locationName),
+                      );
+                    });
+                  },
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+              ],
+            ),
+          ),
+        )),
       ),
     );
   }

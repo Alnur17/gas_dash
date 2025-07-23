@@ -4,7 +4,7 @@ class Api {
   //static const baseUrl = "http://172.252.13.83:8000/api/v1";
   static const baseUrl = "https://api.gasdash.io/api/v1";
   //static const baseUrl = "http://10.10.10.15:6000/api/v1";
-  static const socketUrl = "http://10.10.10.15:6001";
+  static const socketUrl = "https://socket.gasdash.io";
   //static const socketUrl = "https://socket.gasdash.io";
  // static const socketUrl = "http://115.127.156.131:1005";
 
@@ -49,6 +49,7 @@ class Api {
   static String singleOrderById(String orderId) => "$baseUrl/orders/$orderId"; //done
 
   static String orderDataConfirmation(String id) => "$baseUrl/orders/$id"; //
+  static String orderReAssign(String id) => "$baseUrl/orders/reassign/$id"; //
 
   ///Coupon
   static String coupon(String couponValue) => "$baseUrl/cupons/check/$couponValue"; //
