@@ -1,15 +1,88 @@
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/user/payment/views/payment_success_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
+import 'package:gas_dash/common/helper/socket_service.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
-
 import 'package:get/get.dart';
-
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 
-class AssigningToDriverView extends GetView {
+class AssigningToDriverView extends StatefulWidget {
   const AssigningToDriverView({super.key});
+
+  @override
+  State<AssigningToDriverView> createState() => _AssigningToDriverViewState();
+}
+
+class _AssigningToDriverViewState extends State<AssigningToDriverView>
+    with SingleTickerProviderStateMixin {
+  final SocketService socketService = Get.put(SocketService());
+  bool reAssign = false;
+  AnimationController? _controller;
+  Animation<double>? _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize AnimationController with 2-minute duration
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 120), // 2 minutes = 120 seconds
+    );
+
+    // Create a linear animation from 0.0 to 1.0
+    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller!,
+        curve: Curves.linear, // Ensures smooth linear progression
+      ),
+    )..addListener(() {
+      if (mounted) {
+        setState(() {}); // Only update if widget is mounted
+      }
+    });
+
+    // Start the animation
+    _controller!.forward();
+
+    // Socket initialization
+    socketService.init().then((_) {
+      if (socketService.socket.connected) {
+        socketService.socket.on('orderAssigned', (data) {
+          print('>>>>>>>> orderAssigned $data');
+          if (data["success"] == true) {
+            _controller?.stop(); // Stop animation before navigating
+            Get.offAll(() => const PaymentSuccessView());
+          }
+        });
+        socketService.socket.on('orderResponse', (data) {
+          print('>>>>>>>> orderResponse $data');
+        });
+        socketService.socket.on('reassignEnable', (data) {
+          print('>>>>>>>> reassignEnable $data');
+          if (data["success"] == true) {
+            if (mounted) {
+              setState(() {
+                reAssign = true; // Update reAssign only if mounted
+              });
+            }
+          }
+        });
+      } else {
+        print('socket not connected');
+      }
+    }).catchError((error) {
+      print('Error initializing socket: $error');
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller?.stop(); // Stop animation if running
+    _controller?.dispose(); // Dispose controller
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,18 +96,11 @@ class AssigningToDriverView extends GetView {
         child: Column(
           children: [
             sh30,
-            // const Text(
-            //   'Assigning to driver',
-            //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            // ),
-            // const SizedBox(height: 20),
-            const LinearProgressIndicator(
-              value: null,
+            LinearProgressIndicator(
+              value: _animation?.value ?? 0.0, // Fallback to 0.0 if null
               minHeight: 10,
               backgroundColor: Colors.grey,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                Colors.blue,
-              ),
+              valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
             ),
             const SizedBox(height: 20),
             Center(
@@ -45,13 +111,15 @@ class AssigningToDriverView extends GetView {
               ),
             ),
             sh16,
-            CustomButton(
-              text: 'Re-Assign',
-              onPressed: () {
-                Get.offAll(() => PaymentSuccessView());
-              },
-              gradientColors: AppColors.gradientColorGreen,
-            )
+            if (reAssign)
+              CustomButton(
+                text: 'Re-Assign',
+                onPressed: () {
+                  _controller?.stop();
+
+                },
+                gradientColors: AppColors.gradientColorGreen,
+              ),
           ],
         ),
       ),

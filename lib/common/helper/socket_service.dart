@@ -113,8 +113,8 @@ class SocketService {
               "longitude": position.longitude,
               "orderId": LocalStorage.getData(key: AppConstant.userId),
             };
-            _socket.emit('getLocation', locationData); // Emit location data
-            print('Emitted location: $locationData');
+            _socket.emit('getLocation', locationData);
+       //     print('Emitted location: $locationData');
           } catch (e) {
             print('Error getting location: $e');
           }
