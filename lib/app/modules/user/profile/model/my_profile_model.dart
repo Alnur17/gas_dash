@@ -173,12 +173,12 @@ class GeoLocation {
   });
 
   final String? type;
-  final List<double> coordinates;
+  final List<dynamic> coordinates;
 
   factory GeoLocation.fromJson(Map<String, dynamic> json){
     return GeoLocation(
       type: json["type"],
-      coordinates: json["coordinates"] == null ? [] : List<double>.from(json["coordinates"]!.map((x) => x)),
+      coordinates: json["coordinates"] == null ? [] : List<dynamic>.from(json["coordinates"]!.map((x) => x)),
     );
   }
 

@@ -163,17 +163,17 @@ class LoginView extends StatelessWidget {
                 ],
               ),
               sh10,
-              Obx(
-                () => GoogleButton(
-                  assetPath: AppImages.google,
-                  label: authController.isLoadingGoogle.value
-                      ? 'Loading...'
-                      : 'Continue with Google',
-                  onTap: () {
-                    authController.loginWithGoogle();
-                  },
-                ),
-              ),
+              // Obx(
+              //   () => GoogleButton(
+              //     assetPath: AppImages.google,
+              //     label: authController.isLoadingGoogle.value
+              //         ? 'Loading...'
+              //         : 'Continue with Google',
+              //     onTap: () {
+              //       authController.loginWithGoogle();
+              //     },
+              //   ),
+              // ),
               // sh12,
               // Obx(
               //   () => GoogleButton(
@@ -189,7 +189,7 @@ class LoginView extends StatelessWidget {
               sh10,
               GestureDetector(
                 onTap: () {
-                  Get.to(() => const SignUpView());
+                  Get.to(() =>  SignUpView());
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

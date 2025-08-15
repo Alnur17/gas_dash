@@ -408,4 +408,42 @@ class ProfileController extends GetxController {
   }
 
 
+
+
+  //deleteMyProfile
+  Future<void> deleteMyProfile() async {
+    try {
+      isLoading.value = true;
+      String apiUrl = Api.deleteAccount;
+
+      debugPrint("Fetching Profile Data...");
+      String accessToken = LocalStorage.getData(key: AppConstant.accessToken);
+      var headers = {
+        'Content-Type': "application/json",
+        'Authorization': 'Bearer $accessToken',
+      };
+
+      var response = await BaseClient.deleteRequest(api: apiUrl, headers: headers);
+
+      if (response.statusCode == 200) {
+        LocalStorage.removeData(key: AppConstant.accessToken);
+        LocalStorage.removeData(key: AppConstant.refreshToken);
+        LocalStorage.removeData(key: AppConstant.role);
+        Get.offAll(() => LoginView() );
+      } else {
+        kSnackBar(
+          message: "Failed to load profile data",
+          bgColor: AppColors.orange,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error getting profile: $e");
+      kSnackBar(
+        message: "Error getting profile: $e",
+        bgColor: AppColors.orange,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

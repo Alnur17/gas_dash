@@ -8,7 +8,7 @@ class Api {
   //static const socketUrl = "https://socket.gasdash.io";
  // static const socketUrl = "http://115.127.156.131:1005";
 
-  ///auth
+  ///auth api
   static const register = "$baseUrl/users/create"; //done
   static const login = "$baseUrl/auth/login"; //done
   static const forgotPassword = "$baseUrl/auth/forgot-password"; //done
@@ -16,6 +16,7 @@ class Api {
   static const reSendOtp = "$baseUrl/otp/resend-otp"; //done
   static const resetPassword = "$baseUrl/auth/reset-password"; //done
   static const changePassword = "$baseUrl/auth/change-password"; //done
+  static const deleteAccount = "$baseUrl/users/delete-my-account"; //done
 
   ///Gas Prices
   static const fuelInfo = "$baseUrl/fuelInfo/userzipprise"; //done

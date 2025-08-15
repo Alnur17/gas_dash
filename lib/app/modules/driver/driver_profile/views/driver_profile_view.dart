@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/profile/controllers/profile_controller.dart';
 
 import 'package:get/get.dart';
 
@@ -20,6 +21,7 @@ class DriverProfileView extends GetView<DriverProfileController> {
   DriverProfileView({super.key});
 
   final driverProfileController = Get.put(DriverProfileController());
+  final ProfileController profileController = Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {
@@ -93,15 +95,61 @@ class DriverProfileView extends GetView<DriverProfileController> {
             sh12,
             CustomListTile(
               onTap: () {
-                LocalStorage.removeData(key: AppConstant.accessToken);
-                LocalStorage.removeData(key: AppConstant.refreshToken);
-                LocalStorage.removeData(key: AppConstant.role);
-                Get.offAll(() => LoginView());
+
+                Get.dialog(
+                  AlertDialog(
+                    title: Text("Confirm Deletion"),
+                    content: Text("Do you want to delete your account? This action cannot be undone."),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Get.back(), // Close dialog on "No"
+                        child: Text("No"),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          profileController.deleteMyProfile();
+                        },
+                        child: Text("Yes"),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              leadingImage: AppImages.delete,
+              title: 'Delete Profile',
+              trailingImage: AppImages.arrowRightSmall,
+            ),
+            sh12,
+            CustomListTile(
+              onTap: () {
+
+                Get.dialog(
+                  AlertDialog(
+                    title: Text("Confirm Logout"),
+                    content: Text("Do you want to logout your account?"),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Get.back(), // Close dialog on "No"
+                        child: Text("No"),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          LocalStorage.removeData(key: AppConstant.accessToken);
+                          LocalStorage.removeData(key: AppConstant.refreshToken);
+                          LocalStorage.removeData(key: AppConstant.role);
+                          Get.offAll(() => LoginView());
+                        },
+                        child: Text("Yes"),
+                      ),
+                    ],
+                  ),
+                );
               },
               leadingImage: AppImages.logout,
               title: 'Log Out',
               trailingImage: AppImages.arrowRightSmall,
             ),
+
             sh40,
           ],
         ),
