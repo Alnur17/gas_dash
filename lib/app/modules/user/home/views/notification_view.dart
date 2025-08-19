@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/auth/login/views/login_view.dart';
+import 'package:gas_dash/common/app_constant/app_constant.dart';
+import 'package:gas_dash/common/helper/local_store.dart';
 
 import 'package:get/get.dart';
 
@@ -9,13 +12,32 @@ import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
 import '../../../driver/driver_home/controllers/driver_notifications_controller.dart';
 
-class NotificationView extends GetView<DriverNotificationsController> {
+class NotificationView extends StatefulWidget {
   const NotificationView({super.key});
+
+  @override
+  State<NotificationView> createState() => _NotificationViewState();
+}
+
+class _NotificationViewState extends State<NotificationView> {
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (LocalStorage.getData(key: AppConstant.accessToken) == null) {
+        Get.offAll(() => LoginView());
+      }
+    });
+    super.initState();
+
+  }
+
+  final DriverNotificationsController controller =   Get.put(DriverNotificationsController());
 
   @override
   Widget build(BuildContext context) {
     // Initialize the controller
-    Get.put(DriverNotificationsController());
+
 
     return Scaffold(
       backgroundColor: AppColors.white,

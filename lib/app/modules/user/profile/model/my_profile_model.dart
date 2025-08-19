@@ -95,10 +95,10 @@ class Data {
   final bool? noExtraChargeForEmergencyFuelServiceLimit;
   final bool? freeSubscriptionAdditionalFamilyMember;
   final bool? exclusivePromotionsEarlyAccess;
-  final int? remeningDurationDay;
+  final dynamic remeningDurationDay;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final int? v;
+  final dynamic v;
   final String? title;
   final GeoLocation? geoLocation;
 
@@ -191,7 +191,7 @@ class Verification {
     required this.status,
   });
 
-  final int? otp;
+  final dynamic otp;
   final DateTime? expiresAt;
   final bool? status;
 

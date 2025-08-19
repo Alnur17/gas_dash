@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/auth/sign_up/views/sign_up_view.dart';
+import 'package:gas_dash/app/modules/user/dashboard/views/dashboard_view.dart';
 import 'package:get/get.dart';
 
 import '../../../../../common/app_color/app_colors.dart';
@@ -160,7 +161,20 @@ class LoginView extends StatelessWidget {
                   ),
                   sw10,
                   const Expanded(child: Divider()),
+
                 ],
+              ),
+              sh10,
+              GestureDetector(
+                onTap: () {
+                  Get.to(() =>  DashboardView());
+                },
+                child: Center(
+                  child: Text(
+                    'Guest Login',
+                    style: h4.copyWith(color: AppColors.textColor),
+                  ),
+                ),
               ),
               sh10,
               // Obx(

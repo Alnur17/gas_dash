@@ -29,6 +29,11 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (LocalStorage.getData(key: AppConstant.accessToken) == null) {
+        Get.offAll(() => LoginView());
+      }
+    });
     super.initState();
     profileController.getMyProfile();
   }

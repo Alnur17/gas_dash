@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/auth/login/views/login_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
+import 'package:gas_dash/common/app_constant/app_constant.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:gas_dash/common/helper/earnings_card.dart';
+import 'package:gas_dash/common/helper/local_store.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
 import 'package:gas_dash/common/widgets/custom_loader.dart';
 
@@ -37,6 +40,13 @@ class _JumpStartCarBatteryViewState extends State<JumpStartCarBatteryView> {
 
   @override
   void initState() {
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (LocalStorage.getData(key: AppConstant.accessToken) == null) {
+        Get.offAll(() => LoginView());
+      }
+    });
+
     super.initState();
     orderFuelController.fetchCurrentLocation();
   }
@@ -150,7 +160,7 @@ class _JumpStartCarBatteryViewState extends State<JumpStartCarBatteryView> {
           child: CustomCircularContainer(
             imagePath: AppImages.back,
             onTap: () {
-              Get.back();
+             Navigator.pop(context);
             },
             padding: 2,
           ),
