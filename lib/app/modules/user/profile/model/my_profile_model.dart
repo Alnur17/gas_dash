@@ -21,7 +21,6 @@ class MyProfileModel {
 
 class Data {
   Data({
-    required this.geoLocation,
     required this.verification,
     required this.familyMember,
     required this.id,
@@ -60,10 +59,9 @@ class Data {
     required this.updatedAt,
     required this.v,
     required this.title,
-    required this.currentStatus,
+    required this.geoLocation,
   });
 
-  final GeoLocation? geoLocation;
   final Verification? verification;
   final FamilyMember? familyMember;
   final String? id;
@@ -97,16 +95,15 @@ class Data {
   final bool? noExtraChargeForEmergencyFuelServiceLimit;
   final bool? freeSubscriptionAdditionalFamilyMember;
   final bool? exclusivePromotionsEarlyAccess;
-  final int? remeningDurationDay;
+  final dynamic remeningDurationDay;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final int? v;
+  final dynamic v;
   final String? title;
-  final String? currentStatus;
+  final GeoLocation? geoLocation;
 
   factory Data.fromJson(Map<String, dynamic> json){
     return Data(
-      geoLocation: json["geoLocation"] == null ? null : GeoLocation.fromJson(json["geoLocation"]),
       verification: json["verification"] == null ? null : Verification.fromJson(json["verification"]),
       familyMember: json["familyMember"] == null ? null : FamilyMember.fromJson(json["familyMember"]),
       id: json["_id"],
@@ -145,7 +142,7 @@ class Data {
       updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
       v: json["__v"],
       title: json["title"],
-      currentStatus: json["currentStatus"],
+      geoLocation: json["geoLocation"] == null ? null : GeoLocation.fromJson(json["geoLocation"]),
     );
   }
 
@@ -176,12 +173,12 @@ class GeoLocation {
   });
 
   final String? type;
-  final List<double> coordinates;
+  final List<dynamic> coordinates;
 
   factory GeoLocation.fromJson(Map<String, dynamic> json){
     return GeoLocation(
       type: json["type"],
-      coordinates: json["coordinates"] == null ? [] : List<double>.from(json["coordinates"]!.map((x) => x.toDouble())),
+      coordinates: json["coordinates"] == null ? [] : List<dynamic>.from(json["coordinates"]!.map((x) => x)),
     );
   }
 
@@ -194,7 +191,7 @@ class Verification {
     required this.status,
   });
 
-  final int? otp;
+  final dynamic otp;
   final DateTime? expiresAt;
   final bool? status;
 

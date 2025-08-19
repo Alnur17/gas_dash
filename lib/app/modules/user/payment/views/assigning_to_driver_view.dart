@@ -31,7 +31,7 @@ class _AssigningToDriverViewState extends State<AssigningToDriverView>
     // Initialize AnimationController with 2-minute duration
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 120), // 2 minutes = 120 seconds
+      duration: const Duration(seconds: 320), // 2 minutes = 120 seconds
     );
 
     // Create a linear animation from 0.0 to 1.0

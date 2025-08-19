@@ -29,6 +29,11 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (LocalStorage.getData(key: AppConstant.accessToken) == null) {
+        Get.offAll(() => LoginView());
+      }
+    });
     super.initState();
     profileController.getMyProfile();
   }
@@ -136,10 +141,55 @@ class _ProfileViewState extends State<ProfileView> {
             sh12,
             CustomListTile(
               onTap: () {
-                LocalStorage.removeData(key: AppConstant.accessToken);
-                LocalStorage.removeData(key: AppConstant.refreshToken);
-                LocalStorage.removeData(key: AppConstant.role);
-                Get.offAll(() => LoginView());
+
+                Get.dialog(
+                  AlertDialog(
+                    title: Text("Confirm Deletion"),
+                    content: Text("Do you want to delete your account? This action cannot be undone."),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Get.back(), // Close dialog on "No"
+                        child: Text("No"),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          profileController.deleteMyProfile();
+                        },
+                        child: Text("Yes"),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              leadingImage: AppImages.delete,
+              title: 'Delete Profile',
+              trailingImage: AppImages.arrowRightSmall,
+            ),
+            sh12,
+            CustomListTile(
+              onTap: () {
+
+                Get.dialog(
+                  AlertDialog(
+                    title: Text("Confirm Logout"),
+                    content: Text("Do you want to logout your account?"),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Get.back(), // Close dialog on "No"
+                        child: Text("No"),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          LocalStorage.removeData(key: AppConstant.accessToken);
+                          LocalStorage.removeData(key: AppConstant.refreshToken);
+                          LocalStorage.removeData(key: AppConstant.role);
+                          Get.offAll(() => LoginView());
+                        },
+                        child: Text("Yes"),
+                      ),
+                    ],
+                  ),
+                );
               },
               leadingImage: AppImages.logout,
               title: 'Log Out',

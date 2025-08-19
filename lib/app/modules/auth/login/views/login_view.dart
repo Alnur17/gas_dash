@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/auth/sign_up/views/sign_up_view.dart';
+import 'package:gas_dash/app/modules/user/dashboard/views/dashboard_view.dart';
 import 'package:get/get.dart';
 
 import '../../../../../common/app_color/app_colors.dart';
@@ -9,7 +10,6 @@ import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_button.dart';
 import '../../../../../common/widgets/custom_loader.dart';
 import '../../../../../common/widgets/custom_textfield.dart';
-import '../../../../../common/widgets/google_button.dart';
 import '../../auth_controller/auth_controller.dart';
 import '../../forgot_password/views/forgot_password_view.dart';
 import '../controllers/login_controller.dart';
@@ -160,20 +160,33 @@ class LoginView extends StatelessWidget {
                   ),
                   sw10,
                   const Expanded(child: Divider()),
+
                 ],
               ),
               sh10,
-              Obx(
-                () => GoogleButton(
-                  assetPath: AppImages.google,
-                  label: authController.isLoadingGoogle.value
-                      ? 'Loading...'
-                      : 'Continue with Google',
-                  onTap: () {
-                    authController.loginWithGoogle();
-                  },
+              GestureDetector(
+                onTap: () {
+                  Get.to(() =>  DashboardView());
+                },
+                child: Center(
+                  child: Text(
+                    'Guest Login',
+                    style: h4.copyWith(color: AppColors.textColor),
+                  ),
                 ),
               ),
+              sh10,
+              // Obx(
+              //   () => GoogleButton(
+              //     assetPath: AppImages.google,
+              //     label: authController.isLoadingGoogle.value
+              //         ? 'Loading...'
+              //         : 'Continue with Google',
+              //     onTap: () {
+              //       authController.loginWithGoogle();
+              //     },
+              //   ),
+              // ),
               // sh12,
               // Obx(
               //   () => GoogleButton(
@@ -189,7 +202,7 @@ class LoginView extends StatelessWidget {
               sh10,
               GestureDetector(
                 onTap: () {
-                  Get.to(() => const SignUpView());
+                  Get.to(() =>  SignUpView());
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

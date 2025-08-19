@@ -12,11 +12,13 @@ import '../../../../../common/helper/sign_up_body_widget.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_button.dart';
 import '../../../../../common/widgets/custom_loader.dart';
-import '../../../../../common/widgets/google_button.dart';
+import '../../auth_controller/auth_controller.dart';
 import '../controllers/sign_up_controller.dart';
 
 class SignUpView extends GetView<SignUpController> {
-  const SignUpView({super.key});
+   SignUpView({super.key});
+
+  final AuthController authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -115,18 +117,20 @@ class SignUpView extends GetView<SignUpController> {
                   const Expanded(child: Divider()),
                 ],
               ),
-              sh10,
-              GoogleButton(
-                assetPath: AppImages.google,
-                label: 'Continue with Google',
-                onTap: () {},
-              ),
-              sh12,
+              // sh10,
+              // GoogleButton(
+              //   assetPath: AppImages.google,
+              //   label: 'Continue with Google',
+              //   onTap: () {
+              //     authController.loginWithGoogle();
+              //   },
+              // ),
+        /*      sh12,
               GoogleButton(
                 assetPath: AppImages.apple,
                 label: 'Continue with Apple',
                 onTap: () {},
-              ),
+              ),*/
               sh20,
               GestureDetector(
                 onTap: () {

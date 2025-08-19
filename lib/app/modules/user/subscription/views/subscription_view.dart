@@ -162,7 +162,10 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/auth/login/views/login_view.dart';
+import 'package:gas_dash/common/app_constant/app_constant.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
+import 'package:gas_dash/common/helper/local_store.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/widgets/custom_circular_container.dart';
 import 'package:get/get.dart';
@@ -184,6 +187,16 @@ class _SubscriptionViewState extends State<SubscriptionView> {
   final SubscriptionController controller = Get.put(SubscriptionController());
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (LocalStorage.getData(key: AppConstant.accessToken) == null) {
+        Get.offAll(() => LoginView());
+      }
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -195,7 +208,7 @@ class _SubscriptionViewState extends State<SubscriptionView> {
           padding: const EdgeInsets.only(left: 12),
           child: CustomCircularContainer(
             imagePath: AppImages.back,
-            onTap: () => Get.back(),
+            onTap: () => Navigator.pop(context),
             padding: 2,
           ),
         ),

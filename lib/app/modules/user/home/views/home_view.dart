@@ -182,14 +182,14 @@ class _HomeViewState extends State<HomeView> {
                   );
                 }
 
-                if (homeController.errorMessage.isNotEmpty) {
-                  return Center(
-                    child: Text(
-                      homeController.errorMessage.value,
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                  );
-                }
+                // if (homeController.errorMessage.isNotEmpty) {
+                //   return Center(
+                //     child: Text(
+                //       homeController.errorMessage.value,
+                //       style: const TextStyle(color: Colors.red),
+                //     ),
+                //   );
+                // }
 
                 final data = homeController.fuelInfo.value?.data ?? [];
 
@@ -443,14 +443,14 @@ class _HomeViewState extends State<HomeView> {
                 if (homeController.isLoading.value) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                if (homeController.errorMessage.isNotEmpty) {
-                  return Center(
-                    child: Text(
-                      homeController.errorMessage.value,
-                      style: const TextStyle(color: Colors.red, fontSize: 16),
-                    ),
-                  );
-                }
+                // if (homeController.errorMessage.isNotEmpty) {
+                //   return Center(
+                //     child: Text(
+                //       homeController.errorMessage.value,
+                //       style: const TextStyle(color: Colors.red, fontSize: 16),
+                //     ),
+                //   );
+                // }
                 if (homeController.services.isEmpty) {
                   return const Center(child: Text('No services found'));
                 }
@@ -587,15 +587,6 @@ class _HomeViewState extends State<HomeView> {
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  // Show error message if there's an error
-                  if (oHController.errorMessage.isNotEmpty) {
-                    return Center(
-                      child: Text(
-                        oHController.errorMessage.value,
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    );
-                  }
 
                   // Filter only Pending orders
                   final orders = oHController.orders

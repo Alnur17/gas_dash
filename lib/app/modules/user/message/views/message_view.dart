@@ -1,18 +1,15 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/auth/login/views/login_view.dart';
 import 'package:gas_dash/app/modules/user/message/views/message_body_view.dart';
 
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_constant/app_constant.dart';
-import '../../../../../common/app_images/app_images.dart';
-import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/helper/local_store.dart';
 import '../../../../../common/helper/socket_service.dart';
-import '../../../../../common/widgets/custom_circular_container.dart';
 import '../controllers/all_friend_controller.dart';
 
 class MessageView extends StatefulWidget {
@@ -31,7 +28,11 @@ class _MessageViewState extends State<MessageView> {
   @override
   void initState() {
 
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (LocalStorage.getData(key: AppConstant.accessToken) == null) {
+        Get.offAll(() => LoginView());
+      }
+    });
     print(socketService.onlineUserList);
     socketService.init();
     super.initState();

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/auth/login/views/login_view.dart';
+import 'package:gas_dash/common/app_constant/app_constant.dart';
+import 'package:gas_dash/common/helper/local_store.dart';
 import 'package:get/get.dart';
 import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_images/app_images.dart';
@@ -15,8 +18,18 @@ class OrderHistoryView extends StatefulWidget {
 
 class _OrderHistoryViewState extends State<OrderHistoryView> {
   @override
+  @override
   void initState() {
     super.initState();
+
+    // Defer navigation until after the build phase
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (LocalStorage.getData(key: AppConstant.accessToken) == null) {
+        Get.offAll(() => LoginView());
+      }
+    });
+
+    // Initialize the controller
     Get.put(OrderHistoryController());
   }
 
