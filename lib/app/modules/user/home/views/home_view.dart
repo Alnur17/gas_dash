@@ -449,7 +449,6 @@
 //   }
 // }
 
-
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/user/home/views/notification_view.dart';
 import 'package:gas_dash/app/modules/user/jump_start_car_battery/views/jump_start_car_battery_view.dart';
@@ -542,80 +541,80 @@ class _HomeViewState extends State<HomeView> {
               Obx(() => profileController.isLoading.value
                   ? _buildProfileShimmer()
                   : profileController.myProfileData.value?.title != null
-                  ? Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.silver),
-                  color: AppColors.white,
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Obx(
-                              () => CircleAvatar(
-                            radius: 25,
-                            backgroundColor: AppColors.white,
-                            backgroundImage: NetworkImage(
-                              profileController
-                                  .myProfileData.value?.image ??
-                                  AppImages.profileImageTwo,
-                            ),
+                      ? Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: AppColors.silver),
+                            color: AppColors.white,
                           ),
-                        ),
-                        sw8,
-                        Obx(
-                              () {
-                            return Column(
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  profileController.myProfileData.value
-                                      ?.fullname ??
-                                      'Unknown',
-                                  style: h3.copyWith(
-                                    fontWeight: FontWeight.w700,
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Obx(
+                                    () => CircleAvatar(
+                                      radius: 25,
+                                      backgroundColor: AppColors.white,
+                                      backgroundImage: NetworkImage(
+                                        profileController
+                                                .myProfileData.value?.image ??
+                                            AppImages.profileImageTwo,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  'Customer',
-                                  style: h6.copyWith(
-                                    color: AppColors.blueTurquoise,
+                                  sw8,
+                                  Obx(
+                                    () {
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            profileController.myProfileData
+                                                    .value?.fullname ??
+                                                'Unknown',
+                                            style: h3.copyWith(
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Customer',
+                                            style: h6.copyWith(
+                                              color: AppColors.blueTurquoise,
+                                            ),
+                                          ),
+                                          Text(
+                                            profileController.myProfileData
+                                                        .value?.title !=
+                                                    null
+                                                ? 'Subscription Type:\n${profileController.myProfileData.value?.title.toString()}'
+                                                : 'Subscription Type: Unsubscribe',
+                                            style: h6,
+                                          ),
+                                        ],
+                                      );
+                                    },
                                   ),
-                                ),
-                                Text(
-                                  profileController.myProfileData.value
-                                      ?.title !=
-                                      null
-                                      ? 'Subscription Type:\n${profileController.myProfileData.value?.title.toString()}'
-                                      : 'Subscription Type: Unsubscribe',
-                                  style: h6,
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                    sh12,
-                    CustomButton(
-                      text: 'Manage Subscription',
-                      onPressed: () {
-                        Get.to(() => profileController
-                            .myProfileData.value?.title !=
-                            null
-                            ? AfterSubscriptionView()
-                            : SubscriptionView());
-                      },
-                      gradientColors: AppColors.gradientColor,
-                    ),
-                  ],
-                ),
-              )
-                  : Container()),
+                                ],
+                              ),
+                              sh12,
+                              CustomButton(
+                                text: 'Manage Subscription',
+                                onPressed: () {
+                                  Get.to(() => profileController
+                                              .myProfileData.value?.title !=
+                                          null
+                                      ? AfterSubscriptionView()
+                                      : SubscriptionView());
+                                },
+                                gradientColors: AppColors.gradientColor,
+                              ),
+                            ],
+                          ),
+                        )
+                      : Container()),
               sh16,
               Obx(() {
                 if (homeController.isLoading.value) {
@@ -623,8 +622,29 @@ class _HomeViewState extends State<HomeView> {
                 }
                 final data = homeController.fuelInfo.value?.data ?? [];
                 if (data.isEmpty) {
-                  return const Center(
-                    child: Text('No Fuel Price Data Available'),
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                          color: Colors.red[100],
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.warning),
+                          sw5,
+                          Expanded(
+                            child: Text(
+                              'Fuel price information is not available for your current location. Please update your ZIP code in the Edit Profile section to view accurate pricing.',
+                              style: h5.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   );
                 }
                 return Container(
@@ -674,11 +694,11 @@ class _HomeViewState extends State<HomeView> {
                                 width: 110,
                                 padding: EdgeInsets.only(left: 10, right: 10),
                                 text:
-                                (fuel.fuelPrice ?? 0.0).toStringAsFixed(2),
+                                    (fuel.fuelPrice ?? 0.0).toStringAsFixed(2),
                                 onPressed: () {},
                                 borderRadius: 8,
                                 backgroundColor:
-                                _getFuelColor(fuel.fuelName ?? ''),
+                                    _getFuelColor(fuel.fuelName ?? ''),
                               ),
                             ],
                           ),
@@ -717,9 +737,9 @@ class _HomeViewState extends State<HomeView> {
                     return Padding(
                       padding: EdgeInsets.only(
                           bottom: index ==
-                              (homeController.fuelInfo.value?.data.length ??
-                                  1) -
-                                  1
+                                  (homeController.fuelInfo.value?.data.length ??
+                                          1) -
+                                      1
                               ? 0
                               : 16),
                       child: FuelCard(
@@ -728,9 +748,9 @@ class _HomeViewState extends State<HomeView> {
                         gradientColors: AppColors.gradientColorBlue,
                         onTap: () {
                           Get.to(() => OrderFuelView(
-                            fuelName: fuelData?.fuelName,
-                            fuelPrice: fuelData?.fuelPrice,
-                          ))?.then((result) {
+                                fuelName: fuelData?.fuelName,
+                                fuelPrice: fuelData?.fuelPrice,
+                              ))?.then((result) {
                             if (result == true) {
                               oHController.fetchOrderHistory();
                             }
@@ -773,16 +793,16 @@ class _HomeViewState extends State<HomeView> {
                     return Padding(
                       padding: EdgeInsets.only(
                         bottom:
-                        index == homeController.services.length - 1 ? 0 : 8,
+                            index == homeController.services.length - 1 ? 0 : 8,
                       ),
                       child: ServiceCard(
                         title: service.serviceName ?? 'Unnamed Service',
                         price:
-                        '\$${service.price?.toStringAsFixed(2) ?? 'N/A'}',
+                            '\$${service.price?.toStringAsFixed(2) ?? 'N/A'}',
                         buttonText: 'Order Now',
                         onServiceTap: () {
                           Get.to(
-                                () => JumpStartCarBatteryView(
+                            () => JumpStartCarBatteryView(
                               title: service.serviceName ?? 'Unnamed Service',
                               price: service.price?.toStringAsFixed(2) ?? 'N/A',
                             ),
@@ -811,14 +831,13 @@ class _HomeViewState extends State<HomeView> {
                 }
                 final orders = oHController.orders
                     .where((order) =>
-                order.orderStatus == 'Unassigned' &&
-                    order.isPaid == true)
+                        order.orderStatus == 'Unassigned' &&
+                        order.isPaid == true)
                     .toList();
                 if (orders.isEmpty) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 12),
-                    child:
-                    const Center(child: Text('No Pending orders found')),
+                    child: const Center(child: Text('No Pending orders found')),
                   );
                 }
                 return ListView.builder(
@@ -827,8 +846,7 @@ class _HomeViewState extends State<HomeView> {
                   itemCount: orders.length,
                   itemBuilder: (context, index) {
                     final order = orders[index];
-                    debugPrint(
-                        'Rendering order status: ${order.orderStatus}');
+                    debugPrint('Rendering order status: ${order.orderStatus}');
                     return OrderHistoryCard(
                       emergency: order.emergency ?? false,
                       emergencyImage: AppImages.emergency,
