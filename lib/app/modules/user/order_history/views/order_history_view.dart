@@ -135,7 +135,7 @@ class OrderStatusSection extends StatelessWidget {
 
     return Obx(() {
       if (controller.isLoading.value) {
-        return const Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator(color: AppColors.textColor,));
       }
 
       if (controller.errorMessage.isNotEmpty) {

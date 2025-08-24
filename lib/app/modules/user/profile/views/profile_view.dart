@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/user/profile/views/change_password_view.dart';
 import 'package:gas_dash/app/modules/user/profile/views/edit_profile_view.dart';
@@ -53,14 +54,27 @@ class _ProfileViewState extends State<ProfileView> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             sh20,
-            // Profile section with avatar and name
             Obx(
-                  () => CircleAvatar(
-                radius: 50,
-                backgroundColor: AppColors.white,
-                backgroundImage: NetworkImage(
-                    profileController.myProfileData.value?.image ??
-                        AppImages.profileImageTwo),
+                  () => CachedNetworkImage(
+                imageUrl: profileController.myProfileData.value?.image ??
+                    AppImages.profileImageTwo,
+                imageBuilder: (context, imageProvider) => CircleAvatar(
+                  radius: 50,
+                  backgroundColor: AppColors.white,
+                  backgroundImage: imageProvider,
+                ),
+                placeholder: (context, url) => CircleAvatar(
+                  radius: 50,
+                  backgroundColor: AppColors.white,
+                  // child: CircularProgressIndicator(
+                  //   color: AppColors.textColor,
+                  // ),
+                ),
+                errorWidget: (context, url, error) => CircleAvatar(
+                  radius: 50,
+                  backgroundColor: AppColors.white,
+                  backgroundImage: AssetImage(AppImages.profileImageTwo),
+                ),
               ),
             ),
             sh8,

@@ -1,8 +1,4 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:http/http.dart' as http;
-import 'package:html/parser.dart' show parse;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
