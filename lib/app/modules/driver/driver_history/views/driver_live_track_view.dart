@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -509,7 +508,7 @@ class _DriverLiveTrackViewState extends State<DriverLiveTrackView> {
             zoomControlsEnabled: false,
           ),
           if (_isLoading)
-            const Center(child: CircularProgressIndicator())
+            const Center(child: CircularProgressIndicator(color: AppColors.textColor,))
           else if (_errorMessage != null)
             Center(
               child: Padding(

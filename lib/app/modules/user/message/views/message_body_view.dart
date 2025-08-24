@@ -88,7 +88,7 @@ class _ChattingPageState extends State<ChattingPage> {
         surfaceTintColor: Colors.transparent,
       ),
       body: Obx(() => messageChatController.isLoading.value
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: AppColors.textColor,))
           : messageChatController.messageList.isEmpty
           ? Center(child: Text("No Data Found".tr))
           : ListView.builder(

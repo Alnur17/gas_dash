@@ -41,7 +41,7 @@ class DriverCompletionChecklistView
         centerTitle: true,
       ),
       body: Obx(() => controller.isLoading.value
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: AppColors.textColor,))
           : Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(

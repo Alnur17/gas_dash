@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/user/profile/controllers/profile_controller.dart';
 
@@ -38,13 +39,36 @@ class DriverProfileView extends GetView<DriverProfileController> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             sh20,
+            // Obx(
+            //   () => CircleAvatar(
+            //     radius: 50,
+            //     backgroundColor: AppColors.white,
+            //     backgroundImage: NetworkImage(
+            //         driverProfileController.driverProfileData.value?.image ??
+            //             AppImages.profileImageTwo),
+            //   ),
+            // ),
             Obx(
-              () => CircleAvatar(
-                radius: 50,
-                backgroundColor: AppColors.white,
-                backgroundImage: NetworkImage(
-                    driverProfileController.driverProfileData.value?.image ??
-                        AppImages.profileImageTwo),
+                  () => CachedNetworkImage(
+                imageUrl: driverProfileController.driverProfileData.value?.image ??
+                    AppImages.profileImageTwo,
+                imageBuilder: (context, imageProvider) => CircleAvatar(
+                  radius: 50,
+                  backgroundColor: AppColors.white,
+                  backgroundImage: imageProvider,
+                ),
+                placeholder: (context, url) => CircleAvatar(
+                  radius: 50,
+                  backgroundColor: AppColors.white,
+                  child: CircularProgressIndicator(
+                    color: AppColors.blueTurquoise,
+                  ),
+                ),
+                errorWidget: (context, url, error) => CircleAvatar(
+                  radius: 50,
+                  backgroundColor: AppColors.white,
+                  backgroundImage: AssetImage(AppImages.profileImageTwo),
+                ),
               ),
             ),
             sh8,

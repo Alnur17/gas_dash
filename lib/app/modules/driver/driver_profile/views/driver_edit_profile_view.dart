@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/driver/driver_profile/controllers/driver_profile_controller.dart';
 
@@ -79,50 +80,97 @@ class _DriverEditProfileViewState extends State<DriverEditProfileView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  // Obx(
+                  //   () {
+                  //     return Stack(
+                  //       clipBehavior: Clip.none,
+                  //       children: [
+                  //         CircleAvatar(
+                  //           radius: 50,
+                  //           backgroundImage: driverProfileController
+                  //                       .selectedImage.value !=
+                  //                   null
+                  //               ? FileImage(driverProfileController
+                  //                   .selectedImage.value!)
+                  //               : (driverProfileController.driverProfileData
+                  //                               .value?.image !=
+                  //                           null &&
+                  //                       driverProfileController
+                  //                           .driverProfileData
+                  //                           .value!
+                  //                           .image!
+                  //                           .isNotEmpty)
+                  //                   ? NetworkImage(driverProfileController
+                  //                       .driverProfileData.value!.image!)
+                  //                   : NetworkImage(AppImages.profileImageTwo),
+                  //         ),
+                  //         Positioned(
+                  //           bottom: 0,
+                  //           right: 0,
+                  //           child: GestureDetector(
+                  //             onTap: () {
+                  //               driverProfileController.pickImage();
+                  //             },
+                  //             child: const CircleAvatar(
+                  //               radius: 15,
+                  //               backgroundColor: AppColors.black,
+                  //               child: Icon(
+                  //                 Icons.add,
+                  //                 color: AppColors.white,
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     );
+                  //   },
+                  // ),
                   Obx(
-                    () {
-                      return Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          CircleAvatar(
+                        () => Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        CachedNetworkImage(
+                          imageUrl: driverProfileController.driverProfileData.value?.image ??
+                              AppImages.profileImageTwo,
+                          imageBuilder: (context, imageProvider) => CircleAvatar(
                             radius: 50,
-                            backgroundImage: driverProfileController
-                                        .selectedImage.value !=
-                                    null
-                                ? FileImage(driverProfileController
-                                    .selectedImage.value!)
-                                : (driverProfileController.driverProfileData
-                                                .value?.image !=
-                                            null &&
-                                        driverProfileController
-                                            .driverProfileData
-                                            .value!
-                                            .image!
-                                            .isNotEmpty)
-                                    ? NetworkImage(driverProfileController
-                                        .driverProfileData.value!.image!)
-                                    : NetworkImage(AppImages.profileImageTwo),
+                            backgroundColor: AppColors.white,
+                            backgroundImage: driverProfileController.selectedImage.value != null
+                                ? FileImage(driverProfileController.selectedImage.value!)
+                                : imageProvider,
                           ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: GestureDetector(
-                              onTap: () {
-                                driverProfileController.pickImage();
-                              },
-                              child: const CircleAvatar(
-                                radius: 15,
-                                backgroundColor: AppColors.black,
-                                child: Icon(
-                                  Icons.add,
-                                  color: AppColors.white,
-                                ),
+                          placeholder: (context, url) => CircleAvatar(
+                            radius: 50,
+                            backgroundColor: AppColors.white,
+                            child: CircularProgressIndicator(
+                              color: AppColors.textColor,
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => CircleAvatar(
+                            radius: 50,
+                            backgroundColor: AppColors.white,
+                            backgroundImage: AssetImage(AppImages.profileImageTwo),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: GestureDetector(
+                            onTap: () {
+                              driverProfileController.pickImage();
+                            },
+                            child: const CircleAvatar(
+                              radius: 15,
+                              backgroundColor: AppColors.black,
+                              child: Icon(
+                                Icons.add,
+                                color: AppColors.white,
                               ),
                             ),
                           ),
-                        ],
-                      );
-                    },
+                        ),
+                      ],
+                    ),
                   ),
                   sh12,
                   Obx(

@@ -1,4 +1,5 @@
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -81,27 +82,86 @@ class _EditProfileViewState extends State<EditProfileView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  // Obx(
+                  //   () {
+                  //     return Stack(
+                  //       clipBehavior: Clip.none,
+                  //       children: [
+                  //         CircleAvatar(
+                  //           radius: 50,
+                  //           backgroundImage: profileController
+                  //                       .selectedImage.value !=
+                  //                   null
+                  //               ? FileImage(
+                  //                   profileController.selectedImage.value!)
+                  //               : (profileController
+                  //                               .myProfileData.value?.image !=
+                  //                           null &&
+                  //                       profileController.myProfileData.value!
+                  //                           .image!.isNotEmpty)
+                  //                   ? NetworkImage(profileController
+                  //                       .myProfileData.value!.image!)
+                  //                   : NetworkImage(AppImages.profileImageTwo),
+                  //         ),
+                  //         Positioned(
+                  //           bottom: 0,
+                  //           right: 0,
+                  //           child: GestureDetector(
+                  //             onTap: () {
+                  //               profileController.pickImage();
+                  //             },
+                  //             child: const CircleAvatar(
+                  //               radius: 15,
+                  //               backgroundColor: AppColors.black,
+                  //               child: Icon(
+                  //                 Icons.add,
+                  //                 color: AppColors.white,
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     );
+                  //   },
+                  // ),
                   Obx(
-                    () {
+                        () {
                       return Stack(
                         clipBehavior: Clip.none,
                         children: [
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundImage: profileController
-                                        .selectedImage.value !=
-                                    null
-                                ? FileImage(
-                                    profileController.selectedImage.value!)
-                                : (profileController
-                                                .myProfileData.value?.image !=
-                                            null &&
-                                        profileController.myProfileData.value!
-                                            .image!.isNotEmpty)
-                                    ? NetworkImage(profileController
-                                        .myProfileData.value!.image!)
-                                    : NetworkImage(AppImages.profileImageTwo),
-                          ),
+                          // Conditional image display with caching for network
+                          if (profileController.selectedImage.value != null)
+                          // Local file image (priority)
+                            CircleAvatar(
+                              radius: 50,
+                              backgroundImage: FileImage(profileController.selectedImage.value!),
+                            )
+                          else if (profileController.myProfileData.value?.image != null &&
+                              profileController.myProfileData.value!.image!.isNotEmpty)
+                          // Cached network image with placeholder and error
+                            CachedNetworkImage(
+                              imageUrl: profileController.myProfileData.value!.image!,
+                              imageBuilder: (context, imageProvider) => CircleAvatar(
+                                radius: 50,
+                                backgroundImage: imageProvider,
+                              ),
+                              placeholder: (context, url) => CircleAvatar(
+                                radius: 50,
+                                child: CircularProgressIndicator(
+                                  color: AppColors.blueTurquoise, // Matches your app's theme
+                                ),
+                              ),
+                              errorWidget: (context, url, error) => CircleAvatar(
+                                radius: 50,
+                                backgroundImage: AssetImage(AppImages.profileImageTwo),
+                              ),
+                            )
+                          else
+                          // Fallback to asset
+                            CircleAvatar(
+                              radius: 50,
+                              backgroundImage: AssetImage(AppImages.profileImageTwo),
+                            ),
                           Positioned(
                             bottom: 0,
                             right: 0,

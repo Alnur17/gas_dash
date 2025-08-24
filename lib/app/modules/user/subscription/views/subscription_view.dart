@@ -232,7 +232,7 @@ class _SubscriptionViewState extends State<SubscriptionView> {
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator(color: AppColors.textColor,));
                 }
                 if (controller.errorMessage.isNotEmpty) {
                   return Center(child: Text(controller.errorMessage.value, style: h5));

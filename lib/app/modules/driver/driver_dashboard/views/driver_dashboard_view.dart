@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/driver/driver_earning/views/driver_earning_view.dart';
 import 'package:gas_dash/app/modules/driver/driver_history/views/driver_history_view.dart';
-import 'package:gas_dash/app/modules/driver/driver_message/views/driver_message_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
 

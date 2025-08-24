@@ -32,7 +32,7 @@ class DriverEarningView extends GetView<DriverEarningController> {
         child: Obx(() => Column(
           children: [
             driverEarningController.isLoading.value
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator(color: AppColors.textColor,))
                 : driverEarningController.errorMessage.value.isNotEmpty
                 ? Center(
               child: Text(

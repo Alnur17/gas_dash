@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/auth/login/views/login_view.dart';
 import 'package:gas_dash/app/modules/user/message/views/message_body_view.dart';
@@ -73,7 +71,7 @@ class _MessageViewState extends State<MessageView> {
           },
           child: Obx(() =>friendController.isLoading.value == true
               ? const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(color: AppColors.textColor,),
           )
               : friendController.friendList.isEmpty
               ? Center(child: Text("Empty"),)

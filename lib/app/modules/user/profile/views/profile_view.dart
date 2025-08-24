@@ -66,9 +66,9 @@ class _ProfileViewState extends State<ProfileView> {
                 placeholder: (context, url) => CircleAvatar(
                   radius: 50,
                   backgroundColor: AppColors.white,
-                  // child: CircularProgressIndicator(
-                  //   color: AppColors.textColor,
-                  // ),
+                  child: CircularProgressIndicator(
+                    color: AppColors.textColor,
+                  ),
                 ),
                 errorWidget: (context, url, error) => CircleAvatar(
                   radius: 50,

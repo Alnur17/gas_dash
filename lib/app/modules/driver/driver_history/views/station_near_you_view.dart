@@ -369,7 +369,7 @@ class _StationNearYouViewState extends State<StationNearYouView> {
         centerTitle: true,
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: AppColors.textColor,))
           : Column(
         children: [
           Expanded(
@@ -391,7 +391,7 @@ class _StationNearYouViewState extends State<StationNearYouView> {
                   zoomControlsEnabled: false,
                 ),
                 if (!_isMapLoaded)
-                  const Center(child: CircularProgressIndicator()),
+                  const Center(child: CircularProgressIndicator(color: AppColors.textColor,)),
               ],
             ),
           ),
