@@ -61,7 +61,7 @@ class DriverProfileView extends GetView<DriverProfileController> {
                   radius: 50,
                   backgroundColor: AppColors.white,
                   child: CircularProgressIndicator(
-                    color: AppColors.blueTurquoise,
+                    color: AppColors.textColor,
                   ),
                 ),
                 errorWidget: (context, url, error) => CircleAvatar(
