@@ -101,6 +101,24 @@ class SocketService {
     // Cancel any existing timer to avoid duplicates
     _stopLocationUpdates();
 
+    _locationTimer = Timer.periodic(Duration(seconds: 5), (timer) async {
+      if (_socket.connected) {
+        try {
+          final position = await _getCurrentLocation();
+          final locationData = {
+            "latitude": position.latitude,
+            "longitude": position.longitude,
+          };
+          _socket.emit('setLocation', locationData);
+               print('My Location>>>>>>>>>  location: $locationData');
+        } catch (e) {
+          print('Error getting location: $e');
+        }
+      } else {
+        print('Socket not connected, skipping location emission');
+      }
+    } );
+
     print(">>>>>>>>> ${LocalStorage.getData(key: AppConstant.role)}");
 
     if(LocalStorage.getData(key: AppConstant.role) == "driver"){
