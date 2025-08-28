@@ -59,7 +59,7 @@ class _FinalConfirmationViewState extends State<FinalConfirmationView> {
       ),
       body: Obx(() {
         if (controller.currentLocation.value == 'Fetching location...') {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(color: AppColors.textColor,));
         }
 
         return Padding(

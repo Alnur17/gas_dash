@@ -11,7 +11,9 @@ import 'package:get/get.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
+import '../../../../../common/app_constant/app_constant.dart';
 import '../../../../../common/helper/active_order.dart';
+import '../../../../../common/helper/local_store.dart';
 import '../../../../../common/helper/socket_service.dart';
 import '../../driver_earning/controllers/driver_earning_controller.dart';
 import '../../driver_history/views/driver_start_delivery_view.dart';
@@ -227,6 +229,7 @@ class _DriverHomeViewState extends State<DriverHomeView> {
                           controller.locationNames[orderId] ??
                               "Loading location...";
 
+
                       return FuelAndServiceCard(
                         emergencyImage: AppImages.emergency,
                         emergency: false, // Adjust based on your data
@@ -234,9 +237,17 @@ class _DriverHomeViewState extends State<DriverHomeView> {
                         '${order['amount']?.toStringAsFixed(2) ?? '0.00'} gallons',
                         fuelType: 'Order ID \n$orderId',
                         location: locationName,
-                        onAcceptPressed: () {
+                        onAcceptPressed: () async {
+                          // Call the acceptOrder function
+                          await controller.acceptOrder(orderId);
+
+                          // Retrieve deliveryId from LocalStorage
+                          final deliveryId = LocalStorage.getData(key: AppConstant.deliveryId);
+
+                          // Emit accept order event
                           final orderData = {
                             "orderId": orderId,
+                            "deleveryId": deliveryId ?? "", // Fallback to empty string if null
                           };
                           // Emit accept order event
                           socketService.socket.emit('acceptOrder', orderData);
@@ -248,8 +259,16 @@ class _DriverHomeViewState extends State<DriverHomeView> {
                           controller.fetchAssignedOrders();
                         },
                         onViewDetailsPressed: () {
+                          // // Call the acceptOrder function
+                          // await controller.acceptOrder(orderId);
+                          //
+                          // // Retrieve deliveryId from LocalStorage
+                          // final deliveryId = LocalStorage.getData(key: AppConstant.deliveryId);
+
+                          // Emit accept order event
                           final orderData = {
                             "orderId": orderId,
+                            //"deleveryId": deliveryId ?? "", // Fallback to empty string if null
                           };
                           // Emit reject order event
                           socketService.socket.emit('rejectOrder', orderData);

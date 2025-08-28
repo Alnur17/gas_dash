@@ -261,7 +261,7 @@ class _FuelTypeFinalConfirmationViewState
       body: Obx(() {
         // Show loading indicator while fetching location
         if (controller.currentLocation.value == 'Fetching location...') {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(color: AppColors.textColor,));
         }
 
         return Padding(
