@@ -77,6 +77,7 @@ class _HomeViewState extends State<HomeView> {
         automaticallyImplyLeading: false,
       ),
       body: RefreshIndicator(
+        backgroundColor: AppColors.white,
         color: AppColors.textColor,
         onRefresh: () async {
           await oHController.fetchOrderHistory();

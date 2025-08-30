@@ -161,6 +161,7 @@ class _DriverHomeViewState extends State<DriverHomeView> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Obx(() => RefreshIndicator(
+          color: AppColors.textColor,
           onRefresh: () async {
             await controller.fetchAssignedOrders();
             await profileController.getMyProfile();
