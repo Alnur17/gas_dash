@@ -67,14 +67,14 @@ class _FinalConfirmationViewState extends State<FinalConfirmationView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              sh20,
-              Text(
-                'Discount Coupon',
-                style: h5.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              sh8,
+              // sh20,
+              // Text(
+              //   'Discount Coupon',
+              //   style: h5.copyWith(
+              //     fontWeight: FontWeight.bold,
+              //   ),
+              // ),
+              // sh8,
               sh20,
               Container(
                 width: double.infinity,
@@ -88,7 +88,7 @@ class _FinalConfirmationViewState extends State<FinalConfirmationView> {
                   child: Obx(
                     () {
                       if (controller.isLoading.value) {
-                        return const Center(child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator(color: AppColors.textColor,));
                       } else if (controller.finalConfirmation.value == null ||
                           controller.finalConfirmation.value!.data == null) {
                         return Text(

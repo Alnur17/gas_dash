@@ -93,10 +93,10 @@ class _DriverStartDeliveryViewState extends State<DriverStartDeliveryView> {
                       '#${widget.orderId}',
                       style: h5,
                     ),
-                    Text(
-                      'DeliveryId: ${widget.deliveryId}',
-                      style: h5,
-                    ),
+                    // Text(
+                    //   'DeliveryId: ${widget.deliveryId}',
+                    //   style: h5,
+                    // ),
                   ],
                 ),
                 // Row(

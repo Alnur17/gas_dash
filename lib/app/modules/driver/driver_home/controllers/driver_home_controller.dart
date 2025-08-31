@@ -288,6 +288,7 @@ class DriverHomeController extends GetxController {
         filterOrders();
         showPendingOrders();
       } else {
+
         debugPrint(assignedOrder.message ?? 'Failed to fetch orders');
         kSnackBar(
           message: assignedOrder.message ?? 'Failed to fetch orders',

@@ -126,7 +126,6 @@
 //   }
 // }
 
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -216,7 +215,6 @@ class DriverProofOfDeliveryView
                   style: h5,
                 ),
                 sh8,
-                Text('Delivery Id : $deliveryId:::::::'),
                 UploadWidget(
                   onTap: pickImage,
                   imagePath: selectedImage.value == null ? AppImages.add : null,

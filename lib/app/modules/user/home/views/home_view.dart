@@ -80,11 +80,11 @@ class _HomeViewState extends State<HomeView> {
         backgroundColor: AppColors.white,
         color: AppColors.textColor,
         onRefresh: () async {
-          await oHController.fetchOrderHistory();
-          await profileController.getMyProfile();
-          await homeController.getFuelInfo();
-          await homeController.fetchServices();
-          await settingsController.fetchConditions();
+           oHController.fetchOrderHistory();
+           profileController.getMyProfile();
+           homeController.getFuelInfo();
+           homeController.fetchServices();
+           settingsController.fetchConditions();
         },
         child: SingleChildScrollView(
           child: Column(
@@ -399,7 +399,7 @@ class _HomeViewState extends State<HomeView> {
                 }
                 final orders = oHController.orders
                     .where((order) =>
-                order.orderStatus == 'Unassigned' &&
+                order.orderStatus == 'active' &&
                     order.isPaid == true)
                     .toList();
                 if (orders.isEmpty) {
@@ -424,7 +424,8 @@ class _HomeViewState extends State<HomeView> {
                       fuelType: order.fuelType ?? 'Unknown',
                       price: (order.finalAmountOfPayment ?? 0.0)
                           .toStringAsFixed(2),
-                      status: order.orderStatus.toString(),
+                      //status: order.orderStatus.toString(),
+                      status: 'Unassign',
                     );
                   },
                 );

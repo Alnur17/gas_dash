@@ -31,7 +31,7 @@ class _DriverHomeViewState extends State<DriverHomeView> {
   final ProfileController profileController = Get.put(ProfileController());
   final DriverEarningController driverEarningController =
   Get.put(DriverEarningController());
-  final SocketService socketService = Get.put(SocketService());
+  final SocketService socketService = Get.find<SocketService>();
   List<Map<String, dynamic>> autoAssignList = [];
   Timer? _locationTimer;
 
@@ -47,39 +47,52 @@ class _DriverHomeViewState extends State<DriverHomeView> {
           String orderId = data['orderId'].toString();
           bool orderExists = autoAssignList.any((order) => order['orderId'].toString() == orderId);
 
-          if (!orderExists) {
+          // Skip if order is already processed or assigned
+          if (!orderExists && mounted) {
             setState(() {
               autoAssignList.add({...data, 'orderId': orderId});
             });
             print('Added to Autoassign list: $autoAssignList');
           } else {
-            print('Order with ID $orderId already exists in Autoassign list');
+            print('Order with ID $orderId already exists in Autoassign list or widget is not mounted');
           }
         });
 
         socketService.socket.on('deliveryRejectionResponse', (data) {
           debugPrint(">>>>>>>>>>>>>>>== Order Reject Done: $data");
-          // Ensure orderId is a string
           String orderId = data['orderId'].toString();
-          setState(() {
-            autoAssignList.removeWhere((order) => order['orderId'].toString() == orderId);
-          });
-          print('Removed order ID $orderId from Autoassign list: $autoAssignList');
+          if (mounted) {
+            setState(() {
+              autoAssignList.removeWhere((order) => order['orderId'].toString() == orderId);
+            });
+            print('Removed order ID $orderId from Autoassign list: $autoAssignList');
+          }
         });
 
         socketService.socket.on('orderResponse', (data) {
           debugPrint(">>>>>>>>>>>>>>>== Order Accept Done: $data");
-          // Ensure orderId is a string
           String orderId = data['orderId'].toString();
-          setState(() {
-            autoAssignList.removeWhere((order) => order['orderId'].toString() == orderId);
-          });
-          print('Removed order ID $orderId from Autoassign list after orderResponse: $autoAssignList');
+          if (mounted) {
+            setState(() {
+              autoAssignList.removeWhere((order) => order['orderId'].toString() == orderId);
+            });
+            print('Removed order ID $orderId from Autoassign list after orderResponse: $autoAssignList');
+          }
         });
       } else {
         print('not connected');
       }
     });
+  }
+
+  @override
+  void dispose() {
+    // Clean up Socket.IO listeners
+    socketService.socket.off('newOrder');
+    socketService.socket.off('deliveryRejectionResponse');
+    socketService.socket.off('orderResponse');
+    _stopLocationUpdates();
+    super.dispose();
   }
 
   // Method to stop sending location updates
@@ -240,7 +253,7 @@ class _DriverHomeViewState extends State<DriverHomeView> {
                         location: locationName,
                         onAcceptPressed: () async {
                           // Call the acceptOrder function
-                          await controller.acceptOrder(orderId);
+                          controller.acceptOrder(orderId);
 
                           // Retrieve deliveryId from LocalStorage
                           final deliveryId = LocalStorage.getData(key: AppConstant.deliveryId);
@@ -260,16 +273,9 @@ class _DriverHomeViewState extends State<DriverHomeView> {
                           controller.fetchAssignedOrders();
                         },
                         onViewDetailsPressed: () {
-                          // // Call the acceptOrder function
-                          // await controller.acceptOrder(orderId);
-                          //
-                          // // Retrieve deliveryId from LocalStorage
-                          // final deliveryId = LocalStorage.getData(key: AppConstant.deliveryId);
-
                           // Emit accept order event
                           final orderData = {
                             "orderId": orderId,
-                            //"deleveryId": deliveryId ?? "", // Fallback to empty string if null
                           };
                           // Emit reject order event
                           socketService.socket.emit('rejectOrder', orderData);

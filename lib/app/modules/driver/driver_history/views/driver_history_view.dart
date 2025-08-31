@@ -22,7 +22,7 @@ class _DriverHistoryViewState extends State<DriverHistoryView> {
     // Initialize the controller
     Get.put(DriverHomeController());
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
@@ -35,7 +35,7 @@ class _DriverHistoryViewState extends State<DriverHistoryView> {
           bottom: TabBar(
             tabs: [
               Tab(text: 'Active'),
-              Tab(text: 'Pending'),
+              //Tab(text: 'Pending'),
               Tab(text: 'Completed'),
             ],
             indicatorSize: TabBarIndicatorSize.tab,
@@ -49,7 +49,7 @@ class _DriverHistoryViewState extends State<DriverHistoryView> {
             // Active Orders (InProgress)
             OrderStatusSection(status: 'InProgress'),
             // Pending Orders
-            OrderStatusSection(status: 'Pending'),
+            //OrderStatusSection(status: 'Pending'),
             // Completed Orders (Delivered)
             OrderStatusSection(status: 'Delivered'),
           ],

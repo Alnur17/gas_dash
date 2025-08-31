@@ -10,6 +10,7 @@ import '../../../../../common/size_box/custom_sizebox.dart';
 
 class AssigningToDriverView extends StatefulWidget {
   final String orderId;
+
   const AssigningToDriverView({super.key, required this.orderId});
 
   @override
@@ -19,7 +20,8 @@ class AssigningToDriverView extends StatefulWidget {
 class _AssigningToDriverViewState extends State<AssigningToDriverView>
     with SingleTickerProviderStateMixin {
   final SocketService socketService = Get.put(SocketService());
-  final OrderFuelController orderFuelController = Get.put(OrderFuelController());
+  final OrderFuelController orderFuelController =
+      Get.put(OrderFuelController());
 
   AnimationController? _controller;
   Animation<double>? _animation;
@@ -28,48 +30,51 @@ class _AssigningToDriverViewState extends State<AssigningToDriverView>
   void initState() {
     super.initState();
 
-    // Initialize AnimationController with 2-minute duration
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 320), // 2 minutes = 120 seconds
+      duration: const Duration(seconds: 320),
     );
 
-    // Create a linear animation from 0.0 to 1.0
     _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller!,
-        curve: Curves.linear, // Ensures smooth linear progression
+        curve: Curves.linear,
       ),
     )..addListener(() {
-      if (mounted) {
-        setState(() {}); // Only update if widget is mounted
-      }
-    });
+        if (mounted) {
+          setState(() {});
+        }
+      });
 
-    // Start the animation
     _controller!.forward();
 
-    // Socket initialization
     socketService.init().then((_) {
       if (socketService.socket.connected) {
         socketService.socket.on('orderAssigned', (data) {
           print('>>>>>>>> orderAssigned $data');
-          if (data["success"] == true) {
-           // _controller?.stop(); // Stop animation before navigating
+          if (data["success"] == true && mounted) {
+            _controller?.stop();
             Get.offAll(() => const PaymentSuccessView());
           }
         });
+
+        // Add listener for orderResponse event
         socketService.socket.on('orderResponse', (data) {
-          print('>>>>>>>> orderResponse $data');
+          print('>>>>>>>> orderResponse in AssigningToDriverView: $data');
+          if (data['status'] == true &&
+              data['data']['orderId'] == widget.orderId &&
+              mounted) {
+            _controller?.stop();
+            Get.offAll(() => const PaymentSuccessView());
+          }
         });
+
         socketService.socket.on('reassignEnable', (data) {
           print('>>>>>>>> reassignEnable $data');
-          if (data["status"] == true) {
-            if (mounted) {
-              setState(() {
-                orderFuelController.reAssign.value = true; // Update reAssign only if mounted
-              });
-            }
+          if (data["status"] == true && mounted) {
+            setState(() {
+              orderFuelController.reAssign.value = true;
+            });
           }
         });
       } else {
@@ -79,6 +84,62 @@ class _AssigningToDriverViewState extends State<AssigningToDriverView>
       print('Error initializing socket: $error');
     });
   }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   // Initialize AnimationController with 2-minute duration
+  //   _controller = AnimationController(
+  //     vsync: this,
+  //     duration: const Duration(seconds: 320), // 2 minutes = 120 seconds
+  //   );
+  //
+  //   // Create a linear animation from 0.0 to 1.0
+  //   _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+  //     CurvedAnimation(
+  //       parent: _controller!,
+  //       curve: Curves.linear, // Ensures smooth linear progression
+  //     ),
+  //   )..addListener(() {
+  //     if (mounted) {
+  //       setState(() {}); // Only update if widget is mounted
+  //     }
+  //   });
+  //
+  //   // Start the animation
+  //   _controller!.forward();
+  //
+  //   // Socket initialization
+  //   socketService.init().then((_) {
+  //     if (socketService.socket.connected) {
+  //       socketService.socket.on('orderAssigned', (data) {
+  //         print('>>>>>>>> orderAssigned $data');
+  //         if (data["success"] == true) {
+  //          // _controller?.stop(); // Stop animation before navigating
+  //           Get.offAll(() => const PaymentSuccessView());
+  //         }
+  //       });
+  //       socketService.socket.on('orderResponse', (data) {
+  //         print('>>>>>>>> orderResponse $data');
+  //       });
+  //       socketService.socket.on('reassignEnable', (data) {
+  //         print('>>>>>>>> reassignEnable $data');
+  //         if (data["status"] == true) {
+  //           if (mounted) {
+  //             setState(() {
+  //               orderFuelController.reAssign.value = true; // Update reAssign only if mounted
+  //             });
+  //           }
+  //         }
+  //       });
+  //     } else {
+  //       print('socket not connected');
+  //     }
+  //   }).catchError((error) {
+  //     print('Error initializing socket: $error');
+  //   });
+  // }
 
   @override
   void dispose() {
@@ -116,17 +177,19 @@ class _AssigningToDriverViewState extends State<AssigningToDriverView>
             sh16,
             Obx(() => orderFuelController.reAssign.value == true
                 ? CustomButton(
-              text: orderFuelController.isLoading.value == true ? "Assigning..." : 'Re-Assign',
-              onPressed: () {
-                // Stop, reset, and restart the animation
-                _controller?.stop();
-                _controller?.reset();
-                _controller?.forward();
-                // Call the reassign method
-                orderFuelController.orderReAssign(widget.orderId);
-              },
-              gradientColors: AppColors.gradientColorGreen,
-            )
+                    text: orderFuelController.isLoading.value == true
+                        ? "Assigning..."
+                        : 'Re-Assign',
+                    onPressed: () {
+                      // Stop, reset, and restart the animation
+                      _controller?.stop();
+                      _controller?.reset();
+                      _controller?.forward();
+                      // Call the reassign method
+                      orderFuelController.orderReAssign(widget.orderId);
+                    },
+                    gradientColors: AppColors.gradientColorGreen,
+                  )
                 : SizedBox())
           ],
         ),
@@ -134,3 +197,124 @@ class _AssigningToDriverViewState extends State<AssigningToDriverView>
     );
   }
 }
+
+// class _AssigningToDriverViewState extends State<AssigningToDriverView>
+//     with SingleTickerProviderStateMixin {
+//   final SocketService socketService = Get.put(SocketService());
+//   final OrderFuelController orderFuelController = Get.put(OrderFuelController());
+//
+//   AnimationController? _controller;
+//   Animation<double>? _animation;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//
+//     _controller = AnimationController(
+//       vsync: this,
+//       duration: const Duration(seconds: 320),
+//     );
+//
+//     _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+//       CurvedAnimation(
+//         parent: _controller!,
+//         curve: Curves.linear,
+//       ),
+//     )..addListener(() {
+//       if (mounted) {
+//         setState(() {});
+//       }
+//     });
+//
+//     _controller!.forward();
+//
+//     socketService.init().then((_) {
+//       if (socketService.socket.connected) {
+//         socketService.socket.on('orderAssigned', (data) {
+//           print('>>>>>>>> orderAssigned $data');
+//           if (data["success"] == true && mounted) {
+//             _controller?.stop();
+//             Get.offAll(() => const PaymentSuccessView());
+//           }
+//         });
+//
+//         // Add listener for orderResponse event
+//         socketService.socket.on('orderResponse', (data) {
+//           print('>>>>>>>> orderResponse in AssigningToDriverView: $data');
+//           if (data['status'] == true && data['data']['orderId'] == widget.orderId && mounted) {
+//             _controller?.stop();
+//             Get.offAll(() => const PaymentSuccessView());
+//           }
+//         });
+//
+//         socketService.socket.on('reassignEnable', (data) {
+//           print('>>>>>>>> reassignEnable $data');
+//           if (data["status"] == true && mounted) {
+//             setState(() {
+//               orderFuelController.reAssign.value = true;
+//             });
+//           }
+//         });
+//       } else {
+//         print('socket not connected');
+//       }
+//     }).catchError((error) {
+//       print('Error initializing socket: $error');
+//     });
+//   }
+//
+//   @override
+//   void dispose() {
+//     _controller?.stop();
+//     _controller?.dispose();
+//     socketService.socket.off('orderAssigned');
+//     socketService.socket.off('orderResponse');
+//     socketService.socket.off('reassignEnable');
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Assigning to driver'),
+//         centerTitle: true,
+//       ),
+//       body: Padding(
+//         padding: const EdgeInsets.symmetric(horizontal: 20),
+//         child: Column(
+//           children: [
+//             sh30,
+//             LinearProgressIndicator(
+//               value: _animation?.value ?? 0.0,
+//               minHeight: 10,
+//               backgroundColor: Colors.grey,
+//               valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+//             ),
+//             const SizedBox(height: 20),
+//             Center(
+//               child: Text(
+//                 'Please wait while we are assigning to the driver.',
+//                 style: h3,
+//                 textAlign: TextAlign.center,
+//               ),
+//             ),
+//             sh16,
+//             Obx(() => orderFuelController.reAssign.value == true
+//                 ? CustomButton(
+//               text: orderFuelController.isLoading.value == true ? "Assigning..." : 'Re-Assign',
+//               onPressed: () {
+//                 _controller?.stop();
+//                 _controller?.reset();
+//                 _controller?.forward();
+//                 orderFuelController.orderReAssign(widget.orderId);
+//               },
+//               gradientColors: AppColors.gradientColorGreen,
+//             )
+//                 : const SizedBox())
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
