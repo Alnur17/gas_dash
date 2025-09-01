@@ -16,12 +16,10 @@ import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/helper/socket_service.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
-import '../../about_driver_information/controllers/about_driver_information_controller.dart';
 import 'dart:convert';
 import '../../about_driver_information/views/write_review_view.dart';
 import '../../order_history/controllers/order_history_controller.dart';
 import 'dart:ui' as ui;
-import 'dart:typed_data';
 
 class LiveTrackingView extends StatefulWidget {
   final int index;
@@ -90,12 +88,12 @@ class _LiveTrackingViewState extends State<LiveTrackingView> {
     });
   }
 
-  @override
-  void dispose() {
-    _socketService?.disconnect();
-    _mapController?.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _socketService?.disconnect();
+  //   _mapController?.dispose();
+  //   super.dispose();
+  //}
 
   Future<BitmapDescriptor> createCircularDotMarker(
       {required Color color, double radius = 10.0}) async {

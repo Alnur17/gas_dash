@@ -69,7 +69,7 @@ class PaymentController extends GetxController {
 
       var responseBody = await BaseClient.handleResponse(response);
 
-      if (responseBody['success'] = true) {
+      if (responseBody['success'] == true) {
         //var paymentId = responseBody['data']['_id'].toString();
         // LocalStorage.saveData(key: AppConstant.paymentId, data: paymentId);
         // String id = LocalStorage.getData(key: AppConstant.paymentId);

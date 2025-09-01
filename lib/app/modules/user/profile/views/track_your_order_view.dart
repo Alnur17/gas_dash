@@ -54,7 +54,7 @@ final SocketService socketService = Get.put(SocketService());
             status: order.orderStatus.toString(),
             fuelAmount: order.amount.toString(),
             fuelType: order.fuelType.toString(),
-            paidPrice: order.price.toString(),
+            paidPrice: double.parse(order.price.toString()).toStringAsFixed(2),
             onTrack: () {
               socketService.socket.emit('joinOrderRoom', "${order.driverId?.id}"); // Emit location data
            //   Get.to(() => TrackOrderDetailsView());
