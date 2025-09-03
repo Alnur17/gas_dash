@@ -8,10 +8,18 @@ import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_button.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
+import '../../../../../common/widgets/custom_loader.dart';
 import '../../../../../common/widgets/custom_textfield.dart';
+import '../controllers/profile_controller.dart';
 
 class ChangePasswordView extends GetView {
-  const ChangePasswordView({super.key});
+  ChangePasswordView({super.key});
+
+  final ProfileController profileController = Get.put(ProfileController());
+  final TextEditingController currentPassTEController = TextEditingController();
+  final TextEditingController newPassTEController = TextEditingController();
+  final TextEditingController confirmPassTEController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,30 +46,89 @@ class ChangePasswordView extends GetView {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             sh30,
-            Text('New Password',style: h5,),
+            Text(
+              'Current Password',
+              style: h5,
+            ),
             sh8,
-            CustomTextField(
-              hintText: '***********',
-              sufIcon: Image.asset(
-                AppImages.eyeClose,
-                scale: 4,
+            Obx(
+              () => CustomTextField(
+                controller: currentPassTEController,
+                hintText: '***********',
+                sufIcon: GestureDetector(
+                    onTap: () {
+                      profileController.togglePasswordVisibility();
+                    },
+                    child: Image.asset(
+                        profileController.isPasswordVisible.value
+                            ? AppImages.eyeOpen
+                            : AppImages.eyeClose,
+                        scale: 4)),
+                obscureText: !profileController.isPasswordVisible.value,
               ),
             ),
             sh16,
-            Text('Re-type New Password',style: h5,),
+            Text(
+              'New Password',
+              style: h5,
+            ),
             sh8,
-            CustomTextField(
-              hintText: '***********',
-              sufIcon: Image.asset(
-                AppImages.eyeClose,
-                scale: 4,
+            Obx(
+              () => CustomTextField(
+                controller: newPassTEController,
+                hintText: '***********',
+                sufIcon: GestureDetector(
+                    onTap: () {
+                      profileController.togglePasswordVisibility1();
+                    },
+                    child: Image.asset(
+                        profileController.isPasswordVisible1.value
+                            ? AppImages.eyeOpen
+                            : AppImages.eyeClose,
+                        scale: 4)),
+                obscureText: !profileController.isPasswordVisible1.value,
+              ),
+            ),
+            sh16,
+            Text(
+              'Re-type New Password',
+              style: h5,
+            ),
+            sh8,
+            Obx(
+              () => CustomTextField(
+                controller: confirmPassTEController,
+                hintText: '***********',
+                sufIcon: GestureDetector(
+                    onTap: () {
+                      profileController.togglePasswordVisibility2();
+                    },
+                    child: Image.asset(
+                        profileController.isPasswordVisible2.value
+                            ? AppImages.eyeOpen
+                            : AppImages.eyeClose,
+                        scale: 4)),
+                obscureText: !profileController.isPasswordVisible2.value,
               ),
             ),
             sh30,
-            CustomButton(
-              text: 'Confirm',
-              onPressed: () {},
-              gradientColors: AppColors.gradientColor,
+            Obx(
+              () => profileController.isLoading.value == true
+                  ? CustomLoader(
+                      color: AppColors.white,
+                    )
+                  : CustomButton(
+                      text: 'Confirm',
+                      onPressed: () {
+                        profileController.changePassword(
+                          currentPassword: currentPassTEController.text,
+                          newPassword: newPassTEController.text,
+                          confirmPassword: confirmPassTEController.text,
+                          context: context,
+                        );
+                      },
+                      gradientColors: AppColors.gradientColorGreen,
+                    ),
             ),
           ],
         ),

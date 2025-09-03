@@ -5,7 +5,7 @@ import 'package:gas_dash/common/app_text_style/styles.dart';
 class EarningsCard extends StatelessWidget {
   final String title;
   final String amount;
-  final String? dropDown;
+  //final String? dropDown;
   final Color? backgroundColor;
   final List<Color>? gradientColor;
 
@@ -13,7 +13,7 @@ class EarningsCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.amount,
-    this.dropDown,
+    //this.dropDown,
     this.gradientColor, this.backgroundColor,
   });
 
@@ -44,27 +44,27 @@ class EarningsCard extends StatelessWidget {
                 title,
                 style: h5.copyWith(fontSize: 18, color: AppColors.white),
               ),
-              if (dropDown != null)
-                DropdownButton<String>(
-                  iconEnabledColor: AppColors.white,
-                  underline: SizedBox(),
-                  dropdownColor: AppColors.primaryColor,
-                  borderRadius: BorderRadius.circular(12),
-                  value: dropDown,
-                  onChanged: (String? newValue) {},
-                  items: <String>['Last Month', 'This Month', 'Today']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: h6.copyWith(
-                          color: AppColors.white,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
+              // if (dropDown != null)
+              //   DropdownButton<String>(
+              //     iconEnabledColor: AppColors.white,
+              //     underline: SizedBox(),
+              //     dropdownColor: AppColors.primaryColor,
+              //     borderRadius: BorderRadius.circular(12),
+              //     value: dropDown,
+              //     onChanged: (String? newValue) {},
+              //     items: <String>['Last Month', 'This Month']
+              //         .map<DropdownMenuItem<String>>((String value) {
+              //       return DropdownMenuItem<String>(
+              //         value: value,
+              //         child: Text(
+              //           value,
+              //           style: h6.copyWith(
+              //             color: AppColors.white,
+              //           ),
+              //         ),
+              //       );
+              //     }).toList(),
+              //   ),
             ],
           ),
           //SizedBox(height: 10),

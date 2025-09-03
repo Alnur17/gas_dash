@@ -15,6 +15,7 @@ class CustomButton extends StatelessWidget {
   final double? borderRadius;
   final Color? iconColor;
   final List<Color>? gradientColors;
+  final EdgeInsetsGeometry? padding; // New parameter for customizable padding
 
   const CustomButton({
     super.key,
@@ -27,7 +28,10 @@ class CustomButton extends StatelessWidget {
     this.width = double.infinity,
     this.borderColor,
     this.imageAssetPath,
-    this.borderRadius = 40,this.iconColor, this.gradientColors,
+    this.borderRadius = 40,
+    this.iconColor,
+    this.gradientColors,
+    this.padding = const EdgeInsets.only(left: 12, right: 12),
   });
 
   @override
@@ -37,7 +41,7 @@ class CustomButton extends StatelessWidget {
       child: Container(
         height: height,
         width: width,
-        padding: const EdgeInsets.only(left: 12, right: 12),
+        padding: padding,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius!),
           border: Border.all(color: borderColor ?? AppColors.transparent),
@@ -68,10 +72,11 @@ class CustomButton extends StatelessWidget {
               ],
               Text(
                 text,
-                style: textStyle ?? h3.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: textColor ?? AppColors.white,
-                ),
+                style: textStyle ??
+                    h3.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: textColor ?? AppColors.white,
+                    ),
               ),
             ],
           ),

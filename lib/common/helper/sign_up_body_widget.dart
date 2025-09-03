@@ -90,13 +90,13 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
         ),
         sh24,
         Text(
-          'Location',
+          'City and State',
           style: h5,
         ),
         sh8,
         CustomTextField(
           //preIcon: Image.asset(AppImages.message, scale: 4),
-          hintText: 'Enter your location',
+          hintText: 'Enter your city and state',
           controller: signupController.locationController,
         ),
         sh24,
@@ -128,9 +128,18 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
         ),
         sh8,
         CustomTextField(
-          sufIcon: Image.asset(AppImages.eyeClose, scale: 4),
+          sufIcon: GestureDetector(
+              onTap: () {
+                signupController.togglePasswordVisibility();
+              },
+              child: Image.asset(
+                  signupController.isPasswordVisible.value
+                      ? AppImages.eyeOpen
+                      : AppImages.eyeClose,
+                  scale: 4)),
           hintText: 'Enter your password',
           controller: signupController.passwordController,
+          obscureText: !signupController.isPasswordVisible.value,
         ),
         sh24,
         Text(
@@ -139,7 +148,16 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
         ),
         sh8,
         CustomTextField(
-          sufIcon: Image.asset(AppImages.eyeClose, scale: 4),
+          sufIcon: GestureDetector(
+              onTap: () {
+                signupController.togglePasswordVisibility2();
+              },
+              child: Image.asset(
+                  signupController.isPasswordVisible2.value
+                      ? AppImages.eyeOpen
+                      : AppImages.eyeClose,
+                  scale: 4)),
+          obscureText: !signupController.isPasswordVisible2.value,
           hintText: 'Confirm your password',
           controller: signupController.confirmPasswordController,
         ),
@@ -178,7 +196,16 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
         ),
         sh8,
         CustomTextField(
-          sufIcon: Image.asset(AppImages.eyeClose, scale: 4),
+          sufIcon: GestureDetector(
+              onTap: () {
+                signupController.togglePasswordVisibility();
+              },
+              child: Image.asset(
+                  signupController.isPasswordVisible.value
+                      ? AppImages.eyeOpen
+                      : AppImages.eyeClose,
+                  scale: 4)),
+          obscureText: !signupController.isPasswordVisible.value,
           hintText: 'Enter your password',
           controller: signupController.driverPasswordController,
         ),
@@ -189,7 +216,16 @@ class _SignUpBodyWidgetState extends State<SignUpBodyWidget> {
         ),
         sh8,
         CustomTextField(
-          sufIcon: Image.asset(AppImages.eyeClose, scale: 4),
+          sufIcon: GestureDetector(
+              onTap: () {
+                signupController.togglePasswordVisibility2();
+              },
+              child: Image.asset(
+                  signupController.isPasswordVisible2.value
+                      ? AppImages.eyeOpen
+                      : AppImages.eyeClose,
+                  scale: 4)),
+          obscureText: !signupController.isPasswordVisible2.value,
           hintText: 'Confirm your password',
           controller: signupController.driverConfirmPasswordController,
         ),

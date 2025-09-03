@@ -1,22 +1,128 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/driver/driver_earning/model/single_driver_earning_model.dart';
+import 'package:gas_dash/common/app_constant/app_constant.dart';
+import 'package:gas_dash/common/helper/local_store.dart';
 import 'package:get/get.dart';
+import 'package:gas_dash/common/app_color/app_colors.dart';
+import 'package:gas_dash/common/widgets/custom_snackbar.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import '../../../../data/api.dart';
+import '../../../../data/base_client.dart';
 
 class DriverEarningController extends GetxController {
+  final amountController = TextEditingController();
+  final cardHolderNameController = TextEditingController();
+  final cardNumberController = TextEditingController();
 
-  final count = 0.obs;
+  var todayEarnings = 0.0.obs;
+  var totalEarnings = 0.0.obs;
+  var isLoading = false.obs;
+  var errorMessage = ''.obs;
+
   @override
   void onInit() {
     super.onInit();
+    fetchEarnings();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+
+  Future<void> fetchEarnings() async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      String token = LocalStorage.getData(key: AppConstant.accessToken);
+      var decodedToken = JwtDecoder.decode(token);
+      var userId = decodedToken['userId']?.toString() ?? '';
+
+      final headers = {
+        'Content-Type': 'application/json',
+      };
+      final response = await BaseClient.getRequest(
+        api: Api.singleDriverEarning(userId),
+        headers: headers,
+      );
+
+      final jsonResponse = await BaseClient.handleResponse(response);
+      final earningModel = SingleDriverEarningModel.fromJson(jsonResponse);
+
+      if (earningModel.success == true && earningModel.data != null) {
+        todayEarnings(earningModel.data!.todayEarnings ?? 0.0);
+        totalEarnings(earningModel.data!.totalEarnings ?? 0.0);
+      } else {
+        errorMessage(earningModel.message ?? 'Failed to load earnings');
+        kSnackBar(message: errorMessage.value, bgColor: AppColors.orange);
+      }
+    } catch (e) {
+      errorMessage(e.toString());
+      kSnackBar(message: errorMessage.value, bgColor: AppColors.orange);
+    } finally {
+      isLoading(false);
+    }
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
+  Future<void> submitWithdrawRequest() async {
+    try {
+      isLoading.value = true;
 
-  void increment() => count.value++;
+      String token = LocalStorage.getData(key: AppConstant.accessToken);
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+
+      // Validate amount
+      final amountText = amountController.text.replaceAll('\$', '').trim();
+      final amount = double.tryParse(amountText) ?? 0.0;
+      if (amount <= 0.0) {
+        kSnackBar(
+          message: 'Withdraw amount must be greater than \$0',
+          bgColor: AppColors.orange,
+        );
+        isLoading.value = false;
+        return;
+      }
+
+      // Validate card number
+      final cardNumber = cardNumberController.text.trim().replaceAll(' ', '');
+      if (cardNumber.length != 16 || !RegExp(r'^\d{16}$').hasMatch(cardNumber)) {
+        kSnackBar(
+          message: 'Card number must be exactly 16 digits',
+          bgColor: AppColors.orange,
+        );
+        isLoading.value = false;
+        return;
+      }
+
+      final body = {
+        'withdrawAmount': amountText,
+        'cardHolderName': cardHolderNameController.text.trim(),
+        'cardNumber': cardNumber,
+      };
+
+      final response = await BaseClient.postRequest(
+        api: Api.withdrawRequest,
+        body: jsonEncode(body),
+        headers: headers,
+      );
+
+      final jsonResponse = await BaseClient.handleResponse(response);
+      kSnackBar(
+        message: jsonResponse['message'] ?? 'Withdrawal request submitted successfully',
+        bgColor: AppColors.green,
+      );
+
+      amountController.clear();
+      cardHolderNameController.clear();
+      cardNumberController.clear();
+    } catch (e) {
+      kSnackBar(
+        message: e.toString(),
+        bgColor: AppColors.orange,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

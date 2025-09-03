@@ -8,6 +8,7 @@ import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:get/get.dart';
 
 import '../../../../../common/app_text_style/styles.dart';
+import '../../../user/message/views/message_view.dart';
 import '../../driver_home/views/driver_home_view.dart';
 import '../../driver_profile/views/driver_profile_view.dart';
 import '../controllers/driver_dashboard_controller.dart';
@@ -23,11 +24,11 @@ class _DriverDashboardViewState extends State<DriverDashboardView> {
   final DriverDashboardController dashboardController =
       Get.put(DriverDashboardController());
 
-  static final List<Widget> _views = const [
-    DriverHomeView(),
-    DriverHistoryView(),
-    DriverEarningView(),
-    DriverMessageView(),
+  static final List<Widget> _views = [
+    const DriverHomeView(),
+    const DriverHistoryView(),
+    const DriverEarningView(),
+    const MessageView(),
     DriverProfileView(),
   ];
 
