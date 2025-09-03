@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/order_history/controllers/order_history_controller.dart';
 import 'package:gas_dash/app/modules/user/track_order_details/views/track_order_details_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
@@ -7,6 +8,7 @@ import 'package:get/get.dart';
 import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/helper/track_order_card.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
+import '../../track_order_details/views/live_tracking_view.dart';
 
 class TrackYourOrderView extends StatefulWidget {
   const TrackYourOrderView({super.key});
@@ -16,25 +18,7 @@ class TrackYourOrderView extends StatefulWidget {
 }
 
 class _TrackYourOrderViewState extends State<TrackYourOrderView> {
-  final List<Map<String, String>> orders = [
-    {
-      "orderId": "5758",
-      "dateTime": "10 Dec 2025 at 10:39 AM",
-      "status": "In Process",
-      "fuelAmount": "15 Litres",
-      "fuelType": "Premium",
-      "paidPrice": "\$65"
-    },
-    {
-      "orderId": "5759",
-      "dateTime": "11 Dec 2025 at 2:10 PM",
-      "status": "Delivered",
-      "fuelAmount": "20 Litres",
-      "fuelType": "Regular",
-      "paidPrice": "\$85"
-    },
-    // add more orders here
-  ];
+final OrderHistoryController orderHistoryController = Get.put(OrderHistoryController());
 
   @override
   Widget build(BuildContext context) {
@@ -56,23 +40,26 @@ class _TrackYourOrderViewState extends State<TrackYourOrderView> {
           ),
         ),
       ),
-      body: ListView.builder(
-        itemCount: orders.length,
+      body: Obx(() => orderHistoryController.inProcessOrders.isEmpty == true? Center(child: Text("Empty order"),) : ListView.builder(
+        itemCount: orderHistoryController.inProcessOrders.length,
         itemBuilder: (context, index) {
-          final order = orders[index];
+          final order = orderHistoryController.inProcessOrders[index];
           return TrackOrderCard(
-            orderId: order["orderId"]!,
-            dateTime: order["dateTime"]!,
-            status: order["status"]!,
-            fuelAmount: order["fuelAmount"]!,
-            fuelType: order["fuelType"]!,
-            paidPrice: order["paidPrice"]!,
+            emergency: order.emergency ?? false,
+            emergencyImage: AppImages.emergency,
+            orderId: order.id.toString(),
+            dateTime: order.createdAt.toString(),
+            status: order.orderStatus.toString(),
+            fuelAmount: order.finalAmountOfPayment.toString(),
+            fuelType: order.fuelType.toString(),
+            paidPrice: order.price.toString(),
             onTrack: () {
-              Get.to(() => TrackOrderDetailsView());
+           //   Get.to(() => TrackOrderDetailsView());
+              Get.to(()=> LiveTrackingView(index: index,));
             },
           );
         },
-      ),
+      )),
     );
   }
 }

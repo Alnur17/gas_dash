@@ -7,6 +7,8 @@ import '../widgets/custom_button.dart';
 
 class OrderHistoryCard extends StatelessWidget {
   final String orderId;
+  final String emergencyImage;
+  final bool emergency;
   final String orderDate;
   final String fuelQuantity;
   final String fuelType;
@@ -20,6 +22,8 @@ class OrderHistoryCard extends StatelessWidget {
   const OrderHistoryCard({
     super.key,
     required this.orderId,
+    required this.emergencyImage,
+    required this.emergency,
     required this.orderDate,
     required this.fuelQuantity,
     required this.fuelType,
@@ -54,13 +58,24 @@ class OrderHistoryCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Order ID #$orderId',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+              if (emergency) ...[
+                sw5,
+                Image.asset(
+                  emergencyImage,
+                  scale: 4,
+                ),
+              ],
+              sw5,
+              Expanded(
+                child: Text(
+                  'Order ID #$orderId',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
+              sw8,
               Text(
                 status,
                 style: TextStyle(

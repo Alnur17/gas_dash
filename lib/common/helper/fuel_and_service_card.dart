@@ -13,6 +13,8 @@ class FuelAndServiceCard extends StatelessWidget {
   final VoidCallback onViewDetailsPressed;
   final String fuelIconPath;
   final String locationIconPath;
+  final String emergencyImage;
+  final bool emergency;
 
   const FuelAndServiceCard({
     super.key,
@@ -23,6 +25,8 @@ class FuelAndServiceCard extends StatelessWidget {
     required this.onViewDetailsPressed,
     required this.fuelIconPath,
     required this.locationIconPath,
+    required this.emergencyImage,
+    required this.emergency,
   });
 
   @override
@@ -45,12 +49,26 @@ class FuelAndServiceCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '$fuelAmount, $fuelType',
-                    style: h5.copyWith(fontWeight: FontWeight.bold),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                       // '$fuelAmount, $fuelType',
+                        fuelType,
+                        style: h5.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      if (emergency) ...[
+                        sw5,
+                        Image.asset(
+                          emergencyImage,
+                          scale: 4,
+                        ),
+                      ],
+                    ],
                   ),
                   sh5,
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Image.asset(
                         locationIconPath,
@@ -60,6 +78,8 @@ class FuelAndServiceCard extends StatelessWidget {
                       Text(
                         location,
                         style: h6,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
                       ),
                     ],
                   ),

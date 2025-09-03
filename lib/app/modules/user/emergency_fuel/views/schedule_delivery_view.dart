@@ -66,7 +66,7 @@ class ScheduleDeliveryView extends GetView {
             CustomButton(
               text: 'Next',
               onPressed: () {
-                Get.to(()=> ScheduleDeliveryFromCalenderView());
+                //Get.to(()=> ScheduleDeliveryFromCalenderView());
               },
               gradientColors: AppColors.gradientColorGreen,
             ),

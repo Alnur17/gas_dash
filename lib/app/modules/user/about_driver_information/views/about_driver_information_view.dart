@@ -2,33 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:gas_dash/app/modules/user/about_driver_information/views/ratings_view.dart';
 import 'package:gas_dash/app/modules/user/about_driver_information/views/write_review_view.dart';
+import 'package:gas_dash/app/modules/user/dashboard/views/dashboard_view.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
 import 'package:gas_dash/common/widgets/custom_button.dart';
 import 'package:gas_dash/common/widgets/custom_row_header.dart';
-
 import 'package:get/get.dart';
-
+import 'package:url_launcher/url_launcher.dart';
+import '../../../../../common/helper/socket_service.dart';
+import '../../message/controllers/message_send_controller.dart';
+import '../../order_history/model/order_history_model.dart';
 import '../controllers/about_driver_information_controller.dart';
 
 class AboutDriverInformationView
-    extends GetView<AboutDriverInformationController> {
-  const AboutDriverInformationView({super.key});
+    extends StatelessWidget {
+
+  final DriverId? driver;
+  final UserId? userId;
+
+   AboutDriverInformationView({super.key,  this.driver, this.userId});
 
   final profileImage =
-      'https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=800&q=80'; // Replace with your own or AssetImage
-  final reviewerImage =
-      'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=80&q=80';
+      'https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg';
+
+  final MessageSendController messageSendController = Get.put(MessageSendController());
+  final SocketService socketService = Get.put(SocketService());
 
   @override
   Widget build(BuildContext context) {
+    // Ensure controller is initialized
     return Scaffold(
       backgroundColor: const Color(0xfff5f7f8),
       body: SafeArea(
         child: Column(
           children: [
-            // Header with image and details
             ClipRRect(
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(32),
@@ -38,9 +46,16 @@ class AboutDriverInformationView
                 children: [
                   Image.network(
                     profileImage,
+                    // Replace with controller.reviews[0].driverId?.image if available
                     height: 250,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Image.network(
+                      profileImage,
+                      height: 250,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   Container(
                     height: 250,
@@ -57,23 +72,40 @@ class AboutDriverInformationView
                   ),
                   Positioned(
                     left: 20,
+                    top: 20,
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: Container(
+                        decoration: ShapeDecoration(
+                            shape: CircleBorder(), color: AppColors.white),
+                        child: Image.asset(
+                          AppImages.back,
+                          scale: 4,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: 20,
                     bottom: 32,
                     right: 20,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'John Deo',
-                          style: TextStyle(
+                        Text(
+                          driver!.fullname.toString(),
+                          style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 24,
                           ),
                         ),
                         const SizedBox(height: 4),
-                        const Text(
-                          'Driver',
-                          style: TextStyle(
+                        Text(
+                          driver!.role.toString(),
+                          style: const TextStyle(
                             color: Colors.white70,
                             fontWeight: FontWeight.w500,
                             fontSize: 16,
@@ -82,28 +114,72 @@ class AboutDriverInformationView
                         const SizedBox(height: 16),
                         Row(
                           children: [
-                            _buildIconLabel(
-                              icon: AppImages.chatTwo,
-                              label: '',
-                              backgroundColor: Colors.black.withOpacity(0.4),
+                            GestureDetector(
+                              onTap: () async {
+                                  final data = {
+                                    'receiver': driver!.id.toString(),
+                                    'text': "Hello",
+                                  };
+                                  try {
+                                    print('Sending message with data: $data');
+                                    final ack = await socketService.emitWithAck('send-message', data);
+                                    print('Acknowledgment received: $ack, type: ${ack.runtimeType}');
+                                    print("send dddd");
+                                  Get.to(() => DashboardView());
+                                    if (ack == true) {
+                                      messageSendController.messageTextController.clear();
+                                    } else {
+                                      print('Acknowledgment failed or invalid: $ack');
+                                    }
+                                  } catch (e) {
+                                    print('Error sending message: $e');
+                                  }
+
+                              },
+                              child: _buildIconLabel(
+                                icon: AppImages.chatTwo,
+                                label: '',
+                                backgroundColor: Colors.black.withOpacity(0.4),
+                              ),
                             ),
                             const SizedBox(width: 8),
                             _buildIconLabel(
-                              icon:AppImages.work,
-                              label: '10+ Experience',
-                              backgroundColor: Colors.black.withOpacity(0.4),
+                              icon: AppImages.work,
+                              label:
+                              '${driver!.experience}+ Experience',
+                              backgroundColor:
+                              Colors.black.withOpacity(0.4),
                             ),
                             const SizedBox(width: 8),
                             _buildIconLabel(
                               icon: AppImages.star,
-                              label: '5',
-                              backgroundColor: Colors.black.withOpacity(0.4),
+                              label: driver!.avgRating.toString(),
+                              backgroundColor:
+                              Colors.black.withOpacity(0.4),
                             ),
                             const SizedBox(width: 8),
-                            _buildIconLabel(
-                              icon: AppImages.callSmall,
-                              label: '',
-                              backgroundColor: Colors.black.withOpacity(0.4),
+                            GestureDetector(
+                              onTap: () async {
+                                final Uri phoneUri = Uri(
+                                    scheme: 'tel',
+                                    path:
+                                    '${driver!.phoneNumber ?? 0}');
+                                if (await canLaunchUrl(phoneUri)) {
+                                  await launchUrl(phoneUri);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content:
+                                        Text('Could not launch phone dialer')),
+                                  );
+                                }
+                              },
+                              child: _buildIconLabel(
+
+                                icon: AppImages.callSmall,
+                                label: '',
+                                backgroundColor: Colors.black.withOpacity(0.4),
+                              ),
                             ),
                           ],
                         )
@@ -114,12 +190,12 @@ class AboutDriverInformationView
               ),
             ),
             sh20,
-            CustomRowHeader(
-              title: 'Reviews',
-              onTap: () {
-                Get.to(()=> RatingsView());
-              },
-            ),
+            // CustomRowHeader(
+            //   title: 'Reviews',
+            //   onTap: () {
+            //     Get.to(() => RatingsView());
+            //   },
+            // ),
             // Reviews & List
             Expanded(
               child: Padding(
@@ -129,26 +205,28 @@ class AboutDriverInformationView
                   children: [
                     // Reviews List
                     Expanded(
-                      child: ListView.separated(
-                        itemCount: 2,
+                      child:  driver!.reviews.isEmpty? Text("Empty review") :   Expanded(child: ListView.separated(
+                        itemCount: driver!.reviews.length,
                         separatorBuilder: (_, __) => const SizedBox(height: 16),
                         itemBuilder: (context, index) {
+                          final review = driver!.reviews[index];
                           return _buildReviewItem(
-                            imageUrl: reviewerImage,
-                            name: 'Emily Anderson',
-                            rating: 5,
-                            review:
-                                'My fuel was delivered quickly, and the driver, [Driver Name], was very professional and friendly. The process was smooth, and I really appreciated the real-time tracking. Highly recommend this service',
+                            imageUrl: userId!.image ?? profileImage,
+                            name: userId!.fullname ?? 'Anonymous',
+                            rating:
+                            double.parse(driver!.reviews[index].rating.toString()) ??
+                                0.0,
+                            review: driver!.reviews[index].review.toString() ??
+                                'No review provided',
                           );
                         },
-                      ),
+                      ),),
                     ),
-
                     // Write Review Button
                     CustomButton(
                       text: 'Write Review',
                       onPressed: () {
-                        Get.to(()=> WriteReviewView());
+                        Get.to(() => WriteReviewView(driver!.id));
                       },
                       gradientColors: AppColors.gradientColorGreen,
                     ),
@@ -197,7 +275,7 @@ class AboutDriverInformationView
   Widget _buildReviewItem({
     required String imageUrl,
     required String name,
-    required int rating,
+    required double rating,
     required String review,
   }) {
     return Column(
@@ -213,10 +291,15 @@ class AboutDriverInformationView
                 width: 48,
                 height: 48,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Image.network(
+                  profileImage,
+                  width: 48,
+                  height: 48,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             const SizedBox(width: 12),
-
             // Review content
             Expanded(
               child: Column(
@@ -234,7 +317,7 @@ class AboutDriverInformationView
                   Row(
                     children: [
                       RatingBarIndicator(
-                        rating: rating.toDouble(),
+                        rating: rating,
                         itemBuilder: (context, _) => const Icon(
                           Icons.star,
                           color: Colors.amber,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
+import '../../app/modules/user/order_fuel/controllers/order_fuel_controller.dart';
 import '../app_color/app_colors.dart';
 import '../app_images/app_images.dart';
 import '../app_text_style/styles.dart';
@@ -7,30 +8,23 @@ import '../size_box/custom_sizebox.dart';
 import '../widgets/custom_button.dart';
 
 class VehicleCard extends StatelessWidget {
-  final String buttonText;
-  final VoidCallback onButtonPressed;
+  final VoidCallback onAddCarTap;
+  final VoidCallback onSelectCarTap;
   final String imageAssetPath;
-  final String labelText;
-  final TextStyle? labelStyle;
-  final TextStyle? buttonTextStyle;
 
   const VehicleCard({
     super.key,
-    required this.buttonText,
-    required this.onButtonPressed,
+    required this.onAddCarTap,
+    required this.onSelectCarTap,
     required this.imageAssetPath,
-    this.labelText = 'Add Vehicle',
-    this.labelStyle,
-    this.buttonTextStyle,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 8,
-      ),
+    final OrderFuelController controller = Get.find<OrderFuelController>();
+
+    return Obx(() => Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: AppColors.white,
@@ -38,37 +32,96 @@ class VehicleCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Image.asset(
-                imageAssetPath,
-                scale: 4,
-              ),
-              sw12,
-              Text(
-                labelText,
-                style: labelStyle ??
-                    h5.copyWith(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          sh12,
-          CustomButton(
-            text: buttonText,
-            onPressed: onButtonPressed,
-            height: 40,
-            width: 100,
-            borderRadius: 8,
-            backgroundColor: Colors.blue[50],
-            imageAssetPath: AppImages.add,
-            iconColor: AppColors.blueLight,
-            textStyle: buttonTextStyle ??
-                h5.copyWith(
-                  color: AppColors.blueLight,
+          if (controller.confirmedVehicle.value == null) ...[
+            Row(
+              children: [
+                Image.asset(
+                  imageAssetPath,
+                  scale: 4,
                 ),
-          ),
+                sw12,
+                Text(
+                  'Add Vehicle',
+                  style: h5.copyWith(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            sh12,
+            Row(
+              children: [
+                CustomButton(
+                  text: 'Add',
+                  onPressed: onAddCarTap,
+                  height: 40,
+                  width: 100,
+                  borderRadius: 8,
+                  backgroundColor: Colors.blue[50],
+                  imageAssetPath: AppImages.add,
+                  iconColor: AppColors.blueLight,
+                  textStyle: h5.copyWith(color: AppColors.blueLight),
+                ),
+                sw5,
+                CustomButton(
+                  text: 'Select Car',
+                  onPressed: onSelectCarTap,
+                  height: 40,
+                  width: 130,
+                  borderRadius: 8,
+                  backgroundColor: Colors.blue[50],
+                  imageAssetPath: AppImages.edit,
+                  iconColor: AppColors.blueLight,
+                  textStyle: h5.copyWith(color: AppColors.blueLight),
+                ),
+              ],
+            ),
+          ] else ...[
+            Row(
+              children: [
+                Image.asset(
+                  AppImages.car,
+                  scale: 4,
+                ),
+                sw12,
+                Text(
+                  '${controller.confirmedVehicle.value!['year']} ${controller.confirmedVehicle.value!['make']} ${controller.confirmedVehicle.value!['model']}',
+                  style: h5.copyWith(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            sh12,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                CustomButton(
+                  text: 'Change',
+                  onPressed: () {
+                    controller.resetForm();
+                    onAddCarTap();
+                  },
+                  height: 40,
+                  width: 100,
+                  borderRadius: 8,
+                  backgroundColor: Colors.blue[50],
+                  textStyle: h5.copyWith(color: AppColors.blueLight),
+                ),
+                sw12,
+                CustomButton(
+                  text: 'Remove',
+                  onPressed: () {
+                    controller.resetForm();
+                    controller.confirmedVehicle.value = null;
+                  },
+                  height: 40,
+                  width: 100,
+                  borderRadius: 8,
+                  backgroundColor: Colors.red[50],
+                  textStyle: h5.copyWith(color: Colors.red),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
-    );
+    ));
   }
 }

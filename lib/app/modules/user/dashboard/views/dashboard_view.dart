@@ -10,6 +10,9 @@ import 'package:get/get.dart';
 
 import '../../../../../common/app_text_style/styles.dart';
 import '../../home/views/home_view.dart';
+import '../../profile/controllers/conditions_controller.dart';
+import '../../profile/controllers/profile_controller.dart';
+import '../../subscription/views/subscription_view.dart';
 import '../controllers/dashboard_controller.dart';
 
 class DashboardView extends StatefulWidget {
@@ -22,9 +25,12 @@ class DashboardView extends StatefulWidget {
 class _DashboardViewState extends State<DashboardView> {
   final DashboardController dashboardController =
       Get.put(DashboardController());
+  final profileController = Get.put(ProfileController());
+  final settingsController = Get.put(ConditionsController());
+
 
   static final List<Widget> _views = [
-    const HomeView(),
+    HomeView(),
     OrderHistoryView(),
     MessageView(),
     ProfileView(),
@@ -37,7 +43,11 @@ class _DashboardViewState extends State<DashboardView> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Get.to(()=> EmergencyFuelView());
+          profileController.myProfileData.value
+              ?.noExtraChargeForEmergencyFuelServiceLimit ==
+              true
+              ? Get.to(() => EmergencyFuelView())
+              : Get.to(() => SubscriptionView());
         },
         backgroundColor: AppColors.textColor,
         shape: const CircleBorder(),

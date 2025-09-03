@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/emergency_fuel/views/schedule_delivery_view.dart';
+import 'package:gas_dash/common/widgets/custom_button.dart';
 
 import 'package:get/get.dart';
 
@@ -7,11 +9,16 @@ import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/helper/fuel_card.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
+import '../../home/controllers/home_controller.dart';
 import '../../order_fuel/views/order_fuel_view.dart';
 import '../controllers/emergency_fuel_controller.dart';
 
 class EmergencyFuelView extends GetView<EmergencyFuelController> {
-  const EmergencyFuelView({super.key});
+
+  EmergencyFuelView( {super.key});
+
+  final homeController = Get.put(HomeController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +26,10 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
       appBar: AppBar(
         backgroundColor: AppColors.mainColor,
         scrolledUnderElevation: 0,
-        title: Text('EmergencyFuelView',style: titleStyle,),
+        title: Text(
+          'EmergencyFuelView',
+          style: titleStyle,
+        ),
         centerTitle: true,
         leading: GestureDetector(
           onTap: () {
@@ -47,31 +57,54 @@ class EmergencyFuelView extends GetView<EmergencyFuelController> {
           sh16,
           FuelCard(
             title: 'UNLEADED',
-            number: '89',
-            buttonText: 'Order Now',
+            // number: '87',
+            buttonText: 'Order\nNow',
             gradientColors: AppColors.gradientColorBlue,
             onTap: () {
-              Get.to(() => OrderFuelView());
+              final price =
+                  homeController.fuelPricesPerGallon['Unleaded'] ?? 0.0;
+              print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
+              Get.to(() => OrderFuelView(
+                    fuelName: 'Unleaded',
+                    // number: '87',
+                    fuelPrice: price,
+                    isEmergency: true,
+                  ));
             },
           ),
           sh16,
           FuelCard(
             title: 'PREMIUM',
-            number: '91',
-            buttonText: 'Order Now',
+            //number: '91',
+            buttonText: 'Order\nNow',
             gradientColors: AppColors.gradientColorGrey,
             onTap: () {
-              Get.to(() => OrderFuelView());
+              final price =
+                  homeController.fuelPricesPerGallon['Premium'] ?? 0.0;
+              print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
+              Get.to(() => OrderFuelView(
+                    fuelName: 'Premium',
+                    //number: '91',
+                    fuelPrice: price,
+                    isEmergency: true,
+                  ));
             },
           ),
           sh16,
           FuelCard(
             title: 'DIESEL',
-            number: '71',
-            buttonText: 'Order Now',
+            //number: '71',
+            buttonText: 'Order\nNow',
             gradientColors: AppColors.gradientColorGreen,
             onTap: () {
-              Get.to(() => OrderFuelView());
+              final price = homeController.fuelPricesPerGallon['Diesel'] ?? 0.0;
+              print(';;;;;;;;;; $price ;;;;;;;;;;;;;;;;;;');
+              Get.to(() => OrderFuelView(
+                    fuelName: 'Diesel',
+                    //number: '71',
+                    fuelPrice: price,
+                    isEmergency: true,
+                  ));
             },
           ),
         ],

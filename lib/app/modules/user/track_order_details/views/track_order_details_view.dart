@@ -65,10 +65,10 @@ class TrackOrderDetailsView extends GetView<TrackOrderDetailsController> {
                         ),
                       ],
                     ),
-                    Image.asset(
-                      AppImages.copy,
-                      scale: 4,
-                    ),
+                    // Image.asset(
+                    //   AppImages.copy,
+                    //   scale: 4,
+                    // ),
                   ],
                 ),
               ),
@@ -137,7 +137,7 @@ class TrackOrderDetailsView extends GetView<TrackOrderDetailsController> {
               CustomButton(
                 text: 'Tracking Order',
                 onPressed: () {
-                  Get.to(()=> LiveTrackingView());
+                  Get.to(()=> LiveTrackingView(index: 0,));
                 },
                 gradientColors:
                 AppColors.gradientColorGreen,

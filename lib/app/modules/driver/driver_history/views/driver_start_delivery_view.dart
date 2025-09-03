@@ -12,7 +12,25 @@ import 'package:get/get.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
 
 class DriverStartDeliveryView extends StatefulWidget {
-  const DriverStartDeliveryView({super.key});
+  final String orderId;
+  final String userId;
+  final String deliveryId;
+  final String customerName;
+  final String? customerImage;
+  final String amounts;
+  final String orderName;
+  final String? location;
+
+  const DriverStartDeliveryView(
+      {super.key,
+      required this.orderId,
+      required this.userId,
+      required this.deliveryId,
+      required this.customerName,
+      required this.customerImage,
+      required this.amounts,
+      required this.orderName,
+      required this.location});
 
   @override
   State<DriverStartDeliveryView> createState() =>
@@ -69,13 +87,13 @@ class _DriverStartDeliveryViewState extends State<DriverStartDeliveryView> {
                           style: h3,
                         ),
                         Text(
-                          '#798796',
+                          '#${widget.orderId}',
                           style: h5,
                         ),
-                        Text(
-                          'ETA: 10 mins | Distance: 2 miles',
-                          style: h5,
-                        ),
+                        // Text(
+                        //   'ETA: 10 mins | Distance: 2 miles',
+                        //   style: h5,
+                        // ),
                       ],
                     ),
                     Image.asset(
@@ -97,21 +115,21 @@ class _DriverStartDeliveryViewState extends State<DriverStartDeliveryView> {
                   children: [
                     Row(
                       children: [
-                        const CircleAvatar(
+                         CircleAvatar(
                           radius: 18,
                           backgroundImage:
-                              NetworkImage(AppImages.profileImageTwo),
+                              NetworkImage(widget.customerImage ?? AppImages.profileImageTwo),
                         ),
                         sw12,
                         Text(
-                          'Sarah J.',
+                          widget.customerName,
                           style: h3,
                         ),
                       ],
                     ),
                     sh12,
                     Text(
-                      '5 gallons , Premium',
+                      '${widget.amounts} , ${widget.orderName}',
                       style: h3,
                     ),
                     sh8,
@@ -123,7 +141,7 @@ class _DriverStartDeliveryViewState extends State<DriverStartDeliveryView> {
                         ),
                         sw8,
                         Text(
-                          '789 Pine Rd',
+                          widget.location.toString(),
                           style: h5,
                         ),
                       ],
@@ -275,7 +293,7 @@ class _DriverStartDeliveryViewState extends State<DriverStartDeliveryView> {
                       height: 40,
                       text: 'Yes, I Need Fuel',
                       onPressed: () {
-                        Get.to(()=> StationNearYouView());
+                        Get.to(() => StationNearYouView(deliveryId: widget.deliveryId, orderId: widget.orderId,userId: widget.userId,));
                       },
                       gradientColors: AppColors.gradientColorGreen,
                       textStyle: h7.copyWith(
@@ -290,7 +308,7 @@ class _DriverStartDeliveryViewState extends State<DriverStartDeliveryView> {
                       height: 40,
                       text: 'No, I Don’t Need Fuel',
                       onPressed: () {
-                        Get.to(()=> DriverLiveTrackView());
+                        Get.to(() => DriverLiveTrackView(deliveryId: widget.deliveryId, orderId: widget.orderId, userId: widget.userId ));
                       },
                       backgroundColor: AppColors.silver,
                       borderColor: AppColors.primaryColor,

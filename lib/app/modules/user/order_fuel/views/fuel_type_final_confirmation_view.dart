@@ -1,16 +1,54 @@
 import 'package:flutter/material.dart';
-
+import 'package:gas_dash/common/widgets/custom_textfield.dart';
 import 'package:get/get.dart';
-
 import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_button.dart';
-import '../../../../../common/widgets/custom_circular_container.dart';
+import '../../../../../common/widgets/custom_loader.dart';
+import '../../../../../common/widgets/custom_snackbar.dart';
+import '../controllers/coupon_controller.dart';
+import '../controllers/order_fuel_controller.dart';
 
-class FuelTypeFinalConfirmationView extends GetView {
-  const FuelTypeFinalConfirmationView({super.key});
+class FuelTypeFinalConfirmationView extends StatefulWidget {
+  final bool? isEmergency;
+  final String vehicleId;
+  final bool presetAmount;
+  final bool customAmount;
+  final double amount;
+  final String fuelType;
+  final String? scheduleDate;
+  final String? scheduleTime;
+
+  const FuelTypeFinalConfirmationView({
+    super.key,
+    required this.vehicleId,
+    required this.presetAmount,
+    required this.fuelType,
+    required this.amount,
+    required this.customAmount,
+    this.isEmergency,
+    this.scheduleDate,
+    this.scheduleTime,
+  });
+
+  @override
+  State<FuelTypeFinalConfirmationView> createState() =>
+      _FuelTypeFinalConfirmationViewState();
+}
+
+class _FuelTypeFinalConfirmationViewState
+    extends State<FuelTypeFinalConfirmationView> {
+  final OrderFuelController controller = Get.put(OrderFuelController());
+  final CouponController couponController = Get.put(CouponController());
+  final TextEditingController couponTextController = TextEditingController();
+
+  @override
+  void dispose() {
+    couponTextController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,79 +57,136 @@ class FuelTypeFinalConfirmationView extends GetView {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         scrolledUnderElevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 12),
-          child: CustomCircularContainer(
-            imagePath: AppImages.back,
-            onTap: () {
-              Get.back();
-            },
-            padding: 2,
-          ),
-        ),
+        automaticallyImplyLeading: false,
         title: Text('Final Confirmation', style: titleStyle),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            sh20,
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Colors.white,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      body: Obx(() {
+        // Show loading indicator while fetching location
+        if (controller.currentLocation.value == 'Fetching location...') {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                sh20,
+                Text(
+                  'Discount Coupon',
+                  style: h5.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                sh8,
+                Row(
                   children: [
-                    Text('Location',
-                        style: h5.copyWith(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Text('19456 Oak St, Denver, CO 80202', style: h6),
-                    const SizedBox(height: 16),
-                    Text('Vehicle',
-                        style: h5.copyWith(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Text('Ford F-150, 2020, ~20% fuel', style: h6),
-                    const SizedBox(height: 16),
-                    Text('Fuel Type',
-                        style: h5.copyWith(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Text('Premium', style: h6),
-                    const SizedBox(height: 16),
-                    Text('Amount',
-                        style: h5.copyWith(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Text('\$15 gallons', style: h6),
-                    const SizedBox(height: 16),
-                    Text('Delivery Fee',
-                        style: h5.copyWith(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Text('\$5.00', style: h6),
-                    const SizedBox(height: 16),
-                    Text('Mandatory Tip',
-                        style: h5.copyWith(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Text('\$3.00', style: h6),
+                    Expanded(
+                      child: CustomTextField(
+                        controller: couponTextController,
+                        borderColor: AppColors.orange,
+                        preIcon: Image.asset(
+                          AppImages.coupon,
+                          scale: 4,
+                        ),
+                        hintText: 'Enter coupon code',
+                      ),
+                    ),
+                    sw5,
+                    Obx(() => couponController.isLoading.value
+                        ? const CircularProgressIndicator()
+                        : CustomButton(
+                      borderColor: AppColors.orange,
+                      borderRadius: 12,
+                      text: 'Apply',
+                      onPressed: () {
+                        if (couponTextController.text.isNotEmpty) {
+                          couponController
+                              .checkCoupon(couponTextController.text);
+                        } else {
+                          kSnackBar(
+                            message: 'Please enter a coupon code',
+                            bgColor: AppColors.orange,
+                          );
+                        }
+                      },
+                      width: 100,
+                      textColor: AppColors.orange,
+                    )),
                   ],
                 ),
-              ),
+                sh20,
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Location',
+                            style: h5.copyWith(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        Text(controller.currentLocation.value, style: h6),
+                        const SizedBox(height: 16),
+                        Text('Fuel Type',
+                            style: h5.copyWith(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        Text(widget.fuelType, style: h6),
+                        const SizedBox(height: 16),
+                        Text('Amount',
+                            style: h5.copyWith(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        Text('${widget.amount} gallons', style: h6),
+                        const SizedBox(height: 16),
+                        // Text('Delivery Fee',
+                        //     style: h5.copyWith(fontWeight: FontWeight.bold)),
+                        // const SizedBox(height: 8),
+                        sh10,
+                        controller.isLoading.value
+                            ? CustomLoader(color: AppColors.white)
+                            : CustomButton(
+                          text: 'Next',
+                          onPressed: () {
+                            if (widget.isEmergency == true) {
+                              controller.createOrder(
+                                isEmergency: widget.isEmergency,
+                                vehicleId: widget.vehicleId,
+                                presetAmount: widget.presetAmount,
+                                customAmount: widget.customAmount,
+                                amount: widget.amount,
+                                fuelType: widget.fuelType,
+                                schedulTime: widget.scheduleTime,
+                                schedulDate: widget.scheduleDate,
+                              );
+                            } else {
+                              controller.createOrder(
+                                isEmergency: widget.isEmergency,
+                                vehicleId: widget.vehicleId,
+                                presetAmount: widget.presetAmount,
+                                customAmount: widget.customAmount,
+                                amount: widget.amount,
+                                fuelType: widget.fuelType,
+                              );
+                            }
+                          },
+                          gradientColors: AppColors.gradientColorGreen,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-            sh30,
-            CustomButton(
-              text: 'Next',
-              onPressed: () {},
-              gradientColors: AppColors.gradientColorGreen,
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      }),
     );
   }
 }
