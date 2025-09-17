@@ -25,7 +25,6 @@ class LoginController extends GetxController {
 
   void toggleCheckboxVisibility() {
     isCheckboxVisible.toggle();
-
   }
 
   Future userLogin({
@@ -34,9 +33,13 @@ class LoginController extends GetxController {
   }) async {
     try {
       isLoading(true);
+
+      String fcmToken = LocalStorage.getData(key: AppConstant.fcmToken);
+
       var map = {
         "email": email.toLowerCase().trim(),
         "password": password,
+        "fcmToken": fcmToken,
       };
 
       var headers = {
@@ -79,7 +82,7 @@ class LoginController extends GetxController {
           );
 
           String role =
-          responseBody['data']['user']['role'].toString().toLowerCase();
+              responseBody['data']['user']['role'].toString().toLowerCase();
           LocalStorage.saveData(key: AppConstant.role, data: role);
           kSnackBar(message: message, bgColor: AppColors.green);
 
@@ -108,5 +111,4 @@ class LoginController extends GetxController {
       isLoading(false);
     }
   }
-
 }

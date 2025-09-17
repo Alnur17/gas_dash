@@ -1,1 +1,41 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"gasdash-54378","appId":"1:947815682537:android:23d021479dfbc06d6abb78","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"gasdash-54378","configurations":{"android":"1:947815682537:android:23d021479dfbc06d6abb78","ios":"1:947815682537:ios:e956b6397f00ba186abb78","macos":"1:947815682537:ios:e956b6397f00ba186abb78","web":"1:947815682537:web:acbcbb865c4d0f496abb78","windows":"1:947815682537:web:5b38c8a7409bf2a96abb78"}}},"ios":{"default":{"projectId":"gasdash-54378","appId":"1:947815682537:ios:e956b6397f00ba186abb78","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"macos":{"default":{"projectId":"gasdash-54378","appId":"1:947815682537:ios:e956b6397f00ba186abb78","uploadDebugSymbols":false,"fileOutput":"macos/Runner/GoogleService-Info.plist"}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "gasdash-54378",
+          "appId": "1:947815682537:android:23d021479dfbc06d6abb78",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "gasdash-54378",
+          "configurations": {
+            "android": "1:947815682537:android:23d021479dfbc06d6abb78",
+            "ios": "1:947815682537:ios:e956b6397f00ba186abb78",
+            "macos": "1:947815682537:ios:e956b6397f00ba186abb78",
+            "web": "1:947815682537:web:acbcbb865c4d0f496abb78",
+            "windows": "1:947815682537:web:5b38c8a7409bf2a96abb78"
+          }
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "gasdash-54378",
+          "appId": "1:947815682537:ios:e956b6397f00ba186abb78",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "gasdash-54378",
+          "appId": "1:947815682537:ios:e956b6397f00ba186abb78",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      }
+    }
+  }
+}
