@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/data/api.dart';
-import 'package:gas_dash/app/modules/user/dashboard/views/dashboard_view.dart';
 import 'package:gas_dash/app/modules/user/payment/controllers/payment_controller.dart';
 import 'package:gas_dash/common/app_constant/app_constant.dart';
 import 'package:gas_dash/common/helper/local_store.dart';
@@ -295,35 +294,6 @@ class OrderFuelController extends GetxController {
           orderId: orderId,
           address: currentLocation.value,
         ));
-      }
-    } catch (e) {
-      Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  Future<void> cancelOrder(
-      String orderId,
-      ) async {
-    isLoading.value = true;
-    try {
-      var headers = {
-        'Content-Type': 'application/json',
-      };
-
-      http.Response response = await BaseClient.deleteRequest(
-        api: Api.cancelOrder(orderId),
-        headers: headers,
-      );
-
-      var responseData = await BaseClient.handleResponse(response);
-      if (responseData != null) {
-        kSnackBar(
-          message: 'Order cancel successfully!',
-          bgColor: AppColors.green,
-        );
-        Get.to(() => DashboardView());
       }
     } catch (e) {
       Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);

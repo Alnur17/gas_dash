@@ -22,9 +22,7 @@ class OrderHistoryController extends GetxController {
   void onInit() {
     fetchOrderHistory();
     super.onInit();
-
   }
-
 
   var locationNames = <String, String>{}.obs;
 
@@ -39,7 +37,9 @@ class OrderHistoryController extends GetxController {
             place.subLocality,
             place.subAdministrativeArea,
             place.country,
-          ].where((element) => element != null && element.isNotEmpty).join(", ");
+          ]
+              .where((element) => element != null && element.isNotEmpty)
+              .join(", ");
 
           locationNames[orderId] = address.isNotEmpty ? address : "Unknown";
         } else {
@@ -74,15 +74,15 @@ class OrderHistoryController extends GetxController {
         final orderHistory = OrderHistoryModel.fromJson(jsonResponse);
         if (orderHistory.success == true && orderHistory.data?.data != null) {
           orders.assignAll(orderHistory.data!.data);
-          inProcessOrders.assignAll(
-              orderHistory.data!.data.where((e) => e.orderStatus.toString() == "InProgress").toList()
-          );
-
+          inProcessOrders.assignAll(orderHistory.data!.data
+              .where((e) => e.orderStatus.toString() == "InProgress")
+              .toList());
         } else {
           errorMessage('No orders found');
         }
       } else {
-        errorMessage('Invalid response format: Expected Map<String, dynamic>, got ${jsonResponse.runtimeType}');
+        errorMessage(
+            'Invalid response format: Expected Map<String, dynamic>, got ${jsonResponse.runtimeType}');
       }
     } catch (e) {
       errorMessage('Failed to fetch order history: $e');
@@ -91,12 +91,14 @@ class OrderHistoryController extends GetxController {
     }
   }
 
-  Future<void> getSingleOrder(String orderId, String amount, String location) async {
+  Future<void> getSingleOrder(
+      String orderId, String amount, String location) async {
     try {
       isLoading.value = true;
       errorMessage('');
 
-      final String token = LocalStorage.getData(key: AppConstant.accessToken) ?? '';
+      final String token =
+          LocalStorage.getData(key: AppConstant.accessToken) ?? '';
       if (token.isEmpty) {
         throw Exception('No access token found');
       }
@@ -131,7 +133,8 @@ class OrderHistoryController extends GetxController {
           );
         }
       } else {
-        throw Exception('Expected Map<String, dynamic> but got ${jsonResponse.runtimeType}');
+        throw Exception(
+            'Expected Map<String, dynamic> but got ${jsonResponse.runtimeType}');
       }
     } catch (e) {
       debugPrint('Error in getSingleOrder: $e');

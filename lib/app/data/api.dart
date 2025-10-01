@@ -44,7 +44,7 @@ class Api {
 
   ///Order
   static const createOrder = "$baseUrl/orders/create-orderFuel"; //done
-  static cancelOrder(String orderId) => "$baseUrl/orders/$orderId"; //done
+  static cancelOrder(String orderId) => "$baseUrl/orders/unassign-driver/$orderId"; //done
 
   static const orderHistory = "$baseUrl/orders/my-order"; //done
 

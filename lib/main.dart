@@ -12,7 +12,7 @@ import 'common/helper/local_store.dart';
 import 'common/helper/socket_service.dart';
 import 'firebase_options.dart';
 
-/// 🔹 Must be a TOP-LEVEL function
+
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   debugPrint('Background message received: ${message.notification?.title}');

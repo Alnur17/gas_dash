@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:gas_dash/common/app_text_style/styles.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../../common/widgets/custom_button.dart';
+import '../../../../../common/widgets/custom_loader.dart';
 import '../../driver_home/controllers/driver_home_controller.dart';
 import '../../driver_home/model/single_order_by_Id_model.dart';
 
@@ -20,7 +22,7 @@ class DriverOrderDetailsView extends StatefulWidget {
 }
 
 class _DriverOrderDetailsViewState extends State<DriverOrderDetailsView> {
-  final DriverHomeController homeController = Get.put(DriverHomeController());
+  final DriverHomeController homeController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -175,14 +177,23 @@ class _DriverOrderDetailsViewState extends State<DriverOrderDetailsView> {
                   ],
                 ),
               sh20,
-              // Common Start Delivery Button
-              // CustomButton(
-              //   text: 'Start Delivery',
-              //   onPressed: () {
-              //     homeController.viewOrderDetails(widget.orderData?.id ?? '', widget.orderData?.location ?? 'Unknown');
-              //   },
-              //   gradientColors: AppColors.gradientColor,
-              // ),
+              //Common Start Delivery Button
+              Obx(
+                () {
+                  return homeController.isLoading.value == true
+                  ? CustomLoader(
+                  color: AppColors.white,
+                    gradientColors: AppColors.gradientColorRed,
+                  )
+                      : CustomButton(
+                    text: 'Cancel Order',
+                    onPressed: () {
+                      homeController.cancelOrder(widget.orderData?.id ?? '');
+                    },
+                    gradientColors: AppColors.gradientColorRed,
+                  );
+                }
+              ),
             ],
           ),
         ),

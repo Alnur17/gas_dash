@@ -18,6 +18,7 @@ class StationNearYouView extends StatefulWidget {
   final String userId;
   final String lat;
   final String long;
+
   const StationNearYouView({
     super.key,
     required this.deliveryId,
@@ -44,7 +45,8 @@ class _StationNearYouViewState extends State<StationNearYouView> {
   bool _isMapInitialized = false; // Track map initialization
 
   // Replace with your Google Maps API key (store securely in production)
-  static const String _googleApiKey = 'AIzaSyB_3nOokGz9jksH5jN_f05YNEJeZqWizYM'; // Replace with actual key
+  static const String _googleApiKey =
+      'AIzaSyB_3nOokGz9jksH5jN_f05YNEJeZqWizYM'; // Replace with actual key
 
   @override
   void initState() {
@@ -75,13 +77,14 @@ class _StationNearYouViewState extends State<StationNearYouView> {
           const SnackBar(content: Text('Location permissions are denied.')),
         );
         return;
-         }
+      }
     }
 
     if (permission == LocationPermission.deniedForever) {
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Location permissions are permanently denied.')),
+        const SnackBar(
+            content: Text('Location permissions are permanently denied.')),
       );
       return;
     }
@@ -97,7 +100,8 @@ class _StationNearYouViewState extends State<StationNearYouView> {
           Marker(
             markerId: const MarkerId('current_location'),
             position: LatLng(position.latitude, position.longitude),
-            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+            icon:
+                BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
             infoWindow: const InfoWindow(title: 'Your Location'),
           ),
         );
@@ -133,7 +137,8 @@ class _StationNearYouViewState extends State<StationNearYouView> {
     if (_isFetchingStations) return;
     setState(() => _isFetchingStations = true);
 
-    const String apiUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
+    const String apiUrl =
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
     final String url =
         '$apiUrl?location=$latitude,$longitude&radius=5000&type=gas_station&key=$_googleApiKey';
 
@@ -164,14 +169,17 @@ class _StationNearYouViewState extends State<StationNearYouView> {
               };
             }).toList();
 
-            _fuelStations.sort((a, b) => a['distance'].compareTo(b['distance']));
+            _fuelStations
+                .sort((a, b) => a['distance'].compareTo(b['distance']));
 
             _markers.clear();
             _markers.add(
               Marker(
                 markerId: const MarkerId('current_location'),
-                position: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
-                icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+                position: LatLng(
+                    _currentPosition!.latitude, _currentPosition!.longitude),
+                icon: BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueBlue),
                 infoWindow: const InfoWindow(title: 'Your Location'),
               ),
             );
@@ -185,7 +193,8 @@ class _StationNearYouViewState extends State<StationNearYouView> {
                     title: station['name'],
                     snippet: station['address'],
                   ),
-                  icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+                  icon: BitmapDescriptor.defaultMarkerWithHue(
+                      BitmapDescriptor.hueRed),
                   onTap: () {
                     _selectStation(station['id']);
                   },
@@ -209,8 +218,10 @@ class _StationNearYouViewState extends State<StationNearYouView> {
     }
   }
 
-  Future<void> _fetchRoute(LatLng origin, LatLng destination, String stationId) async {
-    const String apiUrl = 'https://maps.googleapis.com/maps/api/directions/json';
+  Future<void> _fetchRoute(
+      LatLng origin, LatLng destination, String stationId) async {
+    const String apiUrl =
+        'https://maps.googleapis.com/maps/api/directions/json';
     final String url =
         '$apiUrl?origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&key=$_googleApiKey';
 
@@ -219,7 +230,8 @@ class _StationNearYouViewState extends State<StationNearYouView> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['status'] == 'OK') {
-          final polylinePoints = data['routes'][0]['overview_polyline']['points'];
+          final polylinePoints =
+              data['routes'][0]['overview_polyline']['points'];
           final points = _decodePolyline(polylinePoints);
           setState(() {
             _polylines.clear();
@@ -239,7 +251,8 @@ class _StationNearYouViewState extends State<StationNearYouView> {
             destination,
           ]);
           if (_mapController != null) {
-            _mapController!.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
+            _mapController!
+                .animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
           }
         } else {
           throw Exception('Directions API Error: ${data['status']}');
@@ -319,8 +332,10 @@ class _StationNearYouViewState extends State<StationNearYouView> {
     }
   }
 
-  String _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-    double distanceInMeters = Geolocator.distanceBetween(lat1, lon1, lat2, lon2);
+  String _calculateDistance(
+      double lat1, double lon1, double lat2, double lon2) {
+    double distanceInMeters =
+        Geolocator.distanceBetween(lat1, lon1, lat2, lon2);
     double distanceInMiles = distanceInMeters / 1609.34;
     return '${distanceInMiles.toStringAsFixed(1)} miles';
   }
@@ -337,7 +352,8 @@ class _StationNearYouViewState extends State<StationNearYouView> {
         _mapController?.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(
-              target: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+              target: LatLng(
+                  _currentPosition!.latitude, _currentPosition!.longitude),
               zoom: 14,
             ),
           ),
@@ -369,122 +385,143 @@ class _StationNearYouViewState extends State<StationNearYouView> {
         centerTitle: true,
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.textColor,))
-          : Column(
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                GoogleMap(
-                  // Removed key: UniqueKey() to prevent reinitialization
-                  onMapCreated: _onMapCreated,
-                  initialCameraPosition: CameraPosition(
-                    target: _currentPosition != null
-                        ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
-                        : const LatLng(23.8103, 90.4125), // Default fallback
-                    zoom: 14,
+          ? const Center(
+              child: CircularProgressIndicator(
+              color: AppColors.textColor,
+            ))
+          : SafeArea(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        GoogleMap(
+                          // Removed key: UniqueKey() to prevent reinitialization
+                          onMapCreated: _onMapCreated,
+                          initialCameraPosition: CameraPosition(
+                            target: _currentPosition != null
+                                ? LatLng(_currentPosition!.latitude,
+                                    _currentPosition!.longitude)
+                                : const LatLng(
+                                    23.8103, 90.4125), // Default fallback
+                            zoom: 14,
+                          ),
+                          markers: _markers,
+                          polylines: _polylines,
+                          myLocationButtonEnabled: true,
+                          myLocationEnabled: true,
+                          zoomControlsEnabled: false,
+                          mapToolbarEnabled: true,
+                        ),
+                        if (!_isMapLoaded)
+                          const Center(
+                              child: CircularProgressIndicator(
+                            color: AppColors.textColor,
+                          )),
+                      ],
+                    ),
                   ),
-                  markers: _markers,
-                  polylines: _polylines,
-                  myLocationButtonEnabled: true,
-                  myLocationEnabled: true,
-                  zoomControlsEnabled: false,
-                ),
-                if (!_isMapLoaded)
-                  const Center(child: CircularProgressIndicator(color: AppColors.textColor,)),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            color: AppColors.white,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (_fuelStations.isNotEmpty)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Nearby Fuel Stations',
-                        style: h5.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      sh8,
-                      SizedBox(
-                        height: 150,
-                        child: ListView.builder(
-                          itemCount: _fuelStations.length > 5 ? 5 : _fuelStations.length,
-                          itemBuilder: (context, index) {
-                            final station = _fuelStations[index];
-                            return GestureDetector(
-                              onTap: () {
-                                _selectStation(station['id']);
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(bottom: 8),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Image.asset(
-                                      AppImages.gasStationSmall,
-                                      scale: 4,
-                                    ),
-                                    sw8,
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            station['name'],
-                                            style: h5,
-                                          ),
-                                          sh5,
-                                          Text(
-                                            station['address'],
-                                            style: h6,
-                                          ),
-                                          sh5,
-                                          Text(
-                                            '${station['distance']} miles',
-                                            style: h6,
-                                          ),
-                                        ],
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    color: AppColors.white,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (_fuelStations.isNotEmpty)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Nearby Fuel Stations',
+                                style: h5.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              sh8,
+                              SizedBox(
+                                height: 180,
+                                child: ListView.builder(
+                                  itemCount: _fuelStations.length > 5
+                                      ? 5
+                                      : _fuelStations.length,
+                                  itemBuilder: (context, index) {
+                                    final station = _fuelStations[index];
+                                    return GestureDetector(
+                                      onTap: () {
+                                        _selectStation(station['id']);
+                                      },
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 8),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Image.asset(
+                                              AppImages.gasStationSmall,
+                                              scale: 4,
+                                            ),
+                                            sw8,
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    station['name'],
+                                                    style: h5,
+                                                  ),
+                                                  sh5,
+                                                  Text(
+                                                    station['address'],
+                                                    style: h6,
+                                                  ),
+                                                  sh5,
+                                                  Text(
+                                                    '${station['distance']} miles',
+                                                    style: h6,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    );
+                                  },
                                 ),
                               ),
-                            );
+                            ],
+                          )
+                        else
+                          Text(
+                            'No fuel stations found nearby.',
+                            style: h6,
+                          ),
+                        sh12,
+                        CustomButton(
+                          text: 'On the Way',
+                          onPressed: () {
+                            if (!_isLoading) {
+                              setState(() => _isLoading = true);
+                              Get.off(() => DriverLiveTrackView(
+                                        deliveryId: widget.deliveryId,
+                                        orderId: widget.orderId,
+                                        userId: widget.userId,
+                                        lat: widget.lat,
+                                        long: widget.long,
+                                      ))
+                                  ?.then((_) =>
+                                      setState(() => _isLoading = false));
+                            }
                           },
+                          gradientColors: AppColors.gradientColorGreen,
                         ),
-                      ),
-                    ],
-                  )
-                else
-                  Text(
-                    'No fuel stations found nearby.',
-                    style: h6,
+                      ],
+                    ),
                   ),
-                sh12,
-                CustomButton(
-                  text: 'On the Way',
-                  onPressed: () {
-                    if (!_isLoading) {
-                      setState(() => _isLoading = true);
-                      Get.off(() => DriverLiveTrackView(
-                        deliveryId: widget.deliveryId,
-                        orderId: widget.orderId,
-                        userId: widget.userId, lat: widget.lat, long: widget.long,
-                      ))?.then((_) => setState(() => _isLoading = false));
-                    }
-                  },
-                  gradientColors: AppColors.gradientColorGreen,
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
     );
   }
 

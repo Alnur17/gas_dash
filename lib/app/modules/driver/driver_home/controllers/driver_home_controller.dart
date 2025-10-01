@@ -242,6 +242,7 @@ import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/widgets/custom_snackbar.dart';
 import '../../../../data/api.dart';
 import '../../../../data/base_client.dart';
+import '../../driver_dashboard/views/driver_dashboard_view.dart';
 import '../../driver_history/views/driver_order_details_view.dart';
 import '../model/assigned_order_model.dart';
 import '../model/single_order_by_Id_model.dart';
@@ -288,7 +289,6 @@ class DriverHomeController extends GetxController {
         filterOrders();
         showPendingOrders();
       } else {
-
         debugPrint(assignedOrder.message ?? 'Failed to fetch orders');
         kSnackBar(
           message: assignedOrder.message ?? 'Failed to fetch orders',
@@ -361,7 +361,8 @@ class DriverHomeController extends GetxController {
       final singleOrder = SingleOrderByIdModel.fromJson(result);
 
       if (singleOrder.success == true && singleOrder.data != null) {
-        Get.to(() => DriverOrderDetailsView(orderData: singleOrder.data!, location: location));
+        Get.to(() => DriverOrderDetailsView(
+            orderData: singleOrder.data!, location: location));
       } else {
         kSnackBar(
           message: singleOrder.message ?? 'Failed to fetch order details',
@@ -377,7 +378,6 @@ class DriverHomeController extends GetxController {
       isLoading.value = false;
     }
   }
-
 
   Future<void> acceptOrder(String orderId) async {
     try {
@@ -403,11 +403,10 @@ class DriverHomeController extends GetxController {
       final result = await BaseClient.handleResponse(response);
 
       if (result['success'] == true) {
-        // Extract _id (deliveryId) from the response
         final deliveryId = result['data']['_id'];
         if (deliveryId != null) {
-          // Save deliveryId to LocalStorage
-          await LocalStorage.saveData(key: AppConstant.deliveryId, data: deliveryId);
+          await LocalStorage.saveData(
+              key: AppConstant.deliveryId, data: deliveryId);
           print('Saved deliveryId to LocalStorage: $deliveryId');
         } else {
           print('No deliveryId found in response');
@@ -440,6 +439,43 @@ class DriverHomeController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  Future<void> cancelOrder(
+    String orderId,
+  ) async {
+    isLoading.value = true;
+
+    final String token = LocalStorage.getData(key: AppConstant.accessToken);
+
+    try {
+      var headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      };
+
+      final response = await BaseClient.postRequest(
+        api: Api.cancelOrder(orderId),
+        headers: headers,
+      );
+
+      var responseData = await BaseClient.handleResponse(response);
+      if (responseData != null) {
+        kSnackBar(
+          message: 'Order cancel successfully!',
+          bgColor: AppColors.green,
+        );
+        Get.to(() => DriverDashboardView());
+        fetchAssignedOrders();
+        pendingOrders.refresh();
+        displayedOrders.refresh();
+      }
+    } catch (e) {
+      Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   //
   // Future<void> acceptOrder(String orderId) async {
   //   try {
@@ -502,7 +538,9 @@ class DriverHomeController extends GetxController {
             place.subLocality,
             place.subAdministrativeArea,
             place.country,
-          ].where((element) => element != null && element.isNotEmpty).join(", ");
+          ]
+              .where((element) => element != null && element.isNotEmpty)
+              .join(", ");
           locationNames[orderId] = address.isNotEmpty ? address : "Unknown";
         } else {
           locationNames[orderId] = "Unknown";

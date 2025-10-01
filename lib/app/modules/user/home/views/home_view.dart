@@ -80,11 +80,11 @@ class _HomeViewState extends State<HomeView> {
         backgroundColor: AppColors.white,
         color: AppColors.textColor,
         onRefresh: () async {
-           oHController.fetchOrderHistory();
-           profileController.getMyProfile();
-           homeController.getFuelInfo();
-           homeController.fetchServices();
-           settingsController.fetchConditions();
+          oHController.fetchOrderHistory();
+          profileController.getMyProfile();
+          homeController.getFuelInfo();
+          homeController.fetchServices();
+          settingsController.fetchConditions();
         },
         child: SingleChildScrollView(
           child: Column(
@@ -93,96 +93,97 @@ class _HomeViewState extends State<HomeView> {
               Obx(() => profileController.isLoading.value
                   ? _buildProfileShimmer()
                   : profileController.myProfileData.value?.title != null
-                  ? Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.silver),
-                  color: AppColors.white,
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Obx(
-                              () => CachedNetworkImage(
-                            imageUrl: profileController
-                                .myProfileData.value?.image ??
-                                AppImages.profileImageTwo,
-                            imageBuilder: (context, imageProvider) =>
-                                CircleAvatar(
-                                  radius: 25,
-                                  backgroundColor: AppColors.white,
-                                  backgroundImage: imageProvider,
-                                ),
-                            placeholder: (context, url) => CircleAvatar(
-                              radius: 25,
-                              backgroundColor: AppColors.white,
-                              child: CircularProgressIndicator(
-                                color: AppColors.textColor,
-                              ),
-                            ),
-                            errorWidget: (context, url, error) =>
-                                CircleAvatar(
-                                  radius: 25,
-                                  backgroundColor: AppColors.white,
-                                  backgroundImage:
-                                  AssetImage(AppImages.profileImageTwo),
-                                ),
+                      ? Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: AppColors.silver),
+                            color: AppColors.white,
                           ),
-                        ),
-                        sw8,
-                        Obx(
-                              () {
-                            return Column(
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  profileController.myProfileData
-                                      .value?.fullname ??
-                                      'Unknown',
-                                  style: h3.copyWith(
-                                    fontWeight: FontWeight.w700,
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Obx(
+                                    () => CachedNetworkImage(
+                                      imageUrl: profileController
+                                              .myProfileData.value?.image ??
+                                          AppImages.profileImageTwo,
+                                      imageBuilder: (context, imageProvider) =>
+                                          CircleAvatar(
+                                        radius: 25,
+                                        backgroundColor: AppColors.white,
+                                        backgroundImage: imageProvider,
+                                      ),
+                                      placeholder: (context, url) =>
+                                          CircleAvatar(
+                                        radius: 25,
+                                        backgroundColor: AppColors.white,
+                                        child: CircularProgressIndicator(
+                                          color: AppColors.textColor,
+                                        ),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          CircleAvatar(
+                                        radius: 25,
+                                        backgroundColor: AppColors.white,
+                                        backgroundImage: AssetImage(
+                                            AppImages.profileImageTwo),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  'Customer',
-                                  style: h6.copyWith(
-                                    color: AppColors.blueTurquoise,
+                                  sw8,
+                                  Obx(
+                                    () {
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            profileController.myProfileData
+                                                    .value?.fullname ??
+                                                'Unknown',
+                                            style: h3.copyWith(
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Customer',
+                                            style: h6.copyWith(
+                                              color: AppColors.blueTurquoise,
+                                            ),
+                                          ),
+                                          Text(
+                                            profileController.myProfileData
+                                                        .value?.title !=
+                                                    null
+                                                ? 'Subscription Type:\n${profileController.myProfileData.value?.title.toString()}'
+                                                : 'Subscription Type: Unsubscribe',
+                                            style: h6,
+                                          ),
+                                        ],
+                                      );
+                                    },
                                   ),
-                                ),
-                                Text(
-                                  profileController.myProfileData
-                                      .value?.title !=
-                                      null
-                                      ? 'Subscription Type:\n${profileController.myProfileData.value?.title.toString()}'
-                                      : 'Subscription Type: Unsubscribe',
-                                  style: h6,
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                    sh12,
-                    CustomButton(
-                      text: 'Manage Subscription',
-                      onPressed: () {
-                        Get.to(() => profileController
-                            .myProfileData.value?.title !=
-                            null
-                            ? AfterSubscriptionView()
-                            : SubscriptionView());
-                      },
-                      gradientColors: AppColors.gradientColor,
-                    ),
-                  ],
-                ),
-              )
-                  : Container()),
+                                ],
+                              ),
+                              sh12,
+                              CustomButton(
+                                text: 'Manage Subscription',
+                                onPressed: () {
+                                  Get.to(() => profileController
+                                              .myProfileData.value?.title !=
+                                          null
+                                      ? AfterSubscriptionView()
+                                      : SubscriptionView());
+                                },
+                                gradientColors: AppColors.gradientColor,
+                              ),
+                            ],
+                          ),
+                        )
+                      : Container()),
               sh16,
               Obx(() {
                 if (homeController.isLoading.value) {
@@ -262,11 +263,11 @@ class _HomeViewState extends State<HomeView> {
                                 width: 110,
                                 padding: EdgeInsets.only(left: 10, right: 10),
                                 text:
-                                (fuel.fuelPrice ?? 0.0).toStringAsFixed(2),
+                                    (fuel.fuelPrice ?? 0.0).toStringAsFixed(2),
                                 onPressed: () {},
                                 borderRadius: 8,
                                 backgroundColor:
-                                _getFuelColor(fuel.fuelName ?? ''),
+                                    _getFuelColor(fuel.fuelName ?? ''),
                               ),
                             ],
                           ),
@@ -305,9 +306,9 @@ class _HomeViewState extends State<HomeView> {
                     return Padding(
                       padding: EdgeInsets.only(
                           bottom: index ==
-                              (homeController.fuelInfo.value?.data.length ??
-                                  1) -
-                                  1
+                                  (homeController.fuelInfo.value?.data.length ??
+                                          1) -
+                                      1
                               ? 0
                               : 16),
                       child: FuelCard(
@@ -316,9 +317,9 @@ class _HomeViewState extends State<HomeView> {
                         gradientColors: AppColors.gradientColorBlue,
                         onTap: () {
                           Get.to(() => OrderFuelView(
-                            fuelName: fuelData?.fuelName,
-                            fuelPrice: fuelData?.fuelPrice,
-                          ))?.then((result) {
+                                fuelName: fuelData?.fuelName,
+                                fuelPrice: fuelData?.fuelPrice,
+                              ))?.then((result) {
                             if (result == true) {
                               oHController.fetchOrderHistory();
                             }
@@ -361,16 +362,16 @@ class _HomeViewState extends State<HomeView> {
                     return Padding(
                       padding: EdgeInsets.only(
                         bottom:
-                        index == homeController.services.length - 1 ? 0 : 8,
+                            index == homeController.services.length - 1 ? 0 : 8,
                       ),
                       child: ServiceCard(
                         title: service.serviceName ?? 'Unnamed Service',
                         price:
-                        '\$${service.price?.toStringAsFixed(2) ?? 'N/A'}',
+                            '\$${service.price?.toStringAsFixed(2) ?? 'N/A'}',
                         buttonText: 'Order Now',
                         onServiceTap: () {
                           Get.to(
-                                () => JumpStartCarBatteryView(
+                            () => JumpStartCarBatteryView(
                               title: service.serviceName ?? 'Unnamed Service',
                               price: service.price?.toStringAsFixed(2) ?? 'N/A',
                             ),
@@ -398,16 +399,23 @@ class _HomeViewState extends State<HomeView> {
                   return _buildOrderHistoryShimmer();
                 }
                 final orders = oHController.orders
-                    .where((order) =>
-                order.orderStatus == 'active' &&
-                    order.isPaid == true)
+                    .where((order) => order.isPaid == true)
                     .toList();
                 if (orders.isEmpty) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 12),
-                    child: const Center(child: Text('No Pending orders found')),
+                    child: const Center(child: Text('No orders found')),
                   );
                 }
+
+                // final orders = oHController.orders; // show all
+                // if (orders.isEmpty) {
+                //   return const Padding(
+                //     padding: EdgeInsets.only(top: 12),
+                //     child: Center(child: Text('No orders found')),
+                //   );
+                // }
+
                 return ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -416,17 +424,17 @@ class _HomeViewState extends State<HomeView> {
                     final order = orders[index];
                     debugPrint('Rendering order status: ${order.orderStatus}');
                     return OrderHistoryCard(
-                      emergency: order.emergency ?? false,
-                      emergencyImage: AppImages.emergency,
-                      orderId: order.id ?? 'N/A',
-                      orderDate: order.createdAt?.toString() ?? 'Unknown',
-                      fuelQuantity: '${order.amount ?? 0} gallons',
-                      fuelType: order.fuelType ?? 'Unknown',
-                      price: (order.finalAmountOfPayment ?? 0.0)
-                          .toStringAsFixed(2),
-                      //status: order.orderStatus.toString(),
-                      status: 'Unassign',
-                    );
+                        emergency: order.emergency ?? false,
+                        emergencyImage: AppImages.emergency,
+                        orderId: order.id ?? 'N/A',
+                        orderDate: order.createdAt?.toString() ?? 'Unknown',
+                        fuelQuantity: '${order.amount ?? 0} gallons',
+                        fuelType: order.fuelType ?? 'Unknown',
+                        price: (order.finalAmountOfPayment ?? 0.0)
+                            .toStringAsFixed(2),
+                        status: order.orderStatus.toString(),
+                        //status: 'Unassign',
+                        );
                   },
                 );
               }),

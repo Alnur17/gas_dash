@@ -98,7 +98,8 @@ class ForgotPasswordController extends GetxController {
   Future verifyOtp({
     required String email,
     required String otp,
-  }) async {
+  })
+  async {
     try {
       String otpToken = LocalStorage.getData(key: AppConstant.verifyToken);
 
