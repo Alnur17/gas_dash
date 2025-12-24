@@ -10,6 +10,7 @@ class AppColors {
   static const blurBack = Color(0x8D8D8D6B);
   static const gradientColor = [Color(0xff63CCA4), Color(0xff409E7A)];
   static const gradientColorBlue = [Color(0xff63B3ED), Color(0xff3182CE)];
+  static const gradientColorRed = [Color(0xffed6863), Color(0xffce3631)];
   static const gradientColorGrey = [Color(0xffE2E2E2), Color(0xffA0A19E)];
   static const gradientColorGreen = [Color(0xff99ECCC), Color(0xff54B18D)];
 

@@ -1,80 +1,114 @@
 class Api {
   /// base url
-  static const baseUrl = "http://192.168.10.160:8000/api/v1";
+  static const baseUrl = "https://api.gasdash.io/api/v1";
+  static const socketUrl = "https://socket.gasdash.io";
 
-  ///auth
-  static const register = "$baseUrl/users/create"; //
-  static const login = "$baseUrl/auth/login"; //
-  static const forgotPassword = "$baseUrl/auth/forgot-password"; //
-  static const otpVerify = "$baseUrl/otp/verify-otp"; //
-  static const reSendOtp = "$baseUrl/otp/resend-otp"; //
-  static const resetPassword = "$baseUrl/auth/reset-password"; //
-  static const changePassword = "$baseUrl/auth/change-password"; //
+  // static const baseUrl = "http://103.186.20.117:1000/api/v1";
+  // static const socketUrl = "http://103.186.20.117:1001";
 
-  ///Sessions Data
-  static const sessions = "$baseUrl/sessions"; //done
+  // static const baseUrl = "http://10.10.10.15:1000/api/v1";
+  // static const socketUrl = "http://10.10.10.15:1001";
 
-  ///Trainers Data
+  ///auth api
+  static const register = "$baseUrl/users/create"; //done
+  static const login = "$baseUrl/auth/login"; //done
+  static const forgotPassword = "$baseUrl/auth/forgot-password"; //done
+  static const otpVerify = "$baseUrl/otp/verify-otp"; //done
+  static const reSendOtp = "$baseUrl/otp/resend-otp"; //done
+  static const resetPassword = "$baseUrl/auth/reset-password"; //done
+  static const changePassword = "$baseUrl/auth/change-password"; //done
+  static const deleteAccount = "$baseUrl/users/delete-my-account"; //done
 
-  static const trainers = "$baseUrl/trainers";//done
+  ///Gas Prices
+  static const fuelInfo = "$baseUrl/fuelInfo/userzipprise"; //done
 
-   static const recommendedTrainers = "$baseUrl/trainers/recommended"; //done
+  ///Business Hour
+  static const businessHour = "$baseUrl/business-ours"; //done
 
-  /// get session details by id
-  static getSingleSession(String id) => "$baseUrl/sessions/$id"; //done
+  ///Services
+  static const service = "$baseUrl/services/"; //done
 
-  /// get trainer details by id
-  static getSingleTrainer(String id) => "$baseUrl/trainers/$id"; //done
+  ///message
+  static const String allFriends = "$baseUrl/chats/my-chat-list";//done
+  static const String createChat = "$baseUrl/chats";//done
+  static const String sendMessage = "$baseUrl/messages/send-messages";//done
+  static chatDetails(chatId) =>
+      "$baseUrl/messages/?chat=$chatId&sort=createdAt";//done
 
-  ///showBookMarked
-  static const myBookings= "$baseUrl/bookings/my-bookings"; //done
+  ///Add Vehicle
 
-  static const addBookings = "$baseUrl/bookings"; // done
+  static const addVehicle = "$baseUrl/vehicles/create"; //done
 
-  static getSingleBookingById(String id) => "$baseUrl/bookings/$id"; // done
+  static const getMyVehicle = "$baseUrl/vehicles/my-vehicles"; //done
+  static const getMySubscriptionVehicle = "$baseUrl/vehicles/subscription-vehicles"; //done
 
-  static cancelBooking(String id) => "$baseUrl/bookings/canceled/$id"; // done
+  ///Order
+  static const createOrder = "$baseUrl/orders/create-orderFuel"; //done
+  static cancelOrder(String orderId) => "$baseUrl/orders/unassign-driver/$orderId"; //done
 
-  /// WaitList
-  static const addMyWaitlist = "$baseUrl/waitLists"; // done
+  static const orderHistory = "$baseUrl/orders/my-order"; //done
 
-  static const getMyWaitlist = "$baseUrl/waitLists/my-waitlist"; //done
+  static String singleOrderById(String orderId) => "$baseUrl/orders/$orderId"; //done
 
-  static removeWaitlist(String id) => "$baseUrl/waitLists/$id"; //done
+  static String orderDataConfirmation(String id) => "$baseUrl/orders/$id"; //done
+  static String orderReAssign(String id) => "$baseUrl/orders/reassign/$id"; //done
 
-  static removeWaitlistBySessionId(String sessionId) =>
-      "$baseUrl/waitLists/session/$sessionId"; //done
+  ///Coupon
+  static String coupon(String couponValue) => "$baseUrl/cupons/check/$couponValue"; //done
 
-  /// All slot
-  static timeSlot(String id) => "$baseUrl/session-slots/session/$id"; // done
+  ///driver assigned order
+  static const assignedOrder = "$baseUrl/orders/driver"; //done
 
   ///profile
   static const String myProfile = "$baseUrl/users/my-profile"; //done
 
   static const String editMyProfile = "$baseUrl/users/update-my-profile"; //done
 
-  static const String conditionsPage = "$baseUrl/settings"; //done
+  // static String confirmPayment(String sessionsId, String paymentId) =>
+  //     "$baseUrl/payments/confirm-payment?sessionId=$sessionsId&paymentId=$paymentId"; //
 
-  static String confirmPayment(String sessionsId, String paymentId) =>
-      "$baseUrl/payments/confirm-payment?sessionId=$sessionsId&paymentId=$paymentId"; //done
-
+  /// payment
   static const String createPayment = "$baseUrl/payments/checkout"; //done
 
-  static String paymentDetails(String id) => "$baseUrl/payments/$id"; //done
+  ///Driver Earning
+  static String singleDriverEarning(String id) => "$baseUrl/driverearnings/driver-erning/$id"; //done
 
-  static String singlePaymentByBookingId(String id) => "$baseUrl/payments/reference/$id"; //done
+  //static String paymentDetails(String id) => "$baseUrl/payments/$id"; //
 
-  static const String refundPayment =
-      "$baseUrl/payments/refound-payment"; //done
+  static const String withdrawRequest = "$baseUrl/withdrawal/create-withdraw"; //
 
-  static const String membershipPackages = "$baseUrl/packages"; //done
+  static const String notifications = "$baseUrl/notifications";
 
-  static const String creditPackages = "$baseUrl/credits?sort=credits"; //done
+  /// Term and conditions
+  static const String conditions = "$baseUrl/settings/";
 
-  static const  String createOrder = "$baseUrl/orders"; //done
+  ///Create Delivery/accept order
+  static const String acceptOrder = "$baseUrl/delivery/create-delivery/";
 
-  static const  String createSubscription = "$baseUrl/subscriptions"; //done
+  ///Subscriptions
 
-  static const String notifications =
-      "$baseUrl/notification/my-notification"; //done
+  static const String subscriptionCreate = "$baseUrl/subscription/";
+  static const String subscriptionPayment = "$baseUrl/payments/subscription/checkout";
+  static const String subscriptionPackage = "$baseUrl/packages/";
+
+  ///Questions
+  static const String questions = "$baseUrl/questions/";
+  static const String questionsCheckList = "$baseUrl/checklist/create-checklist";
+
+  static String updateDelivery(String deliveryId) => "$baseUrl/delivery/update/$deliveryId";
+
+
+  ///Reviews
+
+  static  String createReview(String driverId) => "$baseUrl/reviews/create";
+
+  static  String getReviews(String driverId) => "$baseUrl/reviews/driver/$driverId";
+
+  ///tips
+  static const String optionalTipCreate = "$baseUrl/optionalTip/create";
+  static const String optionalTipCheckout = "$baseUrl/payments/optional-tip/checkout";
+
+  ///Banner
+  static const String emergencyBanner = "$baseUrl/discountBanner";
+  static const String discountBanner = "$baseUrl/emergencyFuelBanner";
 }

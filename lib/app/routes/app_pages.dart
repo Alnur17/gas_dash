@@ -38,12 +38,12 @@ import '../modules/user/order_fuel/bindings/order_fuel_binding.dart';
 import '../modules/user/order_fuel/views/order_fuel_view.dart';
 import '../modules/user/order_history/bindings/order_history_binding.dart';
 import '../modules/user/order_history/views/order_history_view.dart';
+import '../modules/user/payment/bindings/payment_binding.dart';
+import '../modules/user/payment/views/payment_view.dart';
 import '../modules/user/profile/bindings/profile_binding.dart';
 import '../modules/user/profile/views/profile_view.dart';
 import '../modules/user/subscription/bindings/subscription_binding.dart';
 import '../modules/user/subscription/views/subscription_view.dart';
-import '../modules/user/track_order_details/bindings/track_order_details_binding.dart';
-import '../modules/user/track_order_details/views/track_order_details_view.dart';
 
 part 'app_routes.dart';
 
@@ -55,7 +55,7 @@ class AppPages {
   static final routes = [
     GetPage(
       name: _Paths.HOME,
-      page: () => const HomeView(),
+      page: () => HomeView(),
       binding: HomeBinding(),
     ),
     GetPage(
@@ -75,7 +75,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.SIGN_UP,
-      page: () => const SignUpView(),
+      page: () =>  SignUpView(),
       binding: SignUpBinding(),
     ),
     GetPage(
@@ -90,7 +90,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.PROFILE,
-      page: () => const ProfileView(),
+      page: () => ProfileView(),
       binding: ProfileBinding(),
     ),
     GetPage(
@@ -130,7 +130,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.DRIVER_PROFILE,
-      page: () => const DriverProfileView(),
+      page: () => DriverProfileView(),
       binding: DriverProfileBinding(),
     ),
     GetPage(
@@ -140,17 +140,12 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.JUMP_START_CAR_BATTERY,
-      page: () => const JumpStartCarBatteryView(),
+      page: () => JumpStartCarBatteryView(),
       binding: JumpStartCarBatteryBinding(),
     ),
     GetPage(
-      name: _Paths.TRACK_ORDER_DETAILS,
-      page: () => const TrackOrderDetailsView(),
-      binding: TrackOrderDetailsBinding(),
-    ),
-    GetPage(
       name: _Paths.ABOUT_DRIVER_INFORMATION,
-      page: () => const AboutDriverInformationView(),
+      page: () =>  AboutDriverInformationView(),
       binding: AboutDriverInformationBinding(),
     ),
     GetPage(
@@ -160,8 +155,13 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.EMERGENCY_FUEL,
-      page: () => const EmergencyFuelView(),
+      page: () =>  EmergencyFuelView(),
       binding: EmergencyFuelBinding(),
+    ),
+    GetPage(
+      name: _Paths.PAYMENT,
+      page: () => const PaymentView(),
+      binding: PaymentBinding(),
     ),
   ];
 }

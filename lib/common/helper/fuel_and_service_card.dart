@@ -13,6 +13,8 @@ class FuelAndServiceCard extends StatelessWidget {
   final VoidCallback onViewDetailsPressed;
   final String fuelIconPath;
   final String locationIconPath;
+  final String emergencyImage;
+  final bool emergency;
 
   const FuelAndServiceCard({
     super.key,
@@ -23,6 +25,8 @@ class FuelAndServiceCard extends StatelessWidget {
     required this.onViewDetailsPressed,
     required this.fuelIconPath,
     required this.locationIconPath,
+    required this.emergencyImage,
+    required this.emergency,
   });
 
   @override
@@ -42,28 +46,46 @@ class FuelAndServiceCard extends StatelessWidget {
                 scale: 4,
               ),
               sw8,
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '$fuelAmount, $fuelType',
-                    style: h5.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  sh5,
-                  Row(
-                    children: [
-                      Image.asset(
-                        locationIconPath,
-                        scale: 4,
-                      ),
-                      sw8,
-                      Text(
-                        location,
-                        style: h6,
-                      ),
-                    ],
-                  ),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                         // '$fuelAmount, $fuelType',
+                          fuelType,
+                          style: h5.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        if (emergency) ...[
+                          sw5,
+                          Image.asset(
+                            emergencyImage,
+                            scale: 4,
+                          ),
+                        ],
+                      ],
+                    ),
+                    sh5,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Image.asset(
+                          locationIconPath,
+                          scale: 4,
+                        ),
+                        sw8,
+                        Expanded(
+                          child: Text(
+                            location,
+                            style: h6,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -83,7 +105,7 @@ class FuelAndServiceCard extends StatelessWidget {
               Expanded(
                 child: CustomButton(
                   height: 40,
-                  text: 'View Details',
+                  text: 'Reject',
                   onPressed: onViewDetailsPressed,
                   gradientColors: AppColors.gradientColorGreen,
                 ),

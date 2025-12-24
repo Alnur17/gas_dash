@@ -13,6 +13,7 @@ import '../../../../../common/app_color/app_colors.dart';
 import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/helper/onboarding_widget.dart';
+import '../../auth_controller/auth_controller.dart';
 
 class OnboardingView extends StatefulWidget {
   const OnboardingView({super.key});
@@ -23,6 +24,8 @@ class OnboardingView extends StatefulWidget {
 
 class _OnboardingViewState extends State<OnboardingView> {
   final PageController pageController = PageController();
+
+  final AuthController authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -81,35 +84,37 @@ class _OnboardingViewState extends State<OnboardingView> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: ShapeDecoration(
-                        shape: CircleBorder(),
-                        color: AppColors.white,
-                      ),
-                      child: Image.asset(
-                        AppImages.google,
-                        scale: 4,
-                      ),
-                    ),
-                  ),
-                  sw12,
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: ShapeDecoration(
-                        shape: CircleBorder(),
-                        color: AppColors.white,
-                      ),
-                      child: Image.asset(
-                        AppImages.apple,
-                        scale: 4,
-                      ),
-                    ),
-                  ),
+                  // GestureDetector(
+                  //   onTap: () {
+                  //     authController.loginWithGoogle();
+                  //   },
+                  //   child: Container(
+                  //     padding: EdgeInsets.all(8),
+                  //     decoration: ShapeDecoration(
+                  //       shape: CircleBorder(),
+                  //       color: AppColors.white,
+                  //     ),
+                  //     child: Image.asset(
+                  //       AppImages.google,
+                  //       scale: 4,
+                  //     ),
+                  //   ),
+                  // ),
+                  // sw12,
+                  // GestureDetector(
+                  //   onTap: () {},
+                  //   child: Container(
+                  //     padding: EdgeInsets.all(10),
+                  //     decoration: ShapeDecoration(
+                  //       shape: CircleBorder(),
+                  //       color: AppColors.white,
+                  //     ),
+                  //     child: Image.asset(
+                  //       AppImages.apple,
+                  //       scale: 4,
+                  //     ),
+                  //   ),
+                  // ),
                   sw16,
                   Expanded(
                       child: CustomButton(

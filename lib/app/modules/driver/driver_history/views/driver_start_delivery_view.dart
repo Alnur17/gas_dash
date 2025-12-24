@@ -12,7 +12,31 @@ import 'package:get/get.dart';
 import '../../../../../common/widgets/custom_circular_container.dart';
 
 class DriverStartDeliveryView extends StatefulWidget {
-  const DriverStartDeliveryView({super.key});
+  final String orderId;
+  final String userId;
+  final String deliveryId;
+  final String customerName;
+  final String? customerImage;
+  final String amounts;
+  final String orderName;
+  final String? location;
+  final String? lat;
+  final String? long;
+
+
+  const DriverStartDeliveryView(
+      {super.key,
+      required this.orderId,
+      required this.userId,
+      required this.deliveryId,
+      required this.customerName,
+      required this.customerImage,
+      required this.amounts,
+      required this.orderName,
+      required this.lat,
+      required this.long,
+
+      required this.location});
 
   @override
   State<DriverStartDeliveryView> createState() =>
@@ -52,38 +76,56 @@ class _DriverStartDeliveryViewState extends State<DriverStartDeliveryView> {
           child: Column(
             children: [
               Container(
+                width: Get.width,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: AppColors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Order ID',
-                          style: h3,
-                        ),
-                        Text(
-                          '#798796',
-                          style: h5,
-                        ),
-                        Text(
-                          'ETA: 10 mins | Distance: 2 miles',
-                          style: h5,
-                        ),
-                      ],
+                    Text(
+                      'Order ID',
+                      style: h3,
                     ),
-                    Image.asset(
-                      AppImages.copy,
-                      scale: 4,
+                    Text(
+                      '#${widget.orderId}',
+                      style: h5,
                     ),
+                    // Text(
+                    //   'DeliveryId: ${widget.deliveryId}',
+                    //   style: h5,
+                    // ),
                   ],
                 ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   crossAxisAlignment: CrossAxisAlignment.center,
+                //   children: [
+                //     Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: [
+                //         Text(
+                //           'Order ID',
+                //           style: h3,
+                //         ),
+                //         Text(
+                //           '#${widget.orderId}',
+                //           style: h5,
+                //         ),
+                //         // Text(
+                //         //   'ETA: 10 mins | Distance: 2 miles',
+                //         //   style: h5,
+                //         // ),
+                //       ],
+                //     ),
+                //     Image.asset(
+                //       AppImages.copy,
+                //       scale: 4,
+                //     ),
+                //   ],
+                // ),
               ),
               sh20,
               Container(
@@ -97,21 +139,21 @@ class _DriverStartDeliveryViewState extends State<DriverStartDeliveryView> {
                   children: [
                     Row(
                       children: [
-                        const CircleAvatar(
+                        CircleAvatar(
                           radius: 18,
-                          backgroundImage:
-                              NetworkImage(AppImages.profileImageTwo),
+                          backgroundImage: NetworkImage(widget.customerImage ??
+                              AppImages.profileImageTwo),
                         ),
                         sw12,
                         Text(
-                          'Sarah J.',
+                          widget.customerName,
                           style: h3,
                         ),
                       ],
                     ),
                     sh12,
                     Text(
-                      '5 gallons , Premium',
+                      '${widget.amounts} , ${widget.orderName}',
                       style: h3,
                     ),
                     sh8,
@@ -122,9 +164,11 @@ class _DriverStartDeliveryViewState extends State<DriverStartDeliveryView> {
                           scale: 4,
                         ),
                         sw8,
-                        Text(
-                          '789 Pine Rd',
-                          style: h5,
+                        Expanded(
+                          child: Text(
+                            widget.location.toString(),
+                            style: h5,
+                          ),
                         ),
                       ],
                     ),
@@ -275,7 +319,13 @@ class _DriverStartDeliveryViewState extends State<DriverStartDeliveryView> {
                       height: 40,
                       text: 'Yes, I Need Fuel',
                       onPressed: () {
-                        Get.to(()=> StationNearYouView());
+                        Get.to(() => StationNearYouView(
+                              deliveryId: widget.deliveryId,
+                              orderId: widget.orderId,
+                              userId: widget.userId,
+                          lat: widget.lat.toString(),
+                          long: widget.long.toString(),
+                            ));
                       },
                       gradientColors: AppColors.gradientColorGreen,
                       textStyle: h7.copyWith(
@@ -290,7 +340,12 @@ class _DriverStartDeliveryViewState extends State<DriverStartDeliveryView> {
                       height: 40,
                       text: 'No, I Don’t Need Fuel',
                       onPressed: () {
-                        Get.to(()=> DriverLiveTrackView());
+                        Get.to(() => DriverLiveTrackView(
+                            deliveryId: widget.deliveryId,
+                            orderId: widget.orderId,
+                            lat: widget.lat.toString(),
+                            long: widget.long.toString(),
+                            userId: widget.userId));
                       },
                       backgroundColor: AppColors.silver,
                       borderColor: AppColors.primaryColor,

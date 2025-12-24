@@ -8,10 +8,14 @@ class AppImages {
   static const arrowDown = "assets/icons/arrow down.png";
   static const arrowRightSmall = "assets/icons/arrow right small.png";
   static const checkBox = "assets/icons/checkbox.png";
+  static const checkBoxBig = "assets/icons/checkbox big.png";
   static const checkBoxCircle = "assets/icons/circle checkbox.png";
   static const checkBoxFilled = "assets/icons/checkbox filled.png";
   static const checkBoxFilledSquare = "assets/icons/Checbox filled squar.png";
   static const eyeClose = "assets/icons/eye close.png";
+  static const eyeOpen = "assets/icons/eye.png";
+  static const emergency = "assets/icons/emergency.png";
+  static const coupon = "assets/icons/coupon.png";
 
   static const addFloating = "assets/icons/float add.png";
   static const message = "assets/icons/message.png";
@@ -79,6 +83,8 @@ class AppImages {
   static const send = "assets/icons/send.png";
   static const attachFile = "assets/icons/attach file.png";
   static const account = "assets/icons/account.png";
+  static const family = "assets/icons/family.png";
+  static const deliveryCar = "assets/icons/delivery car.png";
   static const aboutUs = "assets/icons/about us.png";
   static const termsAndConditions = "assets/icons/terms and conditions.png";
   static const myOrder = "assets/icons/my order.png";
@@ -100,6 +106,7 @@ class AppImages {
   static const toggleOff = "assets/icons/toggle off.png";
   static const gasStation = "assets/icons/gas station.png";
   static const gasStationSmall = "assets/icons/gas station small.png";
+  static const pdfDownload = "assets/icons/pdf download.png";
 
   static const starCard = "assets/icons/star card.png";
   static const starCardTwo = "assets/icons/star card 2.png";
@@ -130,6 +137,7 @@ class AppImages {
   static const checkMark = "assets/icons/checkmark.png";
   static const subsRight = "assets/icons/subs right.png";
   static const star = "assets/icons/star.png";
+  static const locationBlue = "assets/icons/location blue.png";
   static const estimatedTime = "assets/icons/estimated time.png";
 
   //================ Images ==================>
@@ -143,7 +151,7 @@ class AppImages {
   static const emergencyFuel = "assets/images/emergency fuel image.png";
   static const discount = "assets/images/discount image.png";
   static const mapImage = "assets/images/map image.png";
-
+  static const paymentSuccess = "assets/images/payment success.png";
 
 
   static const onboardingOne = "assets/images/onboarding 1.png";
@@ -173,7 +181,7 @@ class AppImages {
   static const deliveryManImage = "assets/images/delivery man image.png";
 
   static const profileImage = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
-  static const profileImageTwo = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D';
+  static const profileImageTwo = 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541';
   static const storeImageTwo = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlAHSjq7Gk3-FboSL_OMkC42bdCkxD12e4mw&s';
   static const groupOfDogs = 'https://plus.unsplash.com/premium_photo-1668114375111-e90b5e975df6?q=80&w=869&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
   static const imageNotAvailable = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNNLEL-qmmLeFR1nxJuepFOgPYfnwHR56vcw&s';

@@ -2,14 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:gas_dash/common/app_color/app_colors.dart';
 import 'package:gas_dash/common/app_images/app_images.dart';
 import 'package:gas_dash/common/size_box/custom_sizebox.dart';
-import 'package:gas_dash/common/widgets/custom_button.dart';
-
 import 'package:get/get.dart';
+import 'package:gas_dash/common/app_text_style/styles.dart';
+import 'package:intl/intl.dart';
 
-import '../../../../../common/app_text_style/styles.dart';
+import '../../../../../common/widgets/custom_button.dart';
+import '../../../../../common/widgets/custom_loader.dart';
+import '../../driver_home/controllers/driver_home_controller.dart';
+import '../../driver_home/model/single_order_by_Id_model.dart';
 
-class DriverOrderDetailsView extends GetView {
-  const DriverOrderDetailsView({super.key});
+class DriverOrderDetailsView extends StatefulWidget {
+  final SingleOrderData? orderData;
+  final String? location;
+
+  const DriverOrderDetailsView( {super.key, this.orderData,this.location,});
+
+  @override
+  State<DriverOrderDetailsView> createState() => _DriverOrderDetailsViewState();
+}
+
+class _DriverOrderDetailsViewState extends State<DriverOrderDetailsView> {
+  final DriverHomeController homeController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +52,7 @@ class DriverOrderDetailsView extends GetView {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Common Customer Section
               Text(
                 'Customer',
                 style: h5.copyWith(fontWeight: FontWeight.w600),
@@ -48,36 +62,43 @@ class DriverOrderDetailsView extends GetView {
                 children: [
                   CircleAvatar(
                     radius: 20,
-                    backgroundImage: NetworkImage(AppImages.profileImageTwo),
+                    backgroundImage: NetworkImage(
+                      widget.orderData?.userId?.image ?? AppImages.profileImageTwo,
+                    ),
                   ),
                   sw8,
                   Text(
-                    'Sarah J.',
+                    widget.orderData?.userId?.fullname ?? 'Unknown',
                     style: h6,
                   ),
                 ],
               ),
               sh12,
+              // Common Order ID Section
               Text(
                 'Order ID',
                 style: h5.copyWith(fontWeight: FontWeight.w600),
               ),
               sh5,
               Text(
-                '555-987-6543',
+                widget.orderData?.id ?? 'N/A',
                 style: h6,
               ),
               sh12,
+              // Common Delivery Date & Time Section
               Text(
                 'Delivery Date & time',
                 style: h5.copyWith(fontWeight: FontWeight.w600),
               ),
               sh5,
               Text(
-                '06 Feb,2025',
+                widget.orderData?.createdAt != null
+                    ? DateFormat('dd MMM, yyyy').format(widget.orderData!.createdAt!)
+                    : 'N/A',
                 style: h6,
               ),
               sh12,
+              // Common Location Section
               Text(
                 'Location',
                 style: h5.copyWith(fontWeight: FontWeight.w600),
@@ -90,47 +111,88 @@ class DriverOrderDetailsView extends GetView {
                     scale: 4,
                   ),
                   sw8,
-                  Text(
-                    '19456 Oak St, Denver, CO 80202 ',
-                    style: h6,
+                  Expanded(
+                    child: Text(
+                     widget.location ?? 'Unknown Location',
+                      style: h6,
+                    ),
                   ),
                 ],
               ),
               sh12,
+              // Common Vehicle Section
               Text(
                 'Vehicle',
                 style: h5.copyWith(fontWeight: FontWeight.w600),
               ),
               sh5,
               Text(
-                'Ford F-150, 2020, ~20% fuel',
+                widget.orderData?.vehicleId != null
+                    ? '${widget.orderData!.vehicleId!.make ?? 'Unknown'} ${widget.orderData!.vehicleId!.model ?? 'Unknown'} (${widget.orderData!.vehicleId!.year?.toInt() ?? 'N/A'})'
+                    : 'Unknown Vehicle',
                 style: h6,
               ),
               sh12,
-              Text(
-                'Fuel Type',
-                style: h5.copyWith(fontWeight: FontWeight.w600),
-              ),
-              sh5,
-              Text(
-                'Premium',
-                style: h6,
-              ),
-              sh12,
-              Text(
-                'Amount',
-                style: h5.copyWith(fontWeight: FontWeight.w600),
-              ),
-              sh5,
-              Text(
-                '15 gallons ',
-                style: h6,
-              ),
+              // Conditional Section based on orderStatus
+              if (widget.orderData?.orderType?.toLowerCase() == 'fuel')
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Fuel Type',
+                      style: h5.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    sh5,
+                    Text(
+                      widget.orderData?.fuelType ?? 'Unknown',
+                      style: h6,
+                    ),
+                    sh12,
+                    Text(
+                      'Amount',
+                      style: h5.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    sh5,
+                    Text(
+                      widget.orderData?.amount != null
+                          ? '${widget.orderData?.amount!.toStringAsFixed(2)} gallons'
+                          : 'N/A',
+                      style: h6,
+                    ),
+                  ],
+                )
+              else
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Service',
+                      style: h5.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    sh5,
+                    Text(
+                      widget.orderData?.orderType ?? 'Unknown Service',
+                      style: h6,
+                    ),
+                  ],
+                ),
               sh20,
-              CustomButton(
-                text: 'Start Delivery',
-                onPressed: () {},
-                gradientColors: AppColors.gradientColor,
+              //Common Start Delivery Button
+              Obx(
+                () {
+                  return homeController.isLoading.value == true
+                  ? CustomLoader(
+                  color: AppColors.white,
+                    gradientColors: AppColors.gradientColorRed,
+                  )
+                      : CustomButton(
+                    text: 'Cancel Order',
+                    onPressed: () {
+                      homeController.cancelOrder(widget.orderData?.id ?? '');
+                    },
+                    gradientColors: AppColors.gradientColorRed,
+                  );
+                }
               ),
             ],
           ),

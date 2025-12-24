@@ -6,7 +6,7 @@ import '../app_text_style/styles.dart';
 
 class FuelCard extends StatelessWidget {
   final String title;
-  final String number;
+  //final String? number;
   final String buttonText;
   final double height;
   final double width;
@@ -17,13 +17,14 @@ class FuelCard extends StatelessWidget {
   const FuelCard({
     super.key,
     required this.title,
-    required this.number,
+    //required this.number,
+    //this.number,
     required this.buttonText,
     this.height = 65,
     this.width = double.infinity,
     this.margin = const EdgeInsets.only(left: 30, right: 20),
-    required this.gradientColors, required this.onTap,
-
+    required this.gradientColors,
+    required this.onTap,
   });
 
   @override
@@ -56,23 +57,33 @@ class FuelCard extends StatelessWidget {
               ),
             ),
             Positioned(
-              left: -2,
-              top: 0,
-              bottom: 10,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    number,
-                    style: h3.copyWith(fontSize: 20, color: AppColors.white),
-                  ),
-                  Text(
-                    buttonText,
-                    style: h1.copyWith(color: AppColors.white, fontSize: 8),
-                  ),
-                ],
+              left: 0,
+              top: 10,
+              bottom: 0,
+              child: Text(
+                buttonText,
+                style: h5.copyWith(color: AppColors.white,fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
               ),
             ),
+            // Positioned(
+            //   left: -2,
+            //   top: 0,
+            //   bottom: 10,
+            //   child: Column(
+            //     mainAxisAlignment: MainAxisAlignment.center,
+            //     children: [
+            //       Text(
+            //         number,
+            //         style: h3.copyWith(fontSize: 20, color: AppColors.white),
+            //       ),
+            //       Text(
+            //         buttonText,
+            //         style: h1.copyWith(color: AppColors.white, fontSize: 8),
+            //       ),
+            //     ],
+            //   ),
+            // ),
             Align(
               alignment: Alignment.center,
               child: Text(

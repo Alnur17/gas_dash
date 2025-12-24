@@ -27,9 +27,9 @@ import 'package:gas_dash/common/app_color/app_colors.dart';
 
 class CustomLoader extends StatelessWidget {
   final Color color;
-  //final List<Color>? gradientColors;
+  final List<Color>? gradientColors;
 
-  const CustomLoader({super.key, required this.color,});
+  const CustomLoader({super.key, required this.color, this.gradientColors,});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class CustomLoader extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(40),
-        gradient: LinearGradient(colors: AppColors.gradientColorGreen),
+        gradient: LinearGradient(colors: gradientColors ?? AppColors.gradientColorGreen),
       ),
       child: Center(
         child: CircularProgressIndicator(

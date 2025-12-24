@@ -1,10 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-
 import '../../../../../../common/app_text_style/styles.dart';
 import '../app_color/app_colors.dart';
+
 class UploadWidget extends StatelessWidget {
   final VoidCallback onTap;
-  final String imagePath;
+  final String? imagePath;
+  final File? fileImage;
   final String label;
   final double height;
   final double width;
@@ -14,11 +16,12 @@ class UploadWidget extends StatelessWidget {
   const UploadWidget({
     super.key,
     required this.onTap,
-    required this.imagePath,
+    this.imagePath,
+    this.fileImage,
     required this.label,
-    this.height = 140,
+    this.height = 160,
     this.width = double.infinity,
-    this.iconSize = 20,
+    this.iconSize = 50,
     this.labelStyle,
   });
 
@@ -34,30 +37,51 @@ class UploadWidget extends StatelessWidget {
           style: BorderStyle.solid,
         ),
       ),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(height: 8),
-            Container(
-              height: iconSize,
-              width: iconSize,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-              ),
-              child: Image.asset(
-                imagePath,
-                scale: 4,
-                fit: BoxFit.cover,
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              label,
-              style: labelStyle ?? h5.copyWith(color: Colors.grey),
-            ),
-          ],
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: GestureDetector(
+          onTap: onTap,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min, // Use minimum space needed
+            children: [
+              if (fileImage != null)
+                Image.file(
+                  fileImage!,
+                  height: height -4 ,
+                  width: width,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    debugPrint('Error loading image: $error');
+                    return Icon(Icons.error, color: Colors.red);
+                  },
+                )
+              else ...[
+                SizedBox(height: 4), // Further reduced from 6
+                Container(
+                  height: iconSize,
+                  width: iconSize,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                  ),
+                  child: Image.asset(
+                    imagePath!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      debugPrint('Error loading asset: $error');
+                      return Icon(Icons.error, color: Colors.red);
+                    },
+                  ),
+                ),
+                SizedBox(height: 4), // Further reduced from 8
+                Text(
+                  label,
+                  style: labelStyle ?? h5.copyWith(color: Colors.grey),
+                  overflow: TextOverflow.ellipsis, // Prevent text overflow
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );

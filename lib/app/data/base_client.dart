@@ -37,13 +37,13 @@ class BaseClient {
 
     return response;
   }
-  static patchRequest({required String api, body,}) async {
+  static patchRequest({required String api, body,headers}) async {
 
-    //String token = LocalStorage.getData(key: AppConstant.token);
-    var headers = {
-      'Content-Type': "application/json",
-     // "Authorization": token
-    };
+    // //String token = LocalStorage.getData(key: AppConstant.token);
+    // var headers = {
+    //   'Content-Type': "application/json",
+    //  // "Authorization": token
+    // };
     debugPrint("API Hit: $api");
     debugPrint("body: $body");
     http.Response response = await http.patch(
@@ -54,12 +54,12 @@ class BaseClient {
     return response;
   }
 
-  static putRequest({required String api, body}) async {
+  static putRequest({required String api, body,headers}) async {
     //String token = LocalStorage.getData(key: AppConstant.token);
-    var headers = {
-      'Content-Type': "application/json",
-      //"Authorization": "Bearer, $token"
-    };
+    // var headers = {
+    //   'Content-Type': "application/json",
+    //   //"Authorization": "Bearer, $token"
+    // };
     debugPrint("API Hit: $api");
     debugPrint("body: $body");
     http.Response response = await http.put(
@@ -71,13 +71,13 @@ class BaseClient {
   }
 
 
-  static deleteRequest({required String api, body,}) async {
+  static deleteRequest({required String api, body,headers}) async {
 
    // String token = LocalStorage.getData(key: AppConstant.token);
-    var headers = {
-      'Content-Type': "application/json",
-     // "Authorization": token
-    };
+   //  var headers = {
+   //    'Content-Type': "application/json",
+   //   // "Authorization": token
+   //  };
     debugPrint("API Hit: $api");
     debugPrint("body: $body");
     http.Response response = await http.delete(
@@ -102,27 +102,6 @@ class BaseClient {
         }
       } else if (response.statusCode == 401) {
 
-        /* try {
-            var response = await http.post(
-              Uri.parse(ApiConstant.refreshToken),
-              headers: {
-                'Accept': 'application/json',
-                'refreshToken': '${LocalStorage.getData(key: AppConstant.refreshToken)}',
-
-              },
-            );
-            if (response.statusCode == 200) {
-              final Map<String, dynamic> responseData = jsonDecode(response.body);
-              LocalStorage.saveData(key: AppConstant.token, data: responseData["data"]["accessToken"].toString());
-              Get.snackbar('Success', 'Token Updated.');
-            } else {
-              Get.snackbar('Error', 'Failed Token Updated');
-            }
-          } catch (e) {
-            Get.snackbar('Error', 'Failed to Token Updated: $e');
-          }*/
-
-        //  logout();
         String msg = "Unauthorized";
         if (response.body.isNotEmpty) {
           if(json.decode(response.body)['errors'] != null){
@@ -131,7 +110,6 @@ class BaseClient {
         }
         throw msg;
       } else if (response.statusCode == 404) {
-        //kSnackBar(message: json.decode(response.body)['message'].toString(), bgColor: AppColors.orange);
         print(response.body);
       }
       else if (response.statusCode == 400) {

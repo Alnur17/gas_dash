@@ -1,10 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:gas_dash/app/modules/user/profile/controllers/profile_controller.dart';
 
 import 'package:get/get.dart';
 
 import '../../../../../common/app_color/app_colors.dart';
+import '../../../../../common/app_constant/app_constant.dart';
 import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
+import '../../../../../common/helper/local_store.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_list_tile.dart';
 import '../../../auth/login/views/login_view.dart';
@@ -15,7 +19,11 @@ import 'driver_policy_view.dart';
 import 'driver_terms_and_conditions_view.dart';
 
 class DriverProfileView extends GetView<DriverProfileController> {
-  const DriverProfileView({super.key});
+  DriverProfileView({super.key});
+
+  final driverProfileController = Get.put(DriverProfileController());
+  final ProfileController profileController = Get.put(ProfileController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,21 +39,51 @@ class DriverProfileView extends GetView<DriverProfileController> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             sh20,
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage(AppImages.profileImageTwo),
+            // Obx(
+            //   () => CircleAvatar(
+            //     radius: 50,
+            //     backgroundColor: AppColors.white,
+            //     backgroundImage: NetworkImage(
+            //         driverProfileController.driverProfileData.value?.image ??
+            //             AppImages.profileImageTwo),
+            //   ),
+            // ),
+            Obx(
+                  () => CachedNetworkImage(
+                imageUrl: driverProfileController.driverProfileData.value?.image ??
+                    AppImages.profileImageTwo,
+                imageBuilder: (context, imageProvider) => CircleAvatar(
+                  radius: 50,
+                  backgroundColor: AppColors.white,
+                  backgroundImage: imageProvider,
+                ),
+                placeholder: (context, url) => CircleAvatar(
+                  radius: 50,
+                  backgroundColor: AppColors.white,
+                  child: CircularProgressIndicator(
+                    color: AppColors.textColor,
+                  ),
+                ),
+                errorWidget: (context, url, error) => CircleAvatar(
+                  radius: 50,
+                  backgroundColor: AppColors.white,
+                  backgroundImage: AssetImage(AppImages.profileImageTwo),
+                ),
+              ),
             ),
             sh8,
-            Text(
-              'Daniel Martinez',
-              style: h5.copyWith(
-                fontWeight: FontWeight.w500,
+            Obx(
+              () => Text(
+                driverProfileController.driverProfileName.value,
+                style: h5.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
             sh20,
             CustomListTile(
               onTap: () {
-                Get.to(()=> DriverEditProfileView());
+                Get.to(() => DriverEditProfileView());
               },
               leadingImage: AppImages.editProfile,
               title: 'Edit Profile',
@@ -54,7 +92,7 @@ class DriverProfileView extends GetView<DriverProfileController> {
             sh12,
             CustomListTile(
               onTap: () {
-                Get.to(()=> DriverChangePasswordView());
+                Get.to(() => DriverChangePasswordView());
               },
               leadingImage: AppImages.changePass,
               title: 'Change  Password ',
@@ -63,7 +101,7 @@ class DriverProfileView extends GetView<DriverProfileController> {
             sh12,
             CustomListTile(
               onTap: () {
-                Get.to(()=> DriverTermsAndConditionsView());
+                Get.to(() => DriverTermsAndConditionsView());
               },
               leadingImage: AppImages.termsAndConditions,
               title: 'Terms and conditions',
@@ -72,7 +110,7 @@ class DriverProfileView extends GetView<DriverProfileController> {
             sh12,
             CustomListTile(
               onTap: () {
-                Get.to(()=> DriverPolicyView());
+                Get.to(() => DriverPolicyView());
               },
               leadingImage: AppImages.policy,
               title: 'Privacy and Policies',
@@ -81,12 +119,61 @@ class DriverProfileView extends GetView<DriverProfileController> {
             sh12,
             CustomListTile(
               onTap: () {
-                Get.offAll(()=> LoginView());
+
+                Get.dialog(
+                  AlertDialog(
+                    title: Text("Confirm Deletion"),
+                    content: Text("Do you want to delete your account? This action cannot be undone."),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Get.back(), // Close dialog on "No"
+                        child: Text("No"),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          profileController.deleteMyProfile();
+                        },
+                        child: Text("Yes"),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              leadingImage: AppImages.delete,
+              title: 'Delete Profile',
+              trailingImage: AppImages.arrowRightSmall,
+            ),
+            sh12,
+            CustomListTile(
+              onTap: () {
+
+                Get.dialog(
+                  AlertDialog(
+                    title: Text("Confirm Logout"),
+                    content: Text("Do you want to logout your account?"),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Get.back(), // Close dialog on "No"
+                        child: Text("No"),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          LocalStorage.removeData(key: AppConstant.accessToken);
+                          LocalStorage.removeData(key: AppConstant.refreshToken);
+                          LocalStorage.removeData(key: AppConstant.role);
+                          Get.offAll(() => LoginView());
+                        },
+                        child: Text("Yes"),
+                      ),
+                    ],
+                  ),
+                );
               },
               leadingImage: AppImages.logout,
               title: 'Log Out',
               trailingImage: AppImages.arrowRightSmall,
             ),
+
             sh40,
           ],
         ),

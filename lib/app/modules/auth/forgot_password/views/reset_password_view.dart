@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gas_dash/app/modules/auth/forgot_password/views/reset_success_view.dart';
+import 'package:gas_dash/app/modules/auth/forgot_password/controllers/forgot_password_controller.dart';
 
 import 'package:get/get.dart';
 
@@ -8,10 +8,23 @@ import '../../../../../common/app_images/app_images.dart';
 import '../../../../../common/app_text_style/styles.dart';
 import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_button.dart';
+import '../../../../../common/widgets/custom_loader.dart';
 import '../../../../../common/widgets/custom_textfield.dart';
 
-class ResetPasswordView extends GetView {
+class ResetPasswordView extends StatefulWidget {
   const ResetPasswordView({super.key});
+
+  @override
+  State<ResetPasswordView> createState() => _ResetPasswordViewState();
+}
+
+class _ResetPasswordViewState extends State<ResetPasswordView> {
+  final ForgotPasswordController forgotPasswordController =
+      Get.put(ForgotPasswordController());
+  final TextEditingController newPasswordTEController = TextEditingController();
+  final TextEditingController confirmPasswordTEController =
+      TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,11 +60,20 @@ class ResetPasswordView extends GetView {
               style: h4,
             ),
             sh12,
-            CustomTextField(
-              hintText: '**********',
-              sufIcon: Image.asset(
-                AppImages.eyeClose,
-                scale: 4,
+            Obx(
+              () => CustomTextField(
+                controller: newPasswordTEController,
+                hintText: '**********',
+                sufIcon: GestureDetector(
+                    onTap: () {
+                      forgotPasswordController.togglePasswordVisibility();
+                    },
+                    child: Image.asset(
+                        forgotPasswordController.isPasswordVisible.value
+                            ? AppImages.eyeOpen
+                            : AppImages.eyeClose,
+                        scale: 4)),
+                obscureText: !forgotPasswordController.isPasswordVisible.value,
               ),
             ),
             sh16,
@@ -60,20 +82,36 @@ class ResetPasswordView extends GetView {
               style: h4,
             ),
             sh12,
-            CustomTextField(
-              sufIcon: Image.asset(
-                AppImages.eyeClose,
-                scale: 4,
+            Obx(
+              () => CustomTextField(
+                controller: confirmPasswordTEController,
+                sufIcon: GestureDetector(
+                    onTap: () {
+                      forgotPasswordController.togglePasswordVisibility2();
+                    },
+                    child: Image.asset(
+                        forgotPasswordController.isPasswordVisible2.value
+                            ? AppImages.eyeOpen
+                            : AppImages.eyeClose,
+                        scale: 4)),
+                obscureText: !forgotPasswordController.isPasswordVisible2.value,
+                hintText: '**********',
               ),
-              hintText: '**********',
             ),
             sh16,
-            CustomButton(
-              text: 'Update Password',
-              onPressed: () {
-                Get.offAll(()=> ResetSuccessView());
-              },
-              gradientColors: AppColors.gradientColor,
+            Obx(
+              () => forgotPasswordController.isLoading.value == true
+                  ? CustomLoader(color: AppColors.white)
+                  : CustomButton(
+                      text: 'Update Password',
+                      onPressed: () {
+                        forgotPasswordController.resetPassword(
+                          newPassword: newPasswordTEController.text,
+                          confirmPassword: confirmPasswordTEController.text,
+                        );
+                      },
+                      gradientColors: AppColors.gradientColor,
+                    ),
             ),
           ],
         ),

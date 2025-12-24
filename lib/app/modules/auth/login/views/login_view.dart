@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gas_dash/app/modules/auth/sign_up/views/sign_up_view.dart';
-
+import 'package:gas_dash/app/modules/user/dashboard/views/dashboard_view.dart';
 import 'package:get/get.dart';
 
 import '../../../../../common/app_color/app_colors.dart';
@@ -10,25 +10,21 @@ import '../../../../../common/size_box/custom_sizebox.dart';
 import '../../../../../common/widgets/custom_button.dart';
 import '../../../../../common/widgets/custom_loader.dart';
 import '../../../../../common/widgets/custom_textfield.dart';
-import '../../../../../common/widgets/google_button.dart';
+import '../../auth_controller/auth_controller.dart';
 import '../../forgot_password/views/forgot_password_view.dart';
 import '../controllers/login_controller.dart';
 
-class LoginView extends StatefulWidget {
+class LoginView extends StatelessWidget {
   const LoginView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
-}
-
-class _LoginViewState extends State<LoginView> {
-  LoginController loginController = Get.put(LoginController());
-
-  TextEditingController emailTEController = TextEditingController();
-  TextEditingController passwordTEController = TextEditingController();
-
-  @override
   Widget build(BuildContext context) {
+    final LoginController loginController = Get.put(LoginController());
+    final AuthController authController = Get.put(AuthController());
+
+    final TextEditingController emailTEController = TextEditingController();
+    final TextEditingController passwordTEController = TextEditingController();
+
     return Scaffold(
       backgroundColor: AppColors.mainColor,
       appBar: AppBar(
@@ -75,20 +71,30 @@ class _LoginViewState extends State<LoginView> {
                 children: [
                   Text('Email', style: h4),
                   sh8,
-                   CustomTextField(
+                  CustomTextField(
                     hintText: 'Your email',
                     controller: emailTEController,
                   ),
                   const SizedBox(height: 12),
                   Text('Password', style: h4),
                   sh8,
-                  CustomTextField(
-                    sufIcon: Image.asset(
-                      AppImages.eyeClose,
-                      scale: 4,
+                  Obx(
+                    () => CustomTextField(
+                      sufIcon: GestureDetector(
+                        onTap: () {
+                          loginController.togglePasswordVisibility();
+                        },
+                        child: Image.asset(
+                          loginController.isPasswordVisible.value
+                              ? AppImages.eyeOpen
+                              : AppImages.eyeClose,
+                          scale: 4,
+                        ),
+                      ),
+                      hintText: '**********',
+                      controller: passwordTEController,
+                      obscureText: !loginController.isPasswordVisible.value,
                     ),
-                    hintText: '**********',
-                    controller: passwordTEController,
                   ),
                 ],
               ),
@@ -96,14 +102,15 @@ class _LoginViewState extends State<LoginView> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
+                  Obx(() => Row(
                     children: [
                       GestureDetector(
                         onTap: () {
-                          //Get.to(() => const ForgotPasswordView());
+                          loginController.toggleCheckboxVisibility();
                         },
                         child: Image.asset(
-                          AppImages.checkBoxFilledSquare,
+                          loginController.isCheckboxVisible.value
+                              ? AppImages.checkBoxFilledSquare :AppImages.checkBox,
                           scale: 4,
                         ),
                       ),
@@ -113,7 +120,8 @@ class _LoginViewState extends State<LoginView> {
                         style: h4.copyWith(color: AppColors.grey),
                       ),
                     ],
-                  ),
+                  ),)
+                  ,
                   GestureDetector(
                     onTap: () {
                       Get.to(() => const ForgotPasswordView());
@@ -127,20 +135,18 @@ class _LoginViewState extends State<LoginView> {
               ),
               sh24,
               Obx(
-                    () {
-                  return loginController.isLoading.value == true
-                      ? CustomLoader(color: AppColors.white)
-                      : CustomButton(
-                    text: 'Login',
-                    onPressed: () {
-                      loginController.userLogin(
-                        email: emailTEController.text,
-                        password: passwordTEController.text,
-                      );
-                    },
-                    gradientColors: AppColors.gradientColor,
-                  );
-                },
+                () => loginController.isLoading.value
+                    ? CustomLoader(color: AppColors.white)
+                    : CustomButton(
+                        text: 'Login',
+                        onPressed: () {
+                          loginController.userLogin(
+                            email: emailTEController.text,
+                            password: passwordTEController.text,
+                          );
+                        },
+                        gradientColors: AppColors.gradientColor,
+                      ),
               ),
               sh10,
               Row(
@@ -154,24 +160,49 @@ class _LoginViewState extends State<LoginView> {
                   ),
                   sw10,
                   const Expanded(child: Divider()),
+
                 ],
-              ),
-              sh10,
-              GoogleButton(
-                assetPath: AppImages.google,
-                label: 'Continue with Google',
-                onTap: () {},
-              ),
-              sh12,
-              GoogleButton(
-                assetPath: AppImages.apple,
-                label: 'Continue with Apple',
-                onTap: () {},
               ),
               sh10,
               GestureDetector(
                 onTap: () {
-                  Get.to(() => const SignUpView());
+                  Get.to(() =>  DashboardView());
+                },
+                child: Center(
+                  child: Text(
+                    'Guest Login',
+                    style: h4.copyWith(color: AppColors.textColor),
+                  ),
+                ),
+              ),
+              sh10,
+              // Obx(
+              //   () => GoogleButton(
+              //     assetPath: AppImages.google,
+              //     label: authController.isLoadingGoogle.value
+              //         ? 'Loading...'
+              //         : 'Continue with Google',
+              //     onTap: () {
+              //       authController.loginWithGoogle();
+              //     },
+              //   ),
+              // ),
+              // sh12,
+              // Obx(
+              //   () => GoogleButton(
+              //     assetPath: AppImages.apple,
+              //     label: authController.isLoadingApple.value
+              //         ? 'Loading...'
+              //         : 'Continue with Apple',
+              //     onTap: () {
+              //       authController.loginWithApple();
+              //     },
+              //   ),
+              // ),
+              sh10,
+              GestureDetector(
+                onTap: () {
+                  Get.to(() =>  SignUpView());
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

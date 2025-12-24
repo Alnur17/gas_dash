@@ -1,22 +1,449 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
+
+import '../../../../../common/app_color/app_colors.dart';
+import '../../../../../common/app_constant/app_constant.dart';
+import '../../../../../common/helper/local_store.dart';
+import '../../../../../common/widgets/custom_snackbar.dart';
+import '../../../../data/api.dart';
+import '../../../../data/base_client.dart';
+import '../../../auth/login/views/login_view.dart';
+import '../../subscription/views/after_subscription_view.dart';
+import '../../subscription/views/subscription_view.dart';
+import '../model/my_profile_model.dart';
+import '../views/add_family_member_household_vehicle_view.dart';
 
 class ProfileController extends GetxController {
+  var isLoading = false.obs;
+  var myProfileData = Rxn<Data>();
+  var myProfileImage = Rxn<File>();
+  var myProfileName = ''.obs;
+  var email = ''.obs;
+  var selectedImage = Rxn<File>();
 
-  final count = 0.obs;
+  var isPasswordVisible = false.obs;
+  var isPasswordVisible1 = false.obs;
+  var isPasswordVisible2 = false.obs;
+
+  void togglePasswordVisibility() {
+    isPasswordVisible.toggle();
+  }
+
+  void togglePasswordVisibility1() {
+    isPasswordVisible1.toggle();
+  }
+
+  void togglePasswordVisibility2() {
+    isPasswordVisible2.toggle();
+  }
+
   @override
   void onInit() {
+    getMyProfile();
     super.onInit();
+
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  // Navigation logic for Subscription tile
+  void handleSubscriptionNavigation() {
+    if (myProfileData.value?.title != null) {
+      Get.to(() => AfterSubscriptionView());
+    } else {
+      Get.to(() => SubscriptionView());
+    }
   }
 
-  @override
-  void onClose() {
-    super.onClose();
+  // Navigation logic for Family Member tile
+  void handleFamilyMemberNavigation() {
+    if (myProfileData.value?.freeSubscriptionAdditionalFamilyMember == false) {
+      Get.to(() => SubscriptionView());
+    } else {
+      Get.to(() => AddFamilyMemberHouseholdVehicleView());
+    }
   }
 
-  void increment() => count.value++;
+
+  ///my Profile
+  Future<void> getMyProfile() async {
+    try {
+      isLoading.value = true;
+      String apiUrl = Api.myProfile;
+
+      debugPrint("Fetching Profile Data...");
+      String accessToken = LocalStorage.getData(key: AppConstant.accessToken);
+      var headers = {
+        'Content-Type': "application/json",
+        'Authorization': 'Bearer $accessToken',
+      };
+
+      var response = await BaseClient.getRequest(api: apiUrl, headers: headers);
+
+      if (response.statusCode == 200) {
+        var jsonResponse = await BaseClient.handleResponse(response);
+        MyProfileModel myProfileModel = MyProfileModel.fromJson(jsonResponse);
+
+        if (myProfileModel.data != null) {
+          myProfileData.value = myProfileModel.data;
+          myProfileName.value = myProfileModel.data!.fullname ?? "User Name";
+          email.value = myProfileModel.data!.email ?? "example@gmail.com";
+        }
+      } else {
+        kSnackBar(
+          message: "Failed to load profile data",
+          bgColor: AppColors.orange,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error getting profile: $e");
+      kSnackBar(
+        message: "Error getting profile: $e",
+        bgColor: AppColors.orange,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  ///change password
+  Future changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+    required BuildContext context,
+  }) async {
+    try {
+      isLoading(true);
+
+      if (currentPassword.trim().length < 6) {
+        Get.snackbar('Error', 'Password must be at least 6 characters');
+        return;
+      }
+
+      if (newPassword.trim().length < 6) {
+        Get.snackbar('Error', ' New Password must be at least 6 characters');
+        return;
+      }
+
+      if (confirmPassword.trim().length < 6) {
+        Get.snackbar('Error', ' Re-type New Password must be at least 6 characters');
+        return;
+      }
+
+      var map = {
+        "oldPassword": currentPassword,
+        "newPassword": newPassword,
+        "confirmPassword": confirmPassword
+      };
+
+      var headers = {
+        'Content-Type': 'application/json',
+        'Authorization':
+            'Bearer ${LocalStorage.getData(key: AppConstant.accessToken)}',
+      };
+
+      dynamic responseBody = await BaseClient.handleResponse(
+        await BaseClient.patchRequest(
+            api: Api.changePassword, body: jsonEncode(map), headers: headers),
+      );
+
+      if (responseBody != null) {
+        kSnackBar(message: responseBody["message"], bgColor: AppColors.green);
+        Get.offAll(() => LoginView());
+      } else {
+        throw 'reset pass in Failed!';
+      }
+    } catch (e) {
+      debugPrint("Catch Error:::::: $e");
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  ///Update profile
+  Future<void> updateProfileForFamily({
+    required BuildContext context,
+    required String name,
+    required String email,
+  })
+  async {
+    try {
+      isLoading(true);
+      String accessToken = LocalStorage.getData(key: AppConstant.accessToken);
+      if (accessToken.isEmpty) {
+        kSnackBar(message: "User not authenticated", bgColor: AppColors.orange);
+        return;
+      }
+      var map = {
+        "familyMember": {
+          "name": name,
+          "email": email,
+        }
+      };
+      var headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${LocalStorage.getData(key: AppConstant.accessToken)}',
+      };
+
+      dynamic responseBody = await BaseClient.handleResponse(
+        await BaseClient.patchRequest(
+            api: Api.editMyProfile, body: jsonEncode(map), headers: headers),
+      );
+      if (responseBody != null) {
+        kSnackBar(message: responseBody["message"], bgColor: AppColors.green);
+        getMyProfile();
+       Navigator.pop(context);
+        isLoading(false);
+      } else {
+        throw 'reset pass in Failed!';
+      }
+
+    } catch (e) {
+      kSnackBar(
+          message: "Error updating profile: $e", bgColor: AppColors.orange);
+      debugPrint("Update Error: $e");
+    }finally {
+      isLoading(false);
+    }
+  }
+
+  Future<void> updateProfile({
+    required BuildContext context, // Add context parameter
+    required String name,
+    required String email,
+    required String contactNumber,
+    required String location,
+    required String zipCode,
+  }) async {
+    try {
+      isLoading(true);
+      String accessToken = LocalStorage.getData(key: AppConstant.accessToken);
+      if (accessToken.isEmpty) {
+        kSnackBar(message: "User not authenticated", bgColor: AppColors.orange);
+        return;
+      }
+      if (zipCode.trim().length < 4 || zipCode.trim().length > 5) {
+        kSnackBar(
+          message: "Zip code must be 4 or 5 characters",
+          bgColor: AppColors.orange,
+        );
+        return;
+      }
+
+      var request = http.MultipartRequest('PATCH', Uri.parse(Api.editMyProfile));
+
+      request.headers.addAll({
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'multipart/form-data',
+      });
+
+      // Add JSON payload as text
+      Map<String, dynamic> data = {
+        "fullname": name,
+        "email": email,
+        "phoneNumber": contactNumber,
+        'location': location,
+        'zipCode': zipCode,
+      };
+
+      request.fields['data'] = jsonEncode(data);
+
+      // Handle Image Upload
+      if (selectedImage.value != null) {
+        String imagePath = selectedImage.value!.path;
+        String? mimeType = lookupMimeType(imagePath) ?? 'image/jpeg';
+
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'image',
+            imagePath,
+            contentType: MediaType.parse(mimeType),
+          ),
+        );
+      }
+
+      var response = await request.send();
+      var responseData = await response.stream.bytesToString();
+
+      var decodedResponse = json.decode(responseData);
+
+      if (response.statusCode == 200) {
+        await getMyProfile();
+        // Evict cached image if it exists
+        if (myProfileData.value?.image != null) {
+          imageCache.evict(NetworkImage(myProfileData.value!.image!));
+        }
+        kSnackBar(
+            message: "Profile updated successfully", bgColor: AppColors.green);
+
+        // Refresh profile data
+
+        update(); // Trigger UI update
+        Navigator.pop(context); // Use passed context
+      } else {
+        kSnackBar(
+          message: decodedResponse['message'] ?? "Failed to update profile",
+          bgColor: AppColors.orange,
+        );
+      }
+    } catch (e) {
+      kSnackBar(message: "Error updating profile: $e", bgColor: AppColors.orange);
+      debugPrint("Update Error: $e");
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  // Future<void> updateProfile({
+  //   //required BuildContext context,
+  //   required String name,
+  //   required String email,
+  //   required String contactNumber,
+  //   required String location,
+  //   required String zipCode,
+  // })
+  // async {
+  //   try {
+  //     isLoading(true);
+  //     String accessToken = LocalStorage.getData(key: AppConstant.accessToken);
+  //     if (accessToken.isEmpty) {
+  //       kSnackBar(message: "User not authenticated", bgColor: AppColors.orange);
+  //       return;
+  //     }
+  //     if (zipCode.trim().length < 4 || zipCode.trim().length > 5) {
+  //       kSnackBar(
+  //         message: "Zip code must be 4 or 5 characters",
+  //         bgColor: AppColors.orange,
+  //       );
+  //       return;
+  //     }
+  //
+  //     var request =
+  //         http.MultipartRequest('PATCH', Uri.parse(Api.editMyProfile));
+  //
+  //     request.headers.addAll({
+  //       'Authorization': 'Bearer $accessToken',
+  //       'Content-Type': 'multipart/form-data',
+  //     });
+  //
+  //     // Add JSON payload as text
+  //     Map<String, dynamic> data = {
+  //       "fullname": name,
+  //       "email": email,
+  //       "phoneNumber": contactNumber,
+  //       'location': location,
+  //       'zipCode': zipCode,
+  //     };
+  //
+  //     request.fields['data'] = jsonEncode(data);
+  //
+  //     // Handle Image Upload
+  //     if (selectedImage.value != null) {
+  //       String imagePath = selectedImage.value!.path;
+  //       String? mimeType = lookupMimeType(imagePath) ?? 'image/jpeg';
+  //
+  //       request.files.add(
+  //         await http.MultipartFile.fromPath(
+  //           'image',
+  //           imagePath,
+  //           contentType: MediaType.parse(mimeType), //from http_parser package
+  //         ),
+  //       );
+  //     }
+  //
+  //     var response = await request.send();
+  //     var responseData = await response.stream.bytesToString();
+  //
+  //     try {
+  //       var decodedResponse = json.decode(responseData);
+  //
+  //       if (response.statusCode == 200) {
+  //         kSnackBar(
+  //             message: "Profile updated successfully",
+  //             bgColor: AppColors.green);
+  //
+  //         getMyProfile();
+  //         update();
+  //         if (Get.context != null) {
+  //           Navigator.pop(Get.context!);
+  //         }
+  //         //Navigator.pop(context); // sometimes it get some issue
+  //       } else {
+  //         kSnackBar(
+  //           message: decodedResponse['message'] ?? "Failed to update profile",
+  //           bgColor: AppColors.orange,
+  //         );
+  //       }
+  //     } catch (decodeError) {
+  //       kSnackBar(
+  //           message: "Invalid response format", bgColor: AppColors.orange);
+  //       debugPrint("Response Error: $decodeError");
+  //     }
+  //   } catch (e) {
+  //     kSnackBar(
+  //         message: "Error updating profile: $e", bgColor: AppColors.orange);
+  //     debugPrint("Update Error: $e");
+  //   }finally {
+  //     isLoading(false);
+  //   }
+  // }
+
+  Future<void> pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? pickedFile =
+        await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      selectedImage.value = File(pickedFile.path);
+      myProfileImage.value = selectedImage.value;
+      debugPrint("Image Selected: ${pickedFile.path}");
+      update();
+    }
+  }
+
+
+
+
+  //deleteMyProfile
+  Future<void> deleteMyProfile() async {
+    try {
+      isLoading.value = true;
+      String apiUrl = Api.deleteAccount;
+
+      debugPrint("Fetching Profile Data...");
+      String accessToken = LocalStorage.getData(key: AppConstant.accessToken);
+      var headers = {
+        'Content-Type': "application/json",
+        'Authorization': 'Bearer $accessToken',
+      };
+
+      var response = await BaseClient.deleteRequest(api: apiUrl, headers: headers);
+
+      if (response.statusCode == 200) {
+        LocalStorage.removeData(key: AppConstant.accessToken);
+        LocalStorage.removeData(key: AppConstant.refreshToken);
+        LocalStorage.removeData(key: AppConstant.role);
+        Get.offAll(() => LoginView() );
+      } else {
+        kSnackBar(
+          message: "Failed to load profile data",
+          bgColor: AppColors.orange,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error getting profile: $e");
+      kSnackBar(
+        message: "Error getting profile: $e",
+        bgColor: AppColors.orange,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }
